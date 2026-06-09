@@ -301,41 +301,45 @@ export const KronoBookLanding: React.FC = () => {
           </div>
 
           <div className="max-w-md mx-auto">
-            <article className="bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-3xl hover:border-sky-500/30 transition-all duration-500 ease-out hover:-translate-y-3 hover:shadow-[0_24px_60px_rgba(56,189,248,0.12)] p-8 md:p-10 group/card">
-              <div className="inline-block bg-sky-400 text-zinc-950 text-xs font-black uppercase tracking-widest px-3 py-1 mb-8 rounded shadow-[0_0_15px_rgba(56,189,248,0.3)]">
-                Todo incluido
+            <article className="relative bg-sky-500/5 backdrop-blur-md border border-sky-500/30 rounded-3xl p-8 shadow-[0_0_30px_rgba(56,189,248,0.05)] hover:border-sky-400 hover:shadow-[0_0_40px_rgba(56,189,248,0.15)] transition-all duration-500 ease-out hover:-translate-y-2 group/card">
+              {/* Badge flotante de Lanzamiento */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sky-400 to-cyan-500 text-zinc-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(56,189,248,0.4)] animate-pulse">
+                ¡PRIMER MES GRATIS!
               </div>
 
-              <div className="mb-6 pb-6 border-b border-zinc-700/50">
-                <p className="text-zinc-400 text-xs uppercase tracking-widest font-bold mb-2">Pago único de configuración</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-zinc-50">$599</span>
-                  <span className="text-zinc-400 font-semibold text-sm">MXN</span>
+              <div className="text-center mt-4 mb-6">
+                <h3 className="text-zinc-400 text-xs uppercase tracking-widest font-black mb-2">
+                  Plan Selector / Control Total
+                </h3>
+                <div className="flex justify-center items-baseline gap-2 mt-4">
+                  <span className="text-6xl font-black text-zinc-50 tracking-tight">$250</span>
+                  <span className="text-sky-400 font-bold text-sm">MXN / mes</span>
                 </div>
-                <p className="text-zinc-500 text-xs mt-1">Una sola vez · Creación y personalización completa</p>
+                <p className="text-zinc-500 text-xs mt-3 leading-relaxed">
+                  Precio regular de <span className="line-through">$599 MXN</span>. Asegura tu precio de lanzamiento para siempre registrándote hoy.
+                </p>
               </div>
 
-              <div className="mb-8">
-                <p className="text-zinc-400 text-xs uppercase tracking-widest font-bold mb-2">Mensualidad</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-sky-400">$200</span>
-                  <span className="text-sky-400/60 font-semibold text-sm">MXN / mes</span>
-                </div>
-                <p className="text-zinc-500 text-xs mt-1">Hosting · Soporte · Actualizaciones · Sin contratos</p>
-              </div>
+              {/* Divisor */}
+              <div className="w-full h-px bg-zinc-800/80 my-6" />
 
-              <ul className="space-y-3.5 mb-10">
+              <ul className="space-y-4 mb-8">
                 {[
-                  'Página personalizada con tus colores y logo',
-                  'Reservas en línea 24/7 desde celular',
-                  'Panel de administración con agenda y finanzas',
-                  'Punto de venta integrado con POS y propinas',
-                  'Exportación de reportes en CSV',
-                  'Soporte por WhatsApp incluido',
+                  'Agenda Virtual 24/7 interactiva',
+                  'Recordatorios automáticos de citas',
+                  'Panel de Administración y Finanzas en tiempo real',
+                  'Soporte técnico local garantizado',
+                  'Multi-Tenant aislado y seguro',
                 ].map((feat) => (
-                  <li key={feat} className="flex items-start gap-3 text-sm text-zinc-300 group/item">
-                    <svg className="w-4 h-4 text-sky-400 mt-0.5 shrink-0 group-hover/item:scale-125 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  <li key={feat} className="flex items-start gap-3.5 text-sm text-zinc-300 group/item">
+                    <svg
+                      className="w-4 h-4 text-sky-400 mt-0.5 shrink-0 group-hover/item:scale-125 transition-transform duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     <span className="group-hover/item:text-zinc-50 transition-colors duration-200">{feat}</span>
                   </li>
@@ -346,12 +350,9 @@ export const KronoBookLanding: React.FC = () => {
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-3 font-black uppercase tracking-widest text-zinc-950 bg-sky-400 hover:bg-sky-300 rounded-xl active:scale-95 hover:-translate-y-1 transition-all duration-300 py-4 text-sm cursor-pointer group-hover/card:scale-[1.02]"
+                className="w-full flex items-center justify-center gap-3 font-black uppercase tracking-widest text-zinc-950 bg-sky-400 hover:bg-sky-300 rounded-xl active:scale-95 hover:-translate-y-1 transition-all duration-300 py-4 text-sm cursor-pointer group-hover/card:scale-[1.02] shadow-lg shadow-sky-400/10 hover:shadow-sky-400/20"
               >
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.115-2.906-6.99C16.554 1.876 14.079 1.848 11.442 1.848c-5.437 0-9.861 4.42-9.865 9.864-.001 1.765.485 3.486 1.408 5.01L1.97 21.03l4.677-1.876zm12.39-5.49c-.29-.146-1.72-.85-1.986-.948-.267-.098-.46-.147-.654.145-.193.292-.747.948-.916 1.144-.168.196-.337.22-.627.073-.29-.146-1.228-.453-2.34-1.445-.865-.772-1.45-1.725-1.618-2.02-.168-.293-.018-.452.128-.597.133-.13.29-.34.436-.51.145-.17.194-.292.29-.487.097-.195.048-.366-.024-.512-.072-.146-.655-1.58-.897-2.162-.236-.57-.478-.49-.655-.499-.17-.008-.363-.01-.555-.01-.193 0-.507.075-.772.36-.265.288-1.013.992-1.013 2.417s1.036 2.793 1.18 2.99c.145.195 2.037 3.113 4.936 4.36.69.298 1.228.476 1.648.61.692.22 1.32.19 1.817.115.578-.087 1.774-.703 1.961-1.383.242-.68.242-1.266.17-1.383-.07-.117-.265-.19-.556-.337z" />
-                </svg>
-                Contáctanos por WhatsApp
+                Comenzar Prueba Gratis
               </a>
             </article>
           </div>
