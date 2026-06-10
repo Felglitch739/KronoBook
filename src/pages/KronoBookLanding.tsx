@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import BarberiaChagaPreview from '../assets/BarberiaChaga_Preview.png';
 import { useSEO } from '../hooks/useSEO';
-import IconoKronoBook from '../assets/IconoKronoBook.png';
+import { Logo } from '../components/shared/Logo';
 
 // ──────────────────────────────────────────────────────────────────────
 //  KronoBookLanding — Landing page de marketing del producto SaaS
@@ -16,28 +16,7 @@ const WHATSAPP_MSG = encodeURIComponent(
 );
 const WHATSAPP_URL = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${WHATSAPP_MSG}`;
 
-// ── Logotipo compuesto (isotipo + wordmark) ───────────────────────────
-const KronoBookLogo: React.FC<{ size?: 'sm' | 'lg' }> = ({ size = 'sm' }) => {
-  const iconSize = size === 'lg' ? 44 : 26;
-  const textClass = size === 'lg'
-    ? 'font-black text-3xl tracking-tight'
-    : 'font-black text-xl tracking-tight';
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <img
-        src={IconoKronoBook}
-        alt="KronoBook Icon"
-        style={{ width: iconSize, height: iconSize, objectFit: 'contain' }}
-        className="group-hover:rotate-6 transition-transform duration-500 drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]"
-      />
-      {/* Wordmark */}
-      <span className={`${textClass} text-zinc-50 group-hover:text-sky-100 transition-colors duration-300 leading-none`}>
-        Krono<span className="text-sky-400">Book</span>
-      </span>
-    </div>
-  );
-};
+// Logo component is imported from components/shared/Logo
 
 // ─────────────────────────────────────────────────────────────────────
 export const KronoBookLanding: React.FC = () => {
@@ -68,8 +47,8 @@ export const KronoBookLanding: React.FC = () => {
       {/* ── NAV ── */}
       <header className="w-full border-b border-zinc-800/60 sticky top-0 bg-[#0b0c0e]/90 backdrop-blur-md z-50">
         <nav className="w-full px-6 py-4 flex items-center justify-between" aria-label="Navegación principal">
-          <Link to="/" className="group flex items-center gap-1 cursor-pointer">
-            <KronoBookLogo size="sm" />
+          <Link to="/" className="cursor-pointer">
+            <Logo size="sm" />
             <span className="ml-1.5 text-[10px] font-bold text-sky-500 border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider group-hover:bg-sky-500/20 transition-all duration-300">
               Beta
             </span>
@@ -154,8 +133,8 @@ export const KronoBookLanding: React.FC = () => {
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
 
           {/* Isotipo grande en Hero */}
-          <div className="group mb-8 cursor-default inline-flex">
-            <KronoBookLogo size="lg" />
+          <div className="mb-8 cursor-default inline-flex">
+            <Logo size="lg" />
           </div>
 
           {/* Eyebrow pill */}
@@ -385,11 +364,8 @@ export const KronoBookLanding: React.FC = () => {
       <footer className="w-full border-t border-white/5 py-10 px-6 bg-[#0b0c0e]">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo en Footer */}
-          <div className="group flex items-center gap-1.5 cursor-default">
-            <img src={IconoKronoBook} alt="KronoBook" style={{ width: 24, height: 24, objectFit: 'contain' }} className="drop-shadow-[0_0_8px_rgba(56,189,248,0.4)]" />
-            <span className="font-black text-base tracking-tight text-zinc-50">
-              Krono<span className="text-sky-400">Book</span>
-            </span>
+          <div className="flex items-center gap-2 cursor-default">
+            <Logo size="sm" />
             <span className="text-zinc-600 text-xs">© {new Date().getFullYear()}</span>
           </div>
           <p className="text-zinc-600 text-xs text-center md:text-right">

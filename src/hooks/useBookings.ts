@@ -203,26 +203,27 @@ export const useBookings = () => {
 
   const updateCitaEstado = async (id: string, estado: Cita['estado']) => {
     try {
-      let query = supabase
-        .from('citas')
-        .update({ estado })
-        .eq('id', id);
-
-      // Doble capa de seguridad multi-tenant:
-      // Filtra estrictamente por el id de la barbería cargada si existe
-      if (barberia?.id) {
-        query = query.eq('barberia_id', barberia.id);
+      if (!barberia) {
+        throw new Error("No se ha cargado ninguna barbería para actualizar la cita");
       }
 
-      const { error } = await query;
+      // Realizar la mutación real en Supabase con validación de barberia_id
+      const { error } = await supabase
+        .from('citas')
+        .update({ estado })
+        .eq('id', id)
+        .eq('barberia_id', barberia.id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
+      // Si la petición es exitosa, actualizar el estado local
       setCitas((prev) =>
         prev.map((c) => (c.id === id ? { ...c, estado } : c))
       );
     } catch (error) {
-      console.error('Error al actualizar estado de la cita:', error);
+      console.error('Error al actualizar estado de la cita en Supabase:', error);
     }
   };
 
