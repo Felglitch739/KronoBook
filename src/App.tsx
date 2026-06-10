@@ -62,7 +62,7 @@ function TenantApp() {
 // Admin component with active auth check
 function AdminApp() {
   const { user, loading: loadingAuth } = useAuth();
-  const { citas, servicios, barberia, updateCitaEstado, refetch } = useBookings();
+  const { citas, servicios, barberia, updateCitaEstado, eliminarServicio, eliminarCita, crearServicio, refetch } = useBookings();
   const activeServicios = servicios.length > 0 ? servicios : mockServicios;
 
   if (loadingAuth) {
@@ -91,6 +91,9 @@ function AdminApp() {
               barberiaId={barberia?.id} 
               barberiaName={barberia?.nombre}
               onAddSuccess={refetch} 
+              onDeleteService={eliminarServicio}
+              onDeleteCita={eliminarCita}
+              onAddService={crearServicio}
             />
           } 
         />

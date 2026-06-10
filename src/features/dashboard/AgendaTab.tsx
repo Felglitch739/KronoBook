@@ -19,9 +19,10 @@ interface AgendaTabProps {
   citas: Cita[];
   servicios: Servicio[];
   onUpdateStatus: (id: string, estado: Cita['estado']) => void;
+  onDeleteCita: (id: string) => Promise<void>;
 }
 
-export const AgendaTab: React.FC<AgendaTabProps> = ({ citas, servicios, onUpdateStatus }) => {
+export const AgendaTab: React.FC<AgendaTabProps> = ({ citas, servicios, onUpdateStatus, onDeleteCita }) => {
   // Inicializamos en Junio 2026, mes de la mock data
   const [currentDate, setCurrentDate] = useState(new Date(2026, 5, 1));
   const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
@@ -152,6 +153,7 @@ export const AgendaTab: React.FC<AgendaTabProps> = ({ citas, servicios, onUpdate
                 citas={citasDelDia}
                 servicios={servicios}
                 onUpdateStatus={onUpdateStatus}
+                onDeleteCita={onDeleteCita}
                 forceSingleDay={true}
               />
             </div>

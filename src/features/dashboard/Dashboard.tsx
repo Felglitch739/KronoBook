@@ -2,9 +2,20 @@ import React, { useState } from 'react';
 import { type Cita, type Servicio } from '../../types';
 import { FinanzasTab } from './FinanzasTab';
 import { AgendaTab } from './AgendaTab';
+import { ServicesManager } from '../../components/admin/ServicesManager';
 import { AddAppointmentModal } from '../../components/dashboard/AddAppointmentModal';
 import { DigitalReceiptModal } from '../../components/dashboard/DigitalReceiptModal';
 import { useAuth } from '../../context/AuthContext';
+
+interface QuickTransaction {
+  id: string;
+  fecha: string;
+  cliente: string;
+  servicio: string;
+  monto: number;
+  propina: number;
+  total: number;
+}
 
 interface DashboardProps {
   citas: Cita[];
@@ -13,6 +24,9 @@ interface DashboardProps {
   barberiaId?: string;
   barberiaName?: string;
   onAddSuccess?: () => void;
+  onDeleteService: (id: string) => Promise<void>;
+  onDeleteCita: (id: string) => Promise<void>;
+  onAddService: (servicio: Omit<Servicio, 'id' | 'barberiaId'>) => Promise<Servicio>;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -22,10 +36,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
   barberiaId,
   barberiaName,
   onAddSuccess,
+  onDeleteService,
+  onDeleteCita,
+  onAddService,
 }) => {
-  const [activeTab, setActiveTab] = useState<'agenda' | 'finanzas'>('agenda');
+  const [activeTab, setActiveTab] = useState<'agenda' | 'finanzas' | 'servicios'>('agenda');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [justCreatedTx, setJustCreatedTx] = useState<any>(null);
+  const [justCreatedTx, setJustCreatedTx] = useState<QuickTransaction | null>(null);
   const { signOut } = useAuth();
 
   const fechaActual = new Date().toLocaleDateString('es-ES', {
@@ -39,7 +56,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }
   };
 
-  const handleAddSuccess = (newCita?: any) => {
+  const handleAddSuccess = (newCita?: { id: string; servicio_id: string; propina?: number; fecha: string; cliente_nombre?: string }) => {
     if (onAddSuccess) {
       onAddSuccess();
     }
@@ -49,7 +66,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       const precioServicio = servicio?.precio || 0;
       const propinaMonto = newCita.propina || 0;
 
-      const tx = {
+      const tx: QuickTransaction = {
         id: newCita.id,
         fecha: newCita.fecha,
         cliente: newCita.cliente_nombre || 'Walk-in',
@@ -91,10 +108,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
           )}
 
           {/* Navegación por Pestañas */}
-          <div className="flex p-1.5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-xl w-full md:w-auto">
+          <div className="flex p-1.5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-xl w-full md:w-auto overflow-x-auto scrollbar-none">
             <button
               onClick={() => setActiveTab('agenda')}
-              className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 ${activeTab === 'agenda'
+              className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap cursor-pointer ${activeTab === 'agenda'
                   ? 'bg-sky-500 text-zinc-950 border border-sky-500/20'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                 }`}
@@ -104,13 +121,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('finanzas')}
-              className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 ${activeTab === 'finanzas'
+              className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap cursor-pointer ${activeTab === 'finanzas'
                   ? 'bg-sky-500 text-zinc-950 border border-sky-500/20'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                 }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               Finanzas
+            </button>
+            <button
+              onClick={() => setActiveTab('servicios')}
+              className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap cursor-pointer ${activeTab === 'servicios'
+                  ? 'bg-sky-500 text-zinc-950 border border-sky-500/20'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+                }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Servicios
             </button>
           </div>
 
@@ -131,9 +161,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Contenido de la Pestaña */}
       <div className="animate-fade-in mt-6" key={activeTab}>
         {activeTab === 'agenda' ? (
-          <AgendaTab citas={citas} servicios={servicios} onUpdateStatus={onUpdateStatus} />
+          <AgendaTab 
+            citas={citas} 
+            servicios={servicios} 
+            onUpdateStatus={onUpdateStatus} 
+            onDeleteCita={onDeleteCita}
+          />
+        ) : activeTab === 'finanzas' ? (
+          <FinanzasTab 
+            citas={citas} 
+            servicios={servicios} 
+            businessName={barberiaName} 
+            onDeleteCita={onDeleteCita}
+          />
         ) : (
-          <FinanzasTab citas={citas} servicios={servicios} businessName={barberiaName} />
+          <ServicesManager 
+            servicios={servicios} 
+            onDeleteService={onDeleteService} 
+            onAddService={onAddService}
+          />
         )}
       </div>
 

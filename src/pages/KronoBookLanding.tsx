@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import BarberiaChagaPreview from '../assets/BarberiaChaga_Preview.png';
 import { useSEO } from '../hooks/useSEO';
+import IconoKronoBook from '../assets/IconoKronoBook.png';
 
 // ──────────────────────────────────────────────────────────────────────
 //  KronoBookLanding — Landing page de marketing del producto SaaS
@@ -15,50 +16,23 @@ const WHATSAPP_MSG = encodeURIComponent(
 );
 const WHATSAPP_URL = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${WHATSAPP_MSG}`;
 
-// ── Logo SVG: Reloj de precisión geométrico, color celeste KronoBook ──
-const ClockIcon: React.FC<{ size?: number; className?: string }> = ({
-  size = 24,
-  className = '',
-}) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-    aria-hidden="true"
-  >
-    {/* Círculo exterior del reloj */}
-    <circle cx="12" cy="12" r="10" />
-    {/* Manecilla de hora */}
-    <polyline points="12 6 12 12 16 14" />
-    {/* Punto central */}
-    <circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none" />
-  </svg>
-);
-
 // ── Logotipo compuesto (isotipo + wordmark) ───────────────────────────
 const KronoBookLogo: React.FC<{ size?: 'sm' | 'lg' }> = ({ size = 'sm' }) => {
-  const iconSize = size === 'lg' ? 32 : 22;
+  const iconSize = size === 'lg' ? 44 : 26;
   const textClass = size === 'lg'
     ? 'font-black text-3xl tracking-tight'
     : 'font-black text-xl tracking-tight';
 
   return (
-    <div className="flex items-center gap-2.5">
-      {/* Isotipo: fondo oscuro con borde celeste + reloj */}
-      <div className="relative flex items-center justify-center rounded-[8px] bg-sky-400/10 border border-sky-400/30 p-1 group-hover:bg-sky-400/20 group-hover:border-sky-400/60 transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(56,189,248,0.35)]">
-        <ClockIcon
-          size={iconSize}
-          className="text-sky-400 group-hover:rotate-12 transition-transform duration-500"
-        />
-      </div>
+    <div className="flex items-center gap-1.5">
+      <img
+        src={IconoKronoBook}
+        alt="KronoBook Icon"
+        style={{ width: iconSize, height: iconSize, objectFit: 'contain' }}
+        className="group-hover:rotate-6 transition-transform duration-500 drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]"
+      />
       {/* Wordmark */}
-      <span className={`${textClass} text-zinc-50 group-hover:text-sky-100 transition-colors duration-300`}>
+      <span className={`${textClass} text-zinc-50 group-hover:text-sky-100 transition-colors duration-300 leading-none`}>
         Krono<span className="text-sky-400">Book</span>
       </span>
     </div>
@@ -188,7 +162,7 @@ export const KronoBookLanding: React.FC = () => {
           <div className="inline-flex items-center gap-2 mb-8 border border-sky-500/30 bg-sky-500/5 px-4 py-1.5 rounded-full animate-float shadow-[0_0_20px_rgba(56,189,248,0.05)]">
             <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
             <span className="text-sky-400 text-xs font-bold uppercase tracking-widest">
-              Sistema de reserva con POS
+              SISTEMA DE GESTIÓN Y RESERVAS
             </span>
           </div>
 
@@ -201,9 +175,9 @@ export const KronoBookLanding: React.FC = () => {
 
           {/* Subtítulo — universal, multi-vertical */}
           <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed font-light">
-            KronoBook automatiza las reservas de tu spa, estética, barbería,
-            consultorio o cualquier negocio de citas —&nbsp;y las cobra con POS integrado.
-            Tus clientes reservan en segundos, tú cobras más y trabajas menos.
+            KronoBook ayuda a tu barbería, estética, spa o consultorio a gestionar clientes, 
+            citas y servicios — todo desde un solo lugar. Tus clientes reservan en segundos, 
+            tú trabajas con orden.
           </p>
 
           {/* CTA único, centrado y protagónico */}
@@ -302,11 +276,6 @@ export const KronoBookLanding: React.FC = () => {
 
           <div className="max-w-md mx-auto">
             <article className="relative bg-sky-500/5 backdrop-blur-md border border-sky-500/30 rounded-3xl p-8 shadow-[0_0_30px_rgba(56,189,248,0.05)] hover:border-sky-400 hover:shadow-[0_0_40px_rgba(56,189,248,0.15)] transition-all duration-500 ease-out hover:-translate-y-2 group/card">
-              {/* Badge flotante de Lanzamiento */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sky-400 to-cyan-500 text-zinc-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(56,189,248,0.4)] animate-pulse">
-                ¡PRIMER MES GRATIS!
-              </div>
-
               <div className="text-center mt-4 mb-6">
                 <h3 className="text-zinc-400 text-xs uppercase tracking-widest font-black mb-2">
                   Plan Selector / Control Total
@@ -315,9 +284,11 @@ export const KronoBookLanding: React.FC = () => {
                   <span className="text-6xl font-black text-zinc-50 tracking-tight">$250</span>
                   <span className="text-sky-400 font-bold text-sm">MXN / mes</span>
                 </div>
-                <p className="text-zinc-500 text-xs mt-3 leading-relaxed">
-                  Precio regular de <span className="line-through">$599 MXN</span>. Asegura tu precio de lanzamiento para siempre registrándote hoy.
-                </p>
+                <div className="flex flex-col gap-1.5 mt-6 text-xs text-zinc-300 font-bold tracking-wide">
+                  <span className="px-3 py-1 bg-zinc-900/60 border border-zinc-800 rounded-lg">✓ Sin contratos</span>
+                  <span className="px-3 py-1 bg-zinc-900/60 border border-zinc-800 rounded-lg">✓ Configuración gratuita</span>
+                  <span className="px-3 py-1 bg-zinc-900/60 border border-zinc-800 rounded-lg">✓ Cancela cuando quieras</span>
+                </div>
               </div>
 
               {/* Divisor */}
@@ -352,7 +323,7 @@ export const KronoBookLanding: React.FC = () => {
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-3 font-black uppercase tracking-widest text-zinc-950 bg-sky-400 hover:bg-sky-300 rounded-xl active:scale-95 hover:-translate-y-1 transition-all duration-300 py-4 text-sm cursor-pointer group-hover/card:scale-[1.02] shadow-lg shadow-sky-400/10 hover:shadow-sky-400/20"
               >
-                Comenzar Prueba Gratis
+                Comenzar Hoy
               </a>
             </article>
           </div>
@@ -373,16 +344,6 @@ export const KronoBookLanding: React.FC = () => {
             Esta es exactamente la experiencia interactiva que tendrán los clientes de tu negocio.
             Una interfaz rápida, moderna y optimizada para reservas reales en tiempo real.
           </p>
-
-          <Link
-            to="/barberia-chaga"
-            className="inline-flex items-center gap-3 font-black uppercase tracking-widest text-zinc-950 bg-sky-400 hover:bg-sky-300 active:scale-95 transition-all duration-300 hover:-translate-y-1 px-10 py-4 text-sm rounded-xl mb-16 cursor-pointer shadow-xl shadow-sky-400/20"
-          >
-            Abrir demo: Barbería Chaga
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </Link>
 
           {/* Browser Mockup */}
           <Link
@@ -413,14 +374,6 @@ export const KronoBookLanding: React.FC = () => {
                 alt="Vista previa de Barbería Chaga en KronoBook"
                 className="w-full h-full object-cover object-top duration-700 group-hover:scale-[1.015] brightness-95 group-hover:brightness-100 transition-all"
               />
-              <div className="absolute inset-0 bg-sky-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-                <span className="bg-sky-400 text-zinc-950 px-6 py-3.5 font-black uppercase tracking-widest text-xs rounded-xl shadow-2xl scale-90 group-hover:scale-100 transition-transform duration-500 flex items-center gap-2">
-                  Abrir Demo Interactiva
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </span>
-              </div>
             </div>
           </Link>
         </div>
@@ -432,10 +385,8 @@ export const KronoBookLanding: React.FC = () => {
       <footer className="w-full border-t border-white/5 py-10 px-6 bg-[#0b0c0e]">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo en Footer */}
-          <div className="group flex items-center gap-2.5 cursor-default">
-            <div className="flex items-center justify-center rounded-[6px] bg-sky-400/10 border border-sky-400/20 p-0.5">
-              <ClockIcon size={16} className="text-sky-400" />
-            </div>
+          <div className="group flex items-center gap-1.5 cursor-default">
+            <img src={IconoKronoBook} alt="KronoBook" style={{ width: 24, height: 24, objectFit: 'contain' }} className="drop-shadow-[0_0_8px_rgba(56,189,248,0.4)]" />
             <span className="font-black text-base tracking-tight text-zinc-50">
               Krono<span className="text-sky-400">Book</span>
             </span>

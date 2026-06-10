@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import IconoKronoBook from '../../assets/IconoKronoBook.png';
 
 interface NavbarProps {
   slug?: string;
@@ -32,9 +33,12 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) =>
       <nav className="hidden md:flex justify-between items-center px-6 md:px-12 py-4 bg-zinc-900/85 backdrop-blur-md border-b border-zinc-800/80 sticky top-0 z-50">
         <Link 
           to="/" 
-          className="font-black text-2xl tracking-wider cursor-pointer bg-gradient-to-r from-sky-400 to-sky-600 bg-clip-text text-transparent hover:scale-105 transition-transform"
+          className="group flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-transform"
         >
-          KRONOBOOK
+          <img src={IconoKronoBook} alt="KronoBook" style={{ width: 28, height: 28, objectFit: 'contain' }} className="drop-shadow-[0_0_8px_rgba(56,189,248,0.4)] group-hover:rotate-6 transition-transform duration-300" />
+          <span className="font-black text-lg tracking-tight text-zinc-50 leading-none">
+            Krono<span className="text-sky-400">Book</span>
+          </span>
         </Link>
         <div className="flex items-center gap-4">
           {isAdminPage ? (
@@ -97,13 +101,15 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) =>
         </div>
       </nav>
 
-      {/* Top Header for Mobile */}
       <div className="md:hidden flex justify-center items-center py-4 bg-zinc-900/85 backdrop-blur-md border-b border-zinc-800/80 sticky top-0 z-40">
         <Link 
           to="/" 
-          className="font-black text-xl tracking-wider cursor-pointer bg-gradient-to-r from-sky-400 to-sky-600 bg-clip-text text-transparent"
+          className="flex items-center gap-1.5 cursor-pointer"
         >
-          KRONOBOOK
+          <img src={IconoKronoBook} alt="KronoBook" style={{ width: 24, height: 24, objectFit: 'contain' }} className="drop-shadow-[0_0_8px_rgba(56,189,248,0.4)]" />
+          <span className="font-black text-base tracking-tight text-zinc-50 leading-none">
+            Krono<span className="text-sky-400">Book</span>
+          </span>
         </Link>
       </div>
 

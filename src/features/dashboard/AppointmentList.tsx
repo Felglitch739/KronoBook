@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { type Cita, type Servicio } from '../../types';
+import { Trash2 } from 'lucide-react';
 
 interface AppointmentListProps {
   citas: Cita[];
   servicios: Servicio[];
   onUpdateStatus: (id: string, estado: Cita['estado']) => void;
+  onDeleteCita: (id: string) => Promise<void>;
   forceSingleDay?: boolean;
 }
 
@@ -12,9 +14,23 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
   citas,
   servicios,
   onUpdateStatus,
+  onDeleteCita,
   forceSingleDay = false,
 }) => {
   const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
+
+  const handleDeleteCita = async (id: string, nombreCliente: string) => {
+    const confirmed = window.confirm(`¿Estás seguro de que deseas eliminar la cita de "${nombreCliente}"? Esta acción borrará permanentemente la cita de la base de datos.`);
+    if (!confirmed) return;
+
+    try {
+      await onDeleteCita(id);
+      setSelectedCita(null);
+    } catch (error) {
+      console.error('Error al borrar la cita:', error);
+      alert('Hubo un error al intentar eliminar la cita.');
+    }
+  };
 
   const getService = (servicioId: string | undefined, servicio_id?: string) => {
     const targetId = servicioId || servicio_id;
@@ -131,20 +147,30 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
                                    {/* Acciones Rápidas con Iconos Minimalistas */}
                                    <div className="flex justify-end gap-2 pt-3 border-t border-zinc-700/50 mt-auto">
                                      {cEstado === 'pendiente' && (
-                                       <button onClick={(e) => { e.stopPropagation(); onUpdateStatus(cId, 'confirmada'); }} className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-zinc-950 transition-colors" title="Confirmar Cita">
+                                       <button onClick={(e) => { e.stopPropagation(); onUpdateStatus(cId, 'confirmada'); }} className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-zinc-950 transition-colors cursor-pointer" title="Confirmar Cita">
                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                                        </button>
                                      )}
                                      {cEstado === 'confirmada' && (
-                                       <button onClick={(e) => { e.stopPropagation(); onUpdateStatus(cId, 'completada'); }} className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-zinc-950 transition-colors" title="Marcar Completada">
+                                       <button onClick={(e) => { e.stopPropagation(); onUpdateStatus(cId, 'completada'); }} className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-zinc-950 transition-colors cursor-pointer" title="Marcar Completada">
                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                                        </button>
                                      )}
                                      {cEstado !== 'cancelada' && cEstado !== 'completada' && (
-                                       <button onClick={(e) => { e.stopPropagation(); onUpdateStatus(cId, 'cancelada'); }} className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-zinc-950 transition-colors" title="Cancelar Cita">
+                                       <button onClick={(e) => { e.stopPropagation(); onUpdateStatus(cId, 'cancelada'); }} className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-zinc-950 transition-colors cursor-pointer" title="Cancelar Cita">
                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
                                        </button>
                                      )}
+                                     <button 
+                                       onClick={(e) => { 
+                                         e.stopPropagation(); 
+                                         handleDeleteCita(cId, cNombre); 
+                                       }} 
+                                       className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-zinc-950 transition-colors cursor-pointer" 
+                                       title="Eliminar Cita"
+                                     >
+                                       <Trash2 size={14} />
+                                     </button>
                                    </div>
                                  </div>
                                </button>
@@ -249,6 +275,13 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
                       </button>
                     )}
                   </div>
+                  <button 
+                    onClick={() => handleDeleteCita(cId, cNombre)}
+                    className="w-full mt-2 bg-rose-500/10 hover:bg-rose-500 hover:text-zinc-950 text-rose-400 font-bold py-2.5 px-4 rounded-xl border border-rose-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Trash2 size={16} />
+                    <span>Eliminar Cita</span>
+                  </button>
                 </div>
               </div>
             </div>

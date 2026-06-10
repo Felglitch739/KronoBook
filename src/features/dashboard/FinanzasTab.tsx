@@ -1,15 +1,39 @@
 import React, { useMemo, useState } from 'react';
 import { type Cita, type Servicio } from '../../types';
 import { DigitalReceiptModal } from '../../components/dashboard/DigitalReceiptModal';
+import { Trash2 } from 'lucide-react';
+
+export interface Transaccion {
+  id: string;
+  fecha: string;
+  cliente: string;
+  servicio: string;
+  monto: number;
+  propina: number;
+  total: number;
+  estado: string;
+}
 
 interface FinanzasTabProps {
   citas: Cita[];
   servicios: Servicio[];
   businessName?: string;
+  onDeleteCita: (id: string) => Promise<void>;
 }
 
-export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, businessName }) => {
-  const [selectedTx, setSelectedTx] = useState<any>(null);
+export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, businessName, onDeleteCita }) => {
+  const [selectedTx, setSelectedTx] = useState<Transaccion | null>(null);
+
+  const handleDeleteClick = async (id: string, clienteName: string) => {
+    const confirmed = window.confirm(`¿Estás seguro de que deseas eliminar la transacción de "${clienteName}"? Esto borrará la cita de la base de datos y descontará las ganancias inmediatamente.`);
+    if (!confirmed) return;
+    try {
+      await onDeleteCita(id);
+    } catch (error) {
+      console.error('Error al eliminar transacción:', error);
+      alert('Hubo un error al intentar eliminar la transacción.');
+    }
+  };
   
   // Calculamos las métricas
   const metricas = useMemo(() => {
@@ -322,10 +346,20 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
                     <td className="py-4 px-6 text-right font-mono font-bold text-sky-400 group-hover:scale-105 transition-transform origin-right">
                       ${tx.total}
                     </td>
-                    <td className="py-4 px-6 text-right text-zinc-500 group-hover:text-sky-500 transition-colors">
-                      <svg className="w-5 h-5 ml-auto opacity-45 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <td className="py-4 px-6 text-right text-zinc-500 group-hover:text-sky-500 transition-colors flex items-center justify-end gap-3">
+                      <svg className="w-5 h-5 opacity-45 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(tx.id, tx.cliente);
+                        }}
+                        className="p-1 rounded-md bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-zinc-950 transition-all duration-200 cursor-pointer"
+                        title="Eliminar Cita/Transacción"
+                      >
+                        <Trash2 size={14} className="text-rose-500 hover:text-rose-400" />
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -114,17 +114,30 @@ export const useBookings = () => {
           if (srvData) setServicios(srvData as Servicio[]);
           
           if (citasData) {
-            const formattedCitas: Cita[] = citasData.map((data: any) => ({
+            interface SupabaseCita {
+              id: string;
+              barberia_id: string;
+              servicio_id: string;
+              cliente_nombre: string;
+              cliente_telefono: string;
+              cliente_email: string | null;
+              fecha: string;
+              hora: string;
+              estado: string;
+              notas: string | null;
+              propina: number | null;
+            }
+            const formattedCitas: Cita[] = (citasData as SupabaseCita[]).map((data) => ({
               id: data.id,
               barberiaId: data.barberia_id,
               servicioId: data.servicio_id,
               clienteNombre: data.cliente_nombre,
               clienteTelefono: data.cliente_telefono,
-              clienteEmail: data.cliente_email,
+              clienteEmail: data.cliente_email || undefined,
               fecha: data.fecha,
               hora: data.hora,
               estado: data.estado as Cita['estado'],
-              notas: data.notas,
+              notas: data.notas || undefined,
               propina: data.propina || 0
             }));
             setCitas(formattedCitas);
@@ -213,6 +226,83 @@ export const useBookings = () => {
     }
   };
 
+  const eliminarServicio = async (id: string) => {
+    try {
+      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+      
+      const { error } = await supabase
+        .from('servicios')
+        .delete()
+        .eq('id', id)
+        .eq('barberia_id', barberia.id);
+
+      if (error) throw error;
+
+      // Actualizar el estado local de React inmediatamente
+      setServicios((prev) => prev.filter((s) => s.id !== id));
+    } catch (error) {
+      console.error('Error al eliminar el servicio:', error);
+      throw error;
+    }
+  };
+
+  const eliminarCita = async (id: string) => {
+    try {
+      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+
+      const { error } = await supabase
+        .from('citas')
+        .delete()
+        .eq('id', id)
+        .eq('barberia_id', barberia.id);
+
+      if (error) throw error;
+
+      // Actualizar el estado local de React inmediatamente
+      setCitas((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error('Error al eliminar la cita:', error);
+      throw error;
+    }
+  };
+
+  const crearServicio = async (servicioData: Omit<Servicio, 'id' | 'barberiaId'>): Promise<Servicio> => {
+    try {
+      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+
+      const newServiceInsert = {
+        barberia_id: barberia.id,
+        nombre: servicioData.nombre,
+        precio: servicioData.precio,
+        duracion_minutos: servicioData.duracionMinutos,
+        descripcion: servicioData.descripcion || null
+      };
+
+      const { data, error } = await supabase
+        .from('servicios')
+        .insert([newServiceInsert])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const formattedService: Servicio = {
+        id: data.id,
+        barberiaId: data.barberia_id,
+        nombre: data.nombre,
+        precio: Number(data.precio),
+        duracionMinutos: data.duracion_minutos,
+        descripcion: data.descripcion || undefined
+      };
+
+      setServicios((prev) => [...prev, formattedService]);
+      return formattedService;
+    } catch (error) {
+      console.error('Error al crear el servicio:', error);
+      throw error;
+    }
+  };
+
   return {
     citas,
     servicios,
@@ -220,6 +310,9 @@ export const useBookings = () => {
     loading,
     addCita,
     updateCitaEstado,
+    eliminarServicio,
+    eliminarCita,
+    crearServicio,
     refetch,
   };
 };
