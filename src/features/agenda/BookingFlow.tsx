@@ -15,7 +15,8 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
   onCancel,
 }) => {
   const { barberia } = useBookings();
-  const colorPrimario = barberia?.colorPrimario || '#1d4ed8';
+  // KronoBook's default color (sky-500) instead of basic blue
+  const colorPrimario = barberia?.colorPrimario || '#0ea5e9';
 
   const [step, setStep] = useState(1);
   const [servicioId, setServicioId] = useState('');
@@ -25,6 +26,8 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
   const [clienteEmail, setClienteEmail] = useState('');
   const [clienteTelefono, setClienteTelefono] = useState('');
   const [notas, setNotas] = useState('');
+  const [propina, setPropina] = useState<number>(0);
+  const [propinaPersonalizada, setPropinaPersonalizada] = useState('');
 
   const timeSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 
@@ -46,14 +49,19 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
       fecha,
       hora,
       notas,
+      propina,
     });
   };
 
   const selectedService = servicios.find((s) => s.id === servicioId);
 
   return (
-    <div className="max-w-xl mx-auto my-12 p-6 md:p-8 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-3xl text-zinc-100">
-      <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: colorPrimario }}>
+    <div className="max-w-xl mx-auto my-12 p-6 md:p-8 bg-gradient-to-br from-[#16191e]/80 to-[#0b0c0e]/95 backdrop-blur-xl border border-sky-500/20 shadow-[0_0_40px_rgba(14,165,233,0.15)] rounded-[2rem] text-zinc-100 relative overflow-hidden">
+      {/* Glow superior decorativo */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-600 via-sky-400 to-cyan-400" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-sky-500/10 blur-[40px] pointer-events-none" />
+
+      <h2 className="text-3xl font-black mb-8 text-center tracking-tight drop-shadow-md" style={{ color: colorPrimario }}>
         Reservar una Cita
       </h2>
 
@@ -93,18 +101,21 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
                   setServicioId(s.id);
                   handleNext();
                 }}
-                className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer flex justify-between items-center active:scale-[0.98] ${
+                className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex justify-between items-center active:scale-[0.98] group ${
                   servicioId === s.id
-                    ? 'shadow-lg'
-                    : 'border-zinc-800 bg-zinc-900/40 hover:border-zinc-700 hover:bg-zinc-900/70 active:bg-zinc-900/80'
+                    ? 'shadow-[0_0_20px_rgba(14,165,233,0.15)] -translate-y-0.5'
+                    : 'border-zinc-800/80 bg-zinc-900/40 hover:border-sky-500/40 hover:bg-zinc-900/80 hover:shadow-[0_4px_20px_rgba(14,165,233,0.08)]'
                 }`}
-                style={servicioId === s.id ? { borderColor: colorPrimario, backgroundColor: `${colorPrimario}10` } : {}}
+                style={servicioId === s.id ? { borderColor: colorPrimario, backgroundColor: `${colorPrimario}15` } : {}}
               >
                 <div>
-                  <strong className="block text-zinc-100 font-semibold">{s.nombre}</strong>
-                  <span className="text-zinc-500 text-sm">{s.duracionMinutos} min</span>
+                  <strong className={`block font-bold text-lg transition-colors duration-300 ${servicioId === s.id ? 'text-zinc-50' : 'text-zinc-300 group-hover:text-zinc-100'}`}>{s.nombre}</strong>
+                  <span className="text-zinc-500 text-sm font-medium flex items-center gap-1.5 mt-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    {s.duracionMinutos} min
+                  </span>
                 </div>
-                <div className="font-bold text-lg" style={{ color: colorPrimario }}>${s.precio} MXN</div>
+                <div className="font-black text-xl" style={{ color: colorPrimario }}>${s.precio} MXN</div>
               </div>
             ))}
           </div>
@@ -162,7 +173,7 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
           
           {selectedService && (
             <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-400 mb-2">
-              <span className="font-semibold text-zinc-300">Resumen:</span> {selectedService.nombre} • {fecha} a las {hora} hs
+              <span className="font-semibold text-zinc-300">Resumen:</span> {selectedService.nombre} ({selectedService.duracionMinutos} min) • {fecha} a las {hora} hs
             </div>
           )}
 
@@ -212,6 +223,48 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
             />
           </div>
 
+          {/* Propina */}
+          <div className="space-y-3 pt-2">
+            <label className="block text-zinc-400 text-sm font-medium">Propina (Opcional)</label>
+            <div className="flex flex-wrap gap-2">
+              {[0, 20, 50, 100].map((monto) => (
+                <button
+                  key={monto}
+                  type="button"
+                  onClick={() => {
+                    setPropina(monto);
+                    setPropinaPersonalizada('');
+                  }}
+                  className={`py-2 px-4 rounded-xl border text-sm font-semibold transition-all cursor-pointer ${
+                    propina === monto && propinaPersonalizada === ''
+                      ? 'bg-zinc-100 text-zinc-900 border-zinc-100 shadow-md'
+                      : 'bg-[#0b0c0e] border-zinc-800 text-zinc-300 hover:border-zinc-600'
+                  }`}
+                  style={propina === monto && propinaPersonalizada === '' ? { backgroundColor: colorPrimario, borderColor: colorPrimario, color: '#fff' } : {}}
+                >
+                  ${monto}
+                </button>
+              ))}
+              <div className="relative flex-1 min-w-[100px]">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">$</span>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Otro"
+                  value={propinaPersonalizada}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPropinaPersonalizada(val);
+                    setPropina(val ? parseInt(val, 10) : 0);
+                  }}
+                  className={`w-full pl-8 pr-4 py-2 rounded-xl bg-[#0b0c0e] border text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors ${
+                    propinaPersonalizada !== '' ? 'border-zinc-500' : 'border-zinc-800 focus:border-zinc-600'
+                  }`}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="flex gap-4 pt-4 border-t border-zinc-800/80">
             <button
               type="button"
@@ -222,10 +275,10 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
             </button>
             <button
               type="submit"
-              className="flex-1 px-5 py-3 rounded-xl text-zinc-950 font-bold transition-all duration-200 active:scale-95 shadow-lg text-sm cursor-pointer"
+              className="flex-1 px-5 py-3.5 rounded-xl text-zinc-950 font-black transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 shadow-[0_0_15px_rgba(14,165,233,0.25)] hover:shadow-[0_0_25px_rgba(14,165,233,0.4)] text-sm cursor-pointer uppercase tracking-wide"
               style={{ backgroundColor: colorPrimario }}
             >
-              Confirmar Reserva
+              Confirmar • ${(selectedService?.precio || 0) + propina} MXN
             </button>
           </div>
         </form>

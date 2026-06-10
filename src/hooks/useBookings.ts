@@ -111,7 +111,17 @@ export const useBookings = () => {
             .eq('barberia_id', currentBusiness.id)
             .order('fecha', { ascending: false });
 
-          if (srvData) setServicios(srvData as Servicio[]);
+          if (srvData) {
+            const formattedServicios: Servicio[] = srvData.map((data: any) => ({
+              id: data.id,
+              barberiaId: data.barberia_id,
+              nombre: data.nombre,
+              precio: Number(data.precio),
+              duracionMinutos: data.duracion_minutos,
+              descripcion: data.descripcion || undefined
+            }));
+            setServicios(formattedServicios);
+          }
           
           if (citasData) {
             interface SupabaseCita {

@@ -1,6 +1,10 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import BarberiaChagaPreview from '../assets/BarberiaChaga_Preview.png';
+import Demo_Dashboard from '../assets/Demo_Dashboard.png';
+import Demo_Finanzas from '../assets/Demo_Finanzas.png';
+import Demo_Servicios from '../assets/Demo_Servicios.png';
+import Demo_Reservas from '../assets/Demo_Reservas.png';
 import { useSEO } from '../hooks/useSEO';
 import { Logo } from '../components/shared/Logo';
 
@@ -10,7 +14,7 @@ import { Logo } from '../components/shared/Logo';
 //  Ruta: /
 // ──────────────────────────────────────────────────────────────────────
 
-const WHATSAPP_NUMBER = '526868000000';
+const WHATSAPP_NUMBER = '528662040513';
 const WHATSAPP_MSG = encodeURIComponent(
   '¡Hola! Me interesa registrar mi negocio en KronoBook. ¿Me dan más información?'
 );
@@ -146,7 +150,7 @@ export const KronoBookLanding: React.FC = () => {
           </div>
 
           {/* H1 */}
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-zinc-50 mb-7">
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-zinc-50 mb-7 px-2">
             Domina tu Agenda.<br />
             <span className="text-sky-400">Crece tu Negocio.</span><br />
             Sin Esfuerzo.
@@ -164,7 +168,7 @@ export const KronoBookLanding: React.FC = () => {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/cta relative z-20 font-black uppercase tracking-widest text-zinc-950 bg-sky-400 hover:bg-sky-300 rounded-xl active:scale-95 hover:-translate-y-1 transition-all duration-300 px-14 py-5 text-base flex items-center gap-3 cursor-pointer shadow-xl shadow-sky-400/20 hover:shadow-sky-400/40"
+            className="group/cta relative z-20 font-black uppercase tracking-widest text-zinc-950 bg-sky-400 hover:bg-sky-300 rounded-xl active:scale-95 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto justify-center px-8 sm:px-14 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-3 cursor-pointer shadow-xl shadow-sky-400/20 hover:shadow-sky-400/40"
           >
             <svg
               className="w-5 h-5 fill-current group-hover/cta:rotate-12 transition-transform duration-300"
@@ -184,7 +188,7 @@ export const KronoBookLanding: React.FC = () => {
 
       {/* ── CÓMO FUNCIONA ── */}
       <section
-        className="w-full py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
+        className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.1s', animationFillMode: 'both' }}
       >
         <div className="max-w-5xl mx-auto">
@@ -237,9 +241,59 @@ export const KronoBookLanding: React.FC = () => {
         </div>
       </section>
 
+      {/* ── PERSONALIZACIÓN ── */}
+      <section
+        className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
+        style={{ animationDelay: '0.4s', animationFillMode: 'both' }}
+      >
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-16 text-center">
+            <p className="uppercase tracking-[0.3em] text-xs font-black text-sky-500 mb-3">100% Personalizable</p>
+            <h2 className="font-serif text-4xl md:text-5xl font-black text-zinc-50">
+              Tu marca, tu identidad.
+            </h2>
+            <p className="text-zinc-500 mt-4 max-w-2xl mx-auto text-sm leading-relaxed">
+              Cada negocio es diferente. KronoBook se adapta a tus colores, tu logo y tus servicios. Mantén tu imagen profesional sin esfuerzo.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <article className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
+              <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded w-fit group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
+                <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-50 mb-2 uppercase tracking-wide group-hover:text-sky-400 transition-colors duration-300">Tus Colores</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">Adaptamos la plataforma entera para que coincida con la paleta de colores de tu marca y tu logotipo.</p>
+              </div>
+            </article>
+
+            <article className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
+              <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded w-fit group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
+                <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-50 mb-2 uppercase tracking-wide group-hover:text-sky-400 transition-colors duration-300">Tus Servicios</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">Configura tus propios precios, duraciones y nombres de servicios sin restricciones ni límites ocultos.</p>
+              </div>
+            </article>
+
+            <article className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
+              <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded w-fit group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
+                <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-50 mb-2 uppercase tracking-wide group-hover:text-sky-400 transition-colors duration-300">Mobile First</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">Toda la experiencia está diseñada primero para celulares, donde el 90% de tus clientes hará sus reservas.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       {/* ── PRECIOS ── */}
       <section
-        className="w-full py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
+        className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.2s', animationFillMode: 'both' }}
       >
         <div className="max-w-4xl mx-auto">
@@ -309,19 +363,94 @@ export const KronoBookLanding: React.FC = () => {
         </div>
       </section>
 
-      {/* ── CLIENTES ACTUALES / DEMO ── */}
+      {/* ── FEATURES DEL DASHBOARD ── */}
       <section
-        className="w-full py-32 px-4 text-center animate-fade-in-up bg-[#0b0c0e]"
+        className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
+        style={{ animationDelay: '0.15s', animationFillMode: 'both' }}
+      >
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-16 text-center">
+            <p className="uppercase tracking-[0.3em] text-xs font-black text-sky-500 mb-3">El panel que necesitas</p>
+            <h2 className="font-serif text-4xl md:text-5xl font-black text-zinc-50">
+              Todo tu negocio en un solo lugar
+            </h2>
+            <p className="text-zinc-500 mt-4 max-w-xl mx-auto text-sm leading-relaxed">
+              Desde la agenda hasta tus ganancias del día — sin Excel, sin papel, sin caos.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                title: 'Tu Agenda del Día',
+                desc: 'Ve quién viene, a qué hora y qué servicio. Sin sorpresas.',
+                img: Demo_Dashboard,
+                alt: 'Panel de agenda del dashboard KronoBook',
+              },
+              {
+                title: 'Finanzas en Tiempo Real',
+                desc: 'Ingresos del día, semana o mes. Cuánto ganaste hoy, ahora mismo.',
+                img: Demo_Finanzas,
+                alt: 'Panel de finanzas del dashboard KronoBook',
+              },
+              {
+                title: 'Tus Servicios y Precios',
+                desc: 'Agrega, edita o quita servicios en segundos.',
+                img: Demo_Servicios,
+                alt: 'Gestión de servicios del dashboard KronoBook',
+              },
+              {
+                title: 'La Vista de tu Cliente',
+                desc: 'Así reservan tus clientes — rápido, desde su celular, 24/7.',
+                img: Demo_Reservas,
+                alt: 'Portal de reservas móvil KronoBook',
+              },
+            ].map((card) => (
+              <article
+                key={card.title}
+                className="group flex flex-col bg-[#16191e]/60 backdrop-blur-md border border-sky-500/10 rounded-2xl shadow-xl overflow-hidden transition-all duration-700 ease-out hover:-translate-y-2 hover:border-sky-500/40 hover:shadow-[0_20px_50px_rgba(14,165,233,0.12)]"
+              >
+                {/* Screenshot */}
+                <div className="relative overflow-hidden bg-[#0d0f12] p-5 border-b border-white/5 flex items-center justify-center">
+                  <img
+                    src={card.img}
+                    alt={card.alt}
+                    className="w-full max-h-56 md:max-h-64 object-cover object-top rounded-lg shadow-[0_8px_30px_rgba(14,165,233,0.15)] transition-all duration-700 group-hover:scale-[1.02] group-hover:shadow-[0_12px_40px_rgba(14,165,233,0.25)]"
+                  />
+                  {/* Subtle glow background element for the padding area */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#16191e]/40 via-transparent to-transparent opacity-80 pointer-events-none" />
+                </div>
+
+                {/* Card Content */}
+                <div className="p-6 flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-black text-base text-zinc-50 uppercase tracking-wide group-hover:text-sky-400 transition-colors duration-300">
+                      {card.title}
+                    </h3>
+                  </div>
+                  <p className="text-zinc-400 text-sm leading-relaxed">{card.desc}</p>
+                </div>
+
+                {/* Bottom cyan glow line */}
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-sky-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── DEMO ── */}
+      <section
+        className="w-full py-20 md:py-32 px-4 text-center animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.3s', animationFillMode: 'both' }}
       >
         <div className="max-w-5xl mx-auto flex flex-col items-center">
-          <p className="uppercase tracking-[0.3em] text-xs font-black text-sky-500 mb-4">Míralo funcionando</p>
+          <p className="uppercase tracking-[0.3em] text-xs font-black text-sky-500 mb-4">Demo en vivo</p>
           <h2 className="font-serif text-3xl md:text-5xl font-black text-zinc-50 mb-4 tracking-tight">
-            Clientes Actuales
+            Mira la Demo — Hecha para una Barbería
           </h2>
           <p className="text-zinc-400 text-sm md:text-base mb-10 max-w-2xl leading-relaxed font-light">
-            Esta es exactamente la experiencia interactiva que tendrán los clientes de tu negocio.
-            Una interfaz rápida, moderna y optimizada para reservas reales en tiempo real.
+            Así se verá tu negocio dentro de KronoBook. Personalizado con tus colores, tu logo y tus servicios.
           </p>
 
           {/* Browser Mockup */}

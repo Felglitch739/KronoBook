@@ -23,6 +23,7 @@ interface FinanzasTabProps {
 
 export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, businessName, onDeleteCita }) => {
   const [selectedTx, setSelectedTx] = useState<Transaccion | null>(null);
+  const [filtro, setFiltro] = useState<'hoy' | 'semana' | 'mes' | 'mes_anterior' | 'todos'>('mes');
 
   const handleDeleteClick = async (id: string, clienteName: string) => {
     const confirmed = window.confirm(`¿Estás seguro de que deseas eliminar la transacción de "${clienteName}"? Esto borrará la cita de la base de datos y descontará las ganancias inmediatamente.`);
@@ -35,9 +36,46 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
     }
   };
   
+  const filteredCitas = useMemo(() => {
+    return citas.filter(c => {
+      if (filtro === 'todos') return true;
+      const date = new Date(c.fecha + 'T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (filtro === 'hoy') {
+        return date.getTime() === today.getTime();
+      }
+      if (filtro === 'semana') {
+        const t = new Date(today);
+        const day = t.getDay();
+        const diff = t.getDate() - day + (day === 0 ? -6 : 1); // Lunes como primer día
+        const startOfWeek = new Date(t.setDate(diff));
+        startOfWeek.setHours(0,0,0,0);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+        return date >= startOfWeek && date <= endOfWeek;
+      }
+      if (filtro === 'mes') {
+        return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+      }
+      if (filtro === 'mes_anterior') {
+        let lastMonth = today.getMonth() - 1;
+        let year = today.getFullYear();
+        if (lastMonth < 0) {
+          lastMonth = 11;
+          year--;
+        }
+        return date.getMonth() === lastMonth && date.getFullYear() === year;
+      }
+      return true;
+    });
+  }, [citas, filtro]);
+
   // Calculamos las métricas
   const metricas = useMemo(() => {
-    const citasCobrables = citas.filter(c => c.estado === 'completada' || c.estado === 'confirmada');
+    const citasCobrables = filteredCitas.filter(c => c.estado === 'completada' || c.estado === 'confirmada');
     
     let totalServicios = 0;
     let totalPropinas = 0;
@@ -50,7 +88,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
     
     const totalGanancias = totalServicios + totalPropinas;
     const promedio = citasCobrables.length > 0 ? Math.round(totalGanancias / citasCobrables.length) : 0;
-    const completadas = citas.filter(c => c.estado === 'completada').length;
+    const completadas = filteredCitas.filter(c => c.estado === 'completada').length;
     
     // Mock variation metrics for demonstration
     const variacionIngresos = 12.5; // Positive
@@ -71,7 +109,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
 
   // Historial de transacciones
   const transacciones = useMemo(() => {
-    return citas
+    return filteredCitas
       .filter(c => c.estado === 'completada' || c.estado === 'confirmada')
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
       .map(cita => {
@@ -92,31 +130,42 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
   }, [citas, servicios]);
 
   const datosGrafica = useMemo(() => {
-    const ultimos7Dias = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return d.toLocaleDateString('sv-SE');
-    }).reverse();
+    let endDate = new Date();
+    endDate.setHours(0, 0, 0, 0);
 
-    return ultimos7Dias.map(fecha => {
-      const citasDelDia = citas.filter(c => 
-        c.fecha === fecha && 
+    if (filteredCitas.length > 0) {
+      const dates = filteredCitas.map(c => new Date(c.fecha + 'T00:00:00'));
+      const maxTxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+      
+      endDate = maxTxDate;
+    } else if (filtro === 'mes_anterior') {
+      const today = new Date();
+      endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+    }
+
+    const fechas: string[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(endDate);
+      d.setDate(endDate.getDate() - i);
+      fechas.push(d.toLocaleDateString('sv-SE'));
+    }
+
+    return fechas.map(fecha => {
+      const citasDelDia = filteredCitas.filter(c =>
+        c.fecha === fecha &&
         (c.estado === 'completada' || c.estado === 'confirmada')
       );
-
       const totalDia = citasDelDia.reduce((acc, c) => {
         const servicio = servicios.find(s => s.id === c.servicioId);
         return acc + (servicio?.precio || 0) + (c.propina || 0);
       }, 0);
-
       const dateObj = new Date(fecha + 'T00:00:00');
       const diaSemana = dateObj.toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', '');
       const diaNum = dateObj.getDate();
       const label = `${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)} ${diaNum}`;
-
       return { fecha, label, total: totalDia };
     });
-  }, [citas, servicios]);
+  }, [filteredCitas, servicios, filtro]);
 
   const maxTotal = useMemo(() => {
     const maxVal = Math.max(...datosGrafica.map(d => d.total), 0);
@@ -124,8 +173,9 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
   }, [datosGrafica]);
 
   const puntos = useMemo(() => {
+    const n = datosGrafica.length;
     return datosGrafica.map((d, i) => {
-      const x = 40 + (i * (420 / 6));
+      const x = 40 + (i * (420 / Math.max(n - 1, 1)));
       const y = 130 - (d.total / maxTotal) * 100;
       return { x, y, label: d.label, total: d.total };
     });
@@ -175,6 +225,33 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
 
   return (
     <div className="space-y-8 animate-fadeIn">
+      {/* Filtros */}
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-[#16191e]/40 backdrop-blur-md p-4 rounded-2xl border border-white/5">
+        <h2 className="text-lg font-bold text-zinc-100 flex items-center gap-2 mb-4 sm:mb-0">
+          <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Resumen Financiero
+        </h2>
+        <div className="flex gap-2 p-1 bg-zinc-900/50 rounded-xl overflow-x-auto w-full sm:w-auto">
+          {[
+            { id: 'hoy', label: 'Hoy' },
+            { id: 'semana', label: 'Esta Semana' },
+            { id: 'mes', label: 'Este Mes' },
+            { id: 'mes_anterior', label: 'Mes Anterior' },
+            { id: 'todos', label: 'Todo' },
+          ].map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setFiltro(opt.id as any)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                filtro === opt.id ? 'bg-sky-500 text-white shadow-md' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Tarjetas de Métricas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl shadow-sky-500/5 hover:border-sky-500/40 p-6 rounded-2xl transition-colors flex items-center gap-4 group cursor-default relative overflow-hidden">
@@ -241,7 +318,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
       <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl shadow-sky-500/5 rounded-3xl p-6 md:p-8">
         <h3 className="text-xl font-bold text-zinc-200 flex items-center gap-2 mb-2">
           <svg className="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          Tendencia de Ingresos (Últimos 7 días)
+          Tendencia de Ingresos
         </h3>
         <p className="text-xs text-zinc-400 mb-6">Visualización del flujo de caja diario sumando servicios y propinas.</p>
         
@@ -278,12 +355,12 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({ citas, servicios, busi
             {puntos.map((p, i) => (
               <g key={i} className="group/point">
                 <circle cx={p.x} cy={p.y} r="8" fill="#0ea5e9" fillOpacity="0.15" className="opacity-0 group-hover/point:opacity-100 transition-opacity duration-200" />
-                <circle cx={p.x} cy={p.y} r="4.5" fill="#0ea5e9" stroke="#18181b" strokeWidth="1.5" className="cursor-pointer" />
-                <text 
-                  x={p.x} 
-                  y={p.y - 10} 
-                  textAnchor="middle" 
-                  fill="#0ea5e9" 
+                <circle cx={p.x} cy={p.y} r="4.5" fill="#0ea5e9" fillOpacity={1} stroke="#18181b" strokeWidth="1.5" className="cursor-pointer" />
+                <text
+                  x={p.x}
+                  y={p.y - 10}
+                  textAnchor="middle"
+                  fill="#0ea5e9"
                   className="font-bold opacity-0 group-hover/point:opacity-100 transition-opacity duration-200 pointer-events-none"
                 >
                   ${p.total}

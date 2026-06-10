@@ -82,7 +82,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
     <div className="fixed inset-0 bg-zinc-950/80 flex justify-center items-center z-50 p-4 backdrop-blur-sm animate-fade-in transition-all duration-200">
       <div className="bg-[#1e2326]/90 border border-zinc-800/80 w-full max-w-md p-6 rounded-3xl shadow-2xl relative overflow-hidden animate-scale-up transition-all duration-200">
         {/* Top Gradient Accent Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-500" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sky-600 via-sky-400 to-cyan-500" />
 
         <h3 className="text-xl font-bold text-zinc-100 mb-4 flex items-center gap-2 mt-2">
           Registrar Venta / Cita Rápida
@@ -102,7 +102,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
               required
               value={servicioId}
               onChange={(e) => setServicioId(e.target.value)}
-              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500/80 focus:ring-4 focus:ring-amber-500/5 transition-all duration-200 text-sm cursor-pointer active:scale-[0.99]"
+              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-sky-500/80 focus:ring-4 focus:ring-sky-500/5 transition-all duration-200 text-sm cursor-pointer active:scale-[0.99]"
             >
               <option value="" className="bg-[#1e2326] text-zinc-400">-- Selecciona el servicio dado --</option>
               {services.map((srv) => (
@@ -122,7 +122,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
               step="any"
               value={propina}
               onChange={(e) => setPropina(e.target.value)}
-              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500/80 focus:ring-4 focus:ring-amber-500/5 transition-all duration-200 text-sm"
+              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-sky-500/80 focus:ring-4 focus:ring-sky-500/5 transition-all duration-200 text-sm"
               placeholder="0.00"
             />
           </div>
@@ -135,7 +135,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
               required
               value={hora}
               onChange={(e) => setHora(e.target.value)}
-              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 focus:outline-none focus:border-amber-500/80 focus:ring-4 focus:ring-amber-500/5 transition-all duration-200 text-sm"
+              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 focus:outline-none focus:border-sky-500/80 focus:ring-4 focus:ring-sky-500/5 transition-all duration-200 text-sm"
             />
           </div>
 
@@ -146,7 +146,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-amber-500/80 focus:ring-4 focus:ring-amber-500/5 transition-all duration-200 text-sm"
+              className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 px-4 text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-sky-500/80 focus:ring-4 focus:ring-sky-500/5 transition-all duration-200 text-sm"
               placeholder="Ej. Cliente güero, corte con navaja..."
             />
           </div>
@@ -163,7 +163,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-1/2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-70 text-zinc-950 font-bold p-3.5 rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.4)] active:scale-95 cursor-pointer"
+              className="w-1/2 bg-sky-500 hover:bg-sky-400 active:bg-sky-600 disabled:opacity-70 text-zinc-950 font-bold p-3.5 rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(14,165,233,0.2)] hover:shadow-[0_0_25px_rgba(14,165,233,0.4)] active:scale-95 cursor-pointer"
             >
               {loading ? 'Registrando...' : 'Agregar a Caja 💰'}
             </button>
