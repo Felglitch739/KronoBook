@@ -56,7 +56,7 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
   const selectedService = servicios.find((s) => s.id === servicioId);
 
   return (
-    <div className="max-w-xl mx-auto my-12 p-6 md:p-8 bg-gradient-to-br from-[#16191e]/80 to-[#0b0c0e]/95 backdrop-blur-xl border border-sky-500/20 shadow-[0_0_40px_rgba(14,165,233,0.15)] rounded-[2rem] text-zinc-100 relative overflow-hidden">
+    <div className="max-w-xl mx-auto my-4 sm:my-12 p-4 sm:p-6 md:p-8 bg-gradient-to-br from-[#16191e]/80 to-[#0b0c0e]/95 backdrop-blur-xl border border-sky-500/20 shadow-[0_0_40px_rgba(14,165,233,0.15)] rounded-[2rem] text-zinc-100 relative overflow-hidden">
       {/* Glow superior decorativo */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-600 via-sky-400 to-cyan-400" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-sky-500/10 blur-[40px] pointer-events-none" />

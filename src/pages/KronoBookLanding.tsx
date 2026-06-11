@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import BarberiaChagaPreview from '../assets/BarberiaChaga_Preview.png';
 import Demo_Dashboard from '../assets/Demo_Dashboard.png';
@@ -23,8 +23,31 @@ const WHATSAPP_URL = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&tex
 // Logo component is imported from components/shared/Logo
 
 // ─────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
 export const KronoBookLanding: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [showDock, setShowDock] = useState(false);
+
+  // Controlar la visibilidad de la barra flotante al hacer scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 350) {
+        setShowDock(true);
+      } else {
+        setShowDock(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Desplazamiento suave a secciones
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Configuración de Meta Tags dinámicos para optimización SEO
   useSEO({
@@ -49,11 +72,11 @@ export const KronoBookLanding: React.FC = () => {
     <div className="min-h-screen bg-[#0b0c0e] text-zinc-100 flex flex-col w-full relative overflow-x-hidden">
 
       {/* ── NAV ── */}
-      <header className="w-full border-b border-zinc-800/60 sticky top-0 bg-[#0b0c0e]/90 backdrop-blur-md z-50">
+      <header className="hidden sm:block w-full border-b border-zinc-800/60 sticky top-0 bg-[#0b0c0e]/90 backdrop-blur-md z-50">
         <nav className="w-full px-6 py-4 flex items-center justify-between" aria-label="Navegación principal">
-          <Link to="/" className="cursor-pointer">
+          <Link to="/" className="inline-flex items-center gap-2 cursor-pointer group">
             <Logo size="sm" />
-            <span className="ml-1.5 text-[10px] font-bold text-sky-500 border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider group-hover:bg-sky-500/20 transition-all duration-300">
+            <span className="text-[10px] font-bold text-sky-500 border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider group-hover:bg-sky-500/20 transition-all duration-300">
               Beta
             </span>
           </Link>
@@ -78,6 +101,7 @@ export const KronoBookLanding: React.FC = () => {
         para que la "linterna" del Dot Grid las consuma sin re-renders.
       */}
       <section
+        id="inicio"
         ref={heroRef}
         onMouseMove={handleMouseMove}
         className="relative flex flex-col items-center justify-center text-center min-h-[90vh] px-4 group/hero"
@@ -144,13 +168,13 @@ export const KronoBookLanding: React.FC = () => {
           {/* Eyebrow pill */}
           <div className="inline-flex items-center gap-2 mb-8 border border-sky-500/30 bg-sky-500/5 px-4 py-1.5 rounded-full animate-float shadow-[0_0_20px_rgba(56,189,248,0.05)]">
             <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-            <span className="text-sky-400 text-xs font-bold uppercase tracking-widest">
+            <span className="text-sky-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
               SISTEMA DE GESTIÓN Y RESERVAS
             </span>
           </div>
 
           {/* H1 */}
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-zinc-50 mb-7 px-2">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-zinc-50 mb-7 px-2">
             Domina tu Agenda.<br />
             <span className="text-sky-400">Crece tu Negocio.</span><br />
             Sin Esfuerzo.
@@ -188,6 +212,7 @@ export const KronoBookLanding: React.FC = () => {
 
       {/* ── CÓMO FUNCIONA ── */}
       <section
+        id="proceso"
         className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.1s', animationFillMode: 'both' }}
       >
@@ -221,7 +246,7 @@ export const KronoBookLanding: React.FC = () => {
             ].map((step) => (
               <article
                 key={step.num}
-                className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]"
+                className="group p-6 sm:p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
@@ -258,7 +283,7 @@ export const KronoBookLanding: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <article className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
+            <article className="group p-6 sm:p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
               <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded w-fit group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
                 <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
               </div>
@@ -268,7 +293,7 @@ export const KronoBookLanding: React.FC = () => {
               </div>
             </article>
 
-            <article className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
+            <article className="group p-6 sm:p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
               <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded w-fit group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
                 <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
               </div>
@@ -278,7 +303,7 @@ export const KronoBookLanding: React.FC = () => {
               </div>
             </article>
 
-            <article className="group p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
+            <article className="group p-6 sm:p-8 md:p-10 flex flex-col gap-5 bg-[#16191e]/40 backdrop-blur-md border border-white/5 shadow-xl rounded-2xl transition-all duration-700 ease-out hover:bg-white/10 hover:-translate-y-2 hover:border-sky-500/30 hover:shadow-[0_20px_50px_rgba(56,189,248,0.1)]">
               <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 rounded w-fit group-hover:bg-sky-500/20 group-hover:border-sky-400/50 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-500 ease-out">
                 <svg className="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
               </div>
@@ -293,6 +318,7 @@ export const KronoBookLanding: React.FC = () => {
 
       {/* ── PRECIOS ── */}
       <section
+        id="precios"
         className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.2s', animationFillMode: 'both' }}
       >
@@ -308,7 +334,7 @@ export const KronoBookLanding: React.FC = () => {
           </div>
 
           <div className="max-w-md mx-auto">
-            <article className="relative bg-sky-500/5 backdrop-blur-md border border-sky-500/30 rounded-3xl p-8 shadow-[0_0_30px_rgba(56,189,248,0.05)] hover:border-sky-400 hover:shadow-[0_0_40px_rgba(56,189,248,0.15)] transition-all duration-500 ease-out hover:-translate-y-2 group/card">
+            <article className="relative bg-sky-500/5 backdrop-blur-md border border-sky-500/30 rounded-3xl p-6 sm:p-8 shadow-[0_0_30px_rgba(56,189,248,0.05)] hover:border-sky-400 hover:shadow-[0_0_40px_rgba(56,189,248,0.15)] transition-all duration-500 ease-out hover:-translate-y-2 group/card">
               <div className="text-center mt-4 mb-6">
                 <h3 className="text-zinc-400 text-xs uppercase tracking-widest font-black mb-2">
                   Plan Selector / Control Total
@@ -365,6 +391,7 @@ export const KronoBookLanding: React.FC = () => {
 
       {/* ── FEATURES DEL DASHBOARD ── */}
       <section
+        id="panel"
         className="w-full py-20 md:py-32 px-4 animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.15s', animationFillMode: 'both' }}
       >
@@ -422,7 +449,7 @@ export const KronoBookLanding: React.FC = () => {
                 </div>
 
                 {/* Card Content */}
-                <div className="p-6 flex flex-col gap-2">
+                <div className="p-5 sm:p-6 flex flex-col gap-2">
                   <div className="flex items-center gap-3">
                     <h3 className="font-black text-base text-zinc-50 uppercase tracking-wide group-hover:text-sky-400 transition-colors duration-300">
                       {card.title}
@@ -441,6 +468,7 @@ export const KronoBookLanding: React.FC = () => {
 
       {/* ── DEMO ── */}
       <section
+        id="demo"
         className="w-full py-20 md:py-32 px-4 text-center animate-fade-in-up bg-[#0b0c0e]"
         style={{ animationDelay: '0.3s', animationFillMode: 'both' }}
       >
@@ -510,6 +538,31 @@ export const KronoBookLanding: React.FC = () => {
           </a>
         </div>
       </footer>
+
+      {/* ── FLOATING MOBILE DOCK ── */}
+      <div 
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden transition-all duration-500 transform ${
+          showDock ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0 pointer-events-none'
+        }`}
+      >
+        <nav className="flex items-center gap-0.5 bg-[#16191e]/85 backdrop-blur-xl border border-zinc-800/80 px-2 py-1.5 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.8)]">
+          {[
+            { label: 'Inicio', id: 'inicio' },
+            { label: 'Proceso', id: 'proceso' },
+            { label: 'Precios', id: 'precios' },
+            { label: 'Panel', id: 'panel' },
+            { label: 'Demo', id: 'demo' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className="px-2.5 py-1.5 rounded-full text-[9px] font-black tracking-wider uppercase transition-all duration-300 text-zinc-400 hover:text-sky-400 active:bg-sky-500/10 active:text-sky-400"
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 };
