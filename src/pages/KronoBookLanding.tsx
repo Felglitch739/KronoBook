@@ -72,22 +72,39 @@ export const KronoBookLanding: React.FC = () => {
     <div className="min-h-screen bg-[#0b0c0e] text-zinc-100 flex flex-col w-full relative overflow-x-hidden">
 
       {/* ── NAV ── */}
-      <header className="hidden sm:block w-full border-b border-zinc-800/60 sticky top-0 bg-[#0b0c0e]/90 backdrop-blur-md z-50">
-        <nav className="w-full px-6 py-4 flex items-center justify-between" aria-label="Navegación principal">
-          <Link to="/" className="inline-flex items-center gap-2 cursor-pointer group">
+      <header className="hidden sm:block w-full border-b border-zinc-900/40 sticky top-0 bg-[#0b0c0e]/80 backdrop-blur-xl z-50 transition-colors duration-300">
+        <nav className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between" aria-label="Navegación principal">
+          <Link 
+            to="/" 
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection('inicio');
+            }}
+            className="inline-flex items-center gap-2.5 cursor-pointer group hover:scale-[1.01] transition-all duration-300"
+          >
             <Logo size="sm" />
-            <span className="text-[10px] font-bold text-sky-500 border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider group-hover:bg-sky-500/20 transition-all duration-300">
+            <span className="text-[10px] font-black text-sky-400 border border-sky-500/20 bg-sky-500/5 px-2 py-0.5 rounded-md uppercase tracking-wider group-hover:bg-sky-500/10 group-hover:border-sky-500/30 transition-all duration-300">
               Beta
             </span>
           </Link>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-black uppercase tracking-wide text-zinc-950 bg-sky-400 hover:bg-sky-300 active:scale-95 transition-all duration-300 px-4 py-2 rounded-lg hidden sm:flex items-center gap-2"
-          >
-            Registrar mi Negocio
-          </a>
+
+          {/* Enlaces de navegación estilizados */}
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+            {[
+              { label: 'Proceso', id: 'proceso' },
+              { label: 'Precios', id: 'precios' },
+              { label: 'Panel', id: 'panel' },
+              { label: 'Demo', id: 'demo' },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="relative py-2 px-4 rounded-xl text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800/40 active:scale-95 active:bg-zinc-800/60 transition-all duration-300 cursor-pointer"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
         </nav>
       </header>
 
