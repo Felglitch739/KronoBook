@@ -5,7 +5,8 @@ export const mockBarberia: Barberia = {
   nombre: "Barbería Chaga",
   slug: "barberia-chaga",
   direccion: "Calle Principal #123, Zona Centro",
-  horario: "Lunes a Sábado: 10:00 AM - 8:00 PM"
+  horario: "Lunes a Sábado: 10:00 AM - 8:00 PM",
+  tema: "dark"
 };
 
 export const mockServicios: Servicio[] = [

@@ -95,6 +95,7 @@ export const useBookings = () => {
             horario: currentBusiness.horario,
             colorPrimario: currentBusiness.color_primario ?? undefined,
             colorSecundario: currentBusiness.color_secundario ?? undefined,
+            tema: currentBusiness.tema ?? undefined,
           });
 
           // Descargar los servicios vinculados a este negocio

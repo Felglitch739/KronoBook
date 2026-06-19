@@ -8,6 +8,8 @@ export interface Barberia {
   colorPrimario?: string;
   /** Color secundario / acento de marca (HEX). Ej: "#b91c1c". */
   colorSecundario?: string;
+  /** Tema visual de la landing page pública */
+  tema?: 'dark' | 'light' | 'elegant';
 }
 
 export interface Servicio {

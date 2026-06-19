@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -10,8 +11,10 @@
   --animate-glow-sky: glow-sky 3s ease-in-out infinite;
   --animate-mesh-drift: mesh-drift 18s ease-in-out infinite alternate;
 
-  /* Fuente serif con carácter — Playfair Display */
+  /* Fuente serif con carácter — Playfair Display para títulos */
   --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  /* Fuente sans elegante (Lora) o serif secundaria para cuerpo en modo elegant */
+  --font-lora: "Lora", Georgia, serif;
 
   @keyframes float {
     0%, 100% {
