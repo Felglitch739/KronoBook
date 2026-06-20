@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -8,14 +9,20 @@ export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { hasBusiness } = useAuth();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate('/admin/dashboard', { replace: true });
+        // Si ya tiene sesión, decidir a dónde ir
+        if (hasBusiness === false) {
+          navigate('/onboarding', { replace: true });
+        } else {
+          navigate('/admin/dashboard', { replace: true });
+        }
       }
     });
-  }, [navigate]);
+  }, [navigate, hasBusiness]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +30,7 @@ export const Login: React.FC = () => {
     setErrorMsg(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -31,9 +38,23 @@ export const Login: React.FC = () => {
       if (error) {
         setErrorMsg('Credenciales incorrectas o usuario no registrado.');
         setLoading(false);
-      } else {
-        // Redirigir al dashboard
-        navigate('/admin/dashboard');
+        return;
+      }
+
+      // Verificar si el usuario tiene negocio
+      const userId = signInData.user?.id;
+      if (userId) {
+        const { data: bizData } = await supabase
+          .from('barberias')
+          .select('id')
+          .eq('owner_id', userId)
+          .maybeSingle();
+
+        if (!bizData) {
+          navigate('/onboarding', { replace: true });
+        } else {
+          navigate('/admin/dashboard', { replace: true });
+        }
       }
     } catch (err) {
       console.error(err);

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { type Cita, type Servicio } from '../../types';
 import { FinanzasTab } from './FinanzasTab';
 import { AgendaTab } from './AgendaTab';
+import { AparienciaTab } from './AparienciaTab';
 import { ServicesManager } from '../../components/admin/ServicesManager';
 import { AddAppointmentModal } from '../../components/dashboard/AddAppointmentModal';
 import { DigitalReceiptModal } from '../../components/dashboard/DigitalReceiptModal';
@@ -40,7 +41,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onDeleteCita,
   onAddService,
 }) => {
-  const [activeTab, setActiveTab] = useState<'agenda' | 'finanzas' | 'servicios'>('agenda');
+  const [activeTab, setActiveTab] = useState<'agenda' | 'finanzas' | 'servicios' | 'apariencia'>('agenda');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [justCreatedTx, setJustCreatedTx] = useState<QuickTransaction | null>(null);
   const { signOut } = useAuth();
@@ -142,6 +143,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </svg>
               Servicios
             </button>
+            <button
+              onClick={() => setActiveTab('apariencia')}
+              className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap cursor-pointer ${activeTab === 'apariencia'
+                  ? 'bg-sky-500 text-zinc-950 border border-sky-500/20'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+                }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+              Apariencia
+            </button>
           </div>
 
           {/* Botón Cerrar Sesión */}
@@ -166,6 +179,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             servicios={servicios} 
             onUpdateStatus={onUpdateStatus} 
             onDeleteCita={onDeleteCita}
+            businessName={barberiaName}
           />
         ) : activeTab === 'finanzas' ? (
           <FinanzasTab 
@@ -174,12 +188,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
             businessName={barberiaName} 
             onDeleteCita={onDeleteCita}
           />
-        ) : (
+        ) : activeTab === 'servicios' ? (
           <ServicesManager 
             servicios={servicios} 
             onDeleteService={onDeleteService} 
             onAddService={onAddService}
           />
+        ) : (
+          <AparienciaTab />
         )}
       </div>
 

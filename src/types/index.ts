@@ -34,4 +34,5 @@ export interface Cita {
   notas?: string;
   createdAt?: string;
   propina?: number;
+  direccionServicio?: string;
 }

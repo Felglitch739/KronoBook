@@ -37,35 +37,19 @@ export const useBookings = () => {
             return;
           }
 
-          // Si eres SuperAdmin, temporalmente cargamos Chaga
-          if (profile?.rol === 'superadmin') {
-            const { data } = await supabase
-              .from('barberias')
-              .select('*')
-              .eq('slug', 'barberia-chaga')
-              .maybeSingle();
-            currentBusiness = data;
-          } else {
-            // Si eres un Owner normal, busca la barbería que te pertenece a TI (owner_id)
-            const { data, error } = await supabase
-              .from('barberias')
-              .select('*')
-              .eq('owner_id', user.id)
-              .maybeSingle();
+          // Para CUALQUIER usuario admin (owner o superadmin):
+          // Buscar el negocio vinculado a su owner_id
+          const { data: ownerData, error: ownerError } = await supabase
+            .from('barberias')
+            .select('*')
+            .eq('owner_id', user.id)
+            .maybeSingle();
 
-            if (error || !data) {
-              console.warn("No se pudo obtener la barbería por owner_id, cayendo en fallback a la primera barbería:", error?.message);
-              // Fallback seguro a la primera barbería para no romper la pantalla de administración
-              const { data: fallbackData } = await supabase
-                .from('barberias')
-                .select('*')
-                .limit(1)
-                .single();
-              currentBusiness = fallbackData;
-            } else {
-              currentBusiness = data;
-            }
+          if (!ownerError && ownerData) {
+            currentBusiness = ownerData;
           }
+          // Si no tiene negocio, currentBusiness queda null.
+          // La capa de routing (App.tsx → AdminApp) redirigirá a /onboarding.
         } 
         // CASO B: ESTAMOS EN LA LANDING PÚBLICA (VISTA DEL CLIENTE)
         else {
@@ -77,12 +61,26 @@ export const useBookings = () => {
             .maybeSingle();
 
           if (error || !data) {
-            if (slug) {
-              navigate('/404');
+            if (currentSlug === 'kronowash' || currentSlug === 'lavado') {
+              currentBusiness = {
+                id: 'mock-kronowash-id',
+                nombre: 'KronoWash',
+                slug: currentSlug,
+                direccion: 'Servicio a Domicilio',
+                horario: 'Lunes a Domingo: 8:00 AM - 8:00 PM',
+                color_primario: '#0ea5e9',
+                color_secundario: '#10b981',
+                tema: 'dark'
+              };
+            } else {
+              if (slug) {
+                navigate('/404');
+              }
+              return;
             }
-            return;
+          } else {
+            currentBusiness = data;
           }
-          currentBusiness = data;
         }
 
         if (currentBusiness) {
@@ -99,18 +97,28 @@ export const useBookings = () => {
           });
 
           // Descargar los servicios vinculados a este negocio
-          const { data: srvData } = await supabase
-            .from('servicios')
-            .select('*')
-            .eq('barberia_id', currentBusiness.id)
-            .order('precio', { ascending: true });
+          const { data: srvData } = currentBusiness.id === 'mock-kronowash-id'
+            ? { data: [
+                { id: 'mock-srv-1', barberia_id: 'mock-kronowash-id', nombre: 'Detallado Básico - Autos (Sedán / Compactos)', precio: 400, duracion_minutos: 90, descripcion: 'Incluye lavado exterior con hidrolavadora, aspirado profundo y acabado en plásticos interiores.' },
+                { id: 'mock-srv-2', barberia_id: 'mock-kronowash-id', nombre: 'Detallado Básico - SUV (Camionetas de 2 filas)', precio: 500, duracion_minutos: 120, descripcion: 'Incluye lavado exterior con hidrolavadora, aspirado profundo y acabado en plásticos interiores.' },
+                { id: 'mock-srv-3', barberia_id: 'mock-kronowash-id', nombre: 'Detallado Básico - Pick-ups y Vans (3 filas)', precio: 600, duracion_minutos: 150, descripcion: 'Incluye lavado exterior con hidrolavadora, aspirado profundo y acabado en plásticos interiores.' },
+                { id: 'mock-srv-4', barberia_id: 'mock-kronowash-id', nombre: 'Extra: Restauración de Faros', precio: 150, duracion_minutos: 30, descripcion: 'Eliminación del tono amarillento y opaco para recuperar la claridad de tus luces.' },
+                { id: 'mock-srv-5', barberia_id: 'mock-kronowash-id', nombre: 'Extra: Remoción extrema de pelo de mascota', precio: 100, duracion_minutos: 30, descripcion: 'Para alfombras y asientos con exceso de pelo que requieren cepillado especial.' }
+              ] }
+            : await supabase
+              .from('servicios')
+              .select('*')
+              .eq('barberia_id', currentBusiness.id)
+              .order('precio', { ascending: true });
 
           // Descargar las citas vinculadas a este negocio
-          const { data: citasData } = await supabase
-            .from('citas')
-            .select('*')
-            .eq('barberia_id', currentBusiness.id)
-            .order('fecha', { ascending: false });
+          const { data: citasData } = currentBusiness.id === 'mock-kronowash-id'
+            ? { data: [] }
+            : await supabase
+              .from('citas')
+              .select('*')
+              .eq('barberia_id', currentBusiness.id)
+              .order('fecha', { ascending: false });
 
           if (srvData) {
             const formattedServicios: Servicio[] = srvData.map((data: any) => ({
@@ -137,6 +145,7 @@ export const useBookings = () => {
               estado: string;
               notas: string | null;
               propina: number | null;
+              direccion_servicio: string | null;
             }
             const formattedCitas: Cita[] = (citasData as SupabaseCita[]).map((data) => ({
               id: data.id,
@@ -149,7 +158,8 @@ export const useBookings = () => {
               hora: data.hora,
               estado: data.estado as Cita['estado'],
               notas: data.notas || undefined,
-              propina: data.propina || 0
+              propina: data.propina || 0,
+              direccionServicio: data.direccion_servicio || undefined
             }));
             setCitas(formattedCitas);
           } else {
@@ -169,6 +179,25 @@ export const useBookings = () => {
   const addCita = async (citaData: Omit<Cita, 'id' | 'estado' | 'barberiaId'>) => {
     if (!barberia) throw new Error("No barberia loaded");
     try {
+      if (barberia.id === 'mock-kronowash-id') {
+        const mockNewCita: Cita = {
+          id: `mock-cita-${Date.now()}`,
+          barberiaId: barberia.id,
+          servicioId: citaData.servicioId,
+          clienteNombre: citaData.clienteNombre,
+          clienteTelefono: citaData.clienteTelefono,
+          clienteEmail: citaData.clienteEmail || undefined,
+          fecha: citaData.fecha,
+          hora: citaData.hora,
+          estado: 'pendiente',
+          notas: citaData.notas || undefined,
+          propina: 0,
+          direccionServicio: citaData.direccionServicio
+        };
+        setCitas((prev) => [mockNewCita, ...prev]);
+        return mockNewCita;
+      }
+
       const newCitaInsert = {
         barberia_id: barberia.id,
         servicio_id: citaData.servicioId,
@@ -178,7 +207,8 @@ export const useBookings = () => {
         fecha: citaData.fecha,
         hora: citaData.hora,
         estado: 'pendiente',
-        notas: citaData.notas || null
+        notas: citaData.notas || null,
+        direccion_servicio: citaData.direccionServicio || null
       };
 
       const { data, error } = await supabase
@@ -200,7 +230,8 @@ export const useBookings = () => {
         hora: data.hora,
         estado: data.estado as Cita['estado'],
         notas: data.notas,
-        propina: data.propina || 0
+        propina: data.propina || 0,
+        direccionServicio: data.direccion_servicio || undefined
       };
 
       setCitas((prev) => [formattedCita, ...prev]);
@@ -235,6 +266,34 @@ export const useBookings = () => {
       );
     } catch (error) {
       console.error('Error al actualizar estado de la cita en Supabase:', error);
+    }
+  };
+
+  const updateBarberiaAppearance = async (tema: string, colorPrimario: string, colorSecundario: string) => {
+    try {
+      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+      
+      const { error } = await supabase
+        .from('barberias')
+        .update({
+          tema,
+          color_primario: colorPrimario,
+          color_secundario: colorSecundario
+        })
+        .eq('id', barberia.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setBarberia({
+        ...barberia,
+        tema: tema as any,
+        colorPrimario,
+        colorSecundario
+      });
+    } catch (error) {
+      console.error('Error al actualizar apariencia en Supabase:', error);
+      throw error;
     }
   };
 
@@ -325,6 +384,7 @@ export const useBookings = () => {
     eliminarServicio,
     eliminarCita,
     crearServicio,
+    updateBarberiaAppearance,
     refetch,
   };
 };

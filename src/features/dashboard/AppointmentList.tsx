@@ -8,6 +8,7 @@ interface AppointmentListProps {
   onUpdateStatus: (id: string, estado: Cita['estado']) => void;
   onDeleteCita: (id: string) => Promise<void>;
   forceSingleDay?: boolean;
+  businessName?: string;
 }
 
 export const AppointmentList: React.FC<AppointmentListProps> = ({
@@ -16,6 +17,7 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
   onUpdateStatus,
   onDeleteCita,
   forceSingleDay = false,
+  businessName = 'nuestro negocio',
 }) => {
   const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
 
@@ -250,7 +252,7 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
                 {/* Acciones Footer Modal */}
                 <div className="mt-8 flex flex-col gap-3">
                   <a 
-                    href={`https://wa.me/${cTelefono.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(cNombre)},%20te%20escribimos%20de%20Barbería%20Chaga%20para%20recordarte%20tu%20cita%20de%20${encodeURIComponent(getServiceName(cServicioId))}%20el%20día%20${cFecha}%20a%20las%20${cHora}.%20¡Te%20esperamos!`}
+                    href={`https://wa.me/${cTelefono.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(cNombre)},%20te%20escribimos%20de%20${encodeURIComponent(businessName)}%20para%20recordarte%20tu%20cita%20de%20${encodeURIComponent(getServiceName(cServicioId))}%20el%20día%20${cFecha}%20a%20las%20${cHora}.%20¡Te%20esperamos!`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20b858] text-white font-bold py-3 px-4 rounded-xl transition-colors border border-sky-500/20 hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] cursor-pointer"

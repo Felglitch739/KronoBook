@@ -1,9 +1,11 @@
 import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from './components/shared/Layout';
 import { LandingPage } from './features/landing/LandingPage';
+import { CarWashLanding } from './features/landing/CarWashLanding';
 import { BookingFlow } from './features/agenda/BookingFlow';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { Login } from './features/auth/Login';
+import { Onboarding } from './features/onboarding/Onboarding';
 import { KronoBookLanding } from './pages/KronoBookLanding';
 import { useBookings } from './hooks/useBookings';
 import { mockBarberia, mockServicios } from './data/mockData';
@@ -27,17 +29,28 @@ function TenantApp() {
   const activeBarberia = barberia || mockBarberia;
   const activeServicios = servicios.length > 0 ? servicios : mockServicios;
 
+  // Check if it's the custom car wash partition
+  const isCarWash = slug === 'kronowash' || slug === 'lavado';
+
   return (
     <Layout slug={slug || 'demo'}>
       <Routes>
         <Route 
           path="/" 
           element={
-            <LandingPage
-              barberia={activeBarberia}
-              servicios={activeServicios}
-              onBookClick={() => navigate(`/${slug}/reservar`)}
-            />
+            isCarWash ? (
+              <CarWashLanding
+                barberia={activeBarberia}
+                servicios={activeServicios}
+                onBookClick={() => navigate(`/${slug}/reservar`)}
+              />
+            ) : (
+              <LandingPage
+                barberia={activeBarberia}
+                servicios={activeServicios}
+                onBookClick={() => navigate(`/${slug}/reservar`)}
+              />
+            )
           } 
         />
         <Route 
@@ -51,6 +64,7 @@ function TenantApp() {
                 navigate(`/${slug}`);
               }}
               onCancel={() => navigate(`/${slug}`)}
+              askForAddress={isCarWash}
             />
           } 
         />
@@ -59,13 +73,13 @@ function TenantApp() {
   );
 }
 
-// Admin component with active auth check
+// Admin component with active auth check + onboarding guard
 function AdminApp() {
-  const { user, loading: loadingAuth } = useAuth();
+  const { user, loading: loadingAuth, hasBusiness } = useAuth();
   const { citas, servicios, barberia, updateCitaEstado, eliminarServicio, eliminarCita, crearServicio, refetch } = useBookings();
   const activeServicios = servicios.length > 0 ? servicios : mockServicios;
 
-  if (loadingAuth) {
+  if (loadingAuth || hasBusiness === null) {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -78,8 +92,13 @@ function AdminApp() {
     return <Navigate to="/admin/login" replace />;
   }
 
+  // Si tiene sesión pero NO tiene negocio → Onboarding
+  if (hasBusiness === false) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
   return (
-    <Layout isAdmin={true}>
+    <Layout isAdmin={true} slug={barberia?.slug}>
       <Routes>
         <Route 
           path="/dashboard" 
@@ -122,12 +141,39 @@ function App() {
       } />
 
       <Route path="/admin/login" element={<Login />} />
+      <Route path="/onboarding" element={<OnboardingGuard />} />
       <Route path="/admin/*" element={<AdminApp />} />
       {/* Rutas de tenants: /:slug y /:slug/reservar */}
       <Route path="/:slug/*" element={<TenantApp />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
+}
+
+/** Protección: Solo usuarios autenticados sin negocio pueden ver onboarding */
+function OnboardingGuard() {
+  const { user, loading, hasBusiness } = useAuth();
+
+  if (loading || hasBusiness === null) {
+    return (
+      <div className="min-h-screen bg-[#0b0c0e] text-zinc-100 flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-zinc-400 text-lg animate-pulse font-medium">Verificando sesión...</p>
+      </div>
+    );
+  }
+
+  // No autenticado → Login
+  if (!user) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  // Ya tiene negocio → Admin
+  if (hasBusiness === true) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+
+  return <Onboarding />;
 }
 
 export default App;

@@ -7,12 +7,14 @@ interface BookingFlowProps {
   servicios: Servicio[];
   onBookingComplete: (citaData: Omit<Cita, 'id' | 'estado' | 'barberiaId'>) => void;
   onCancel: () => void;
+  askForAddress?: boolean;
 }
 
 export const BookingFlow: React.FC<BookingFlowProps> = ({
   servicios,
   onBookingComplete,
   onCancel,
+  askForAddress = false,
 }) => {
   const { barberia } = useBookings();
   // KronoBook's default color (sky-500) instead of basic blue
@@ -20,14 +22,19 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
 
   const [step, setStep] = useState(1);
   const [servicioId, setServicioId] = useState('');
+  const [extraIds, setExtraIds] = useState<string[]>([]);
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
   const [clienteNombre, setClienteNombre] = useState('');
   const [clienteEmail, setClienteEmail] = useState('');
   const [clienteTelefono, setClienteTelefono] = useState('');
+  const [direccionServicio, setDireccionServicio] = useState('');
   const [notas, setNotas] = useState('');
   const [propina, setPropina] = useState<number>(0);
   const [propinaPersonalizada, setPropinaPersonalizada] = useState('');
+
+  const baseServices = servicios.filter(s => !s.nombre.toLowerCase().includes('extra'));
+  const extraServices = servicios.filter(s => s.nombre.toLowerCase().includes('extra'));
 
   const timeSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 
@@ -41,6 +48,17 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
       return;
     }
 
+    // Unir extras en la nota
+    let finalNotas = notas;
+    if (extraIds.length > 0) {
+      const extraNames = extraIds
+        .map(id => servicios.find(s => s.id === id)?.nombre || '')
+        .filter(Boolean)
+        .join(', ');
+      const extrasText = `[Servicios Extras: ${extraNames}]`;
+      finalNotas = finalNotas ? `${extrasText}\n${finalNotas}` : extrasText;
+    }
+
     onBookingComplete({
       clienteNombre,
       clienteEmail,
@@ -48,8 +66,9 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
       servicioId,
       fecha,
       hora,
-      notas,
+      notas: finalNotas,
       propina,
+      direccionServicio: askForAddress ? direccionServicio : undefined,
     });
   };
 
@@ -91,34 +110,103 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
       </div>
 
       {step === 1 && (
-        <div className="space-y-4">
-          <h3 className="text-xl font-bold text-zinc-200 mb-4">1. Selecciona el Servicio</h3>
-          <div className="space-y-3">
-            {servicios.map((s) => (
-              <div
-                key={s.id}
-                onClick={() => {
-                  setServicioId(s.id);
-                  handleNext();
-                }}
-                className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex justify-between items-center active:scale-[0.98] group ${
-                  servicioId === s.id
-                    ? 'shadow-[0_0_20px_rgba(14,165,233,0.15)] -translate-y-0.5'
-                    : 'border-zinc-800/80 bg-zinc-900/40 hover:border-sky-500/40 hover:bg-zinc-900/80 hover:shadow-[0_4px_20px_rgba(14,165,233,0.08)]'
-                }`}
-                style={servicioId === s.id ? { borderColor: colorPrimario, backgroundColor: `${colorPrimario}15` } : {}}
-              >
-                <div>
-                  <strong className={`block font-bold text-lg transition-colors duration-300 ${servicioId === s.id ? 'text-zinc-50' : 'text-zinc-300 group-hover:text-zinc-100'}`}>{s.nombre}</strong>
-                  <span className="text-zinc-500 text-sm font-medium flex items-center gap-1.5 mt-1">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    {s.duracionMinutos} min
-                  </span>
-                </div>
-                <div className="font-black text-xl" style={{ color: colorPrimario }}>${s.precio} MXN</div>
+        <div className="space-y-6">
+          <h3 className="text-xl font-bold text-zinc-200 mb-2">1. Selecciona el Servicio</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-semibold text-zinc-400 tracking-wider uppercase mb-3">Paquetes principales</h4>
+              <div className="space-y-2">
+                {baseServices.map((s) => (
+                  <div
+                    key={s.id}
+                    onClick={() => {
+                      setServicioId(s.id);
+                      if (extraServices.length === 0) {
+                        handleNext();
+                      }
+                    }}
+                    className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex justify-between items-center active:scale-[0.98] group ${
+                      servicioId === s.id
+                        ? 'shadow-[0_0_20px_rgba(14,165,233,0.15)] -translate-y-0.5'
+                        : 'border-zinc-800/80 bg-zinc-900/40 hover:border-sky-500/40 hover:bg-zinc-900/80'
+                    }`}
+                    style={servicioId === s.id ? { borderColor: colorPrimario, backgroundColor: `${colorPrimario}15` } : {}}
+                  >
+                    <div>
+                      <strong className={`block font-bold text-base transition-colors duration-300 ${servicioId === s.id ? 'text-zinc-50' : 'text-zinc-300 group-hover:text-zinc-100'}`}>{s.nombre}</strong>
+                      <span className="text-zinc-500 text-xs font-medium flex items-center gap-1.5 mt-1">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {s.duracionMinutos} min
+                      </span>
+                    </div>
+                    <div className="font-black text-lg" style={{ color: colorPrimario }}>${s.precio} MXN</div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {extraServices.length > 0 && (
+              <div>
+                <h4 className="text-sm font-semibold text-zinc-400 tracking-wider uppercase mb-3">Servicios adicionales (Extras)</h4>
+                <div className="space-y-2">
+                  {extraServices.map((s) => {
+                    const isSelected = extraIds.includes(s.id);
+                    return (
+                      <div
+                        key={s.id}
+                        onClick={() => {
+                          if (isSelected) {
+                            setExtraIds(prev => prev.filter(id => id !== s.id));
+                          } else {
+                            setExtraIds(prev => [...prev, s.id]);
+                          }
+                        }}
+                        className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex justify-between items-center active:scale-[0.98] group ${
+                          isSelected
+                            ? 'shadow-[0_0_20px_rgba(14,165,233,0.15)] -translate-y-0.5'
+                            : 'border-zinc-800/80 bg-zinc-900/40 hover:border-sky-500/40 hover:bg-zinc-900/80'
+                        }`}
+                        style={isSelected ? { borderColor: `${colorPrimario}80`, backgroundColor: `${colorPrimario}08` } : {}}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            readOnly
+                            className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-sky-500 focus:ring-0 focus:ring-offset-0 pointer-events-none"
+                            style={{ accentColor: colorPrimario }}
+                          />
+                          <div>
+                            <strong className={`block font-bold text-sm transition-colors duration-300 ${isSelected ? 'text-zinc-50' : 'text-zinc-300 group-hover:text-zinc-100'}`}>{s.nombre.replace('Extra: ', '')}</strong>
+                            <span className="text-zinc-500 text-xs font-medium flex items-center gap-1.5 mt-0.5">
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                              +{s.duracionMinutos} min
+                            </span>
+                          </div>
+                        </div>
+                        <div className="font-bold text-base text-zinc-300">+${s.precio} MXN</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
+
+          {extraServices.length > 0 && (
+            <div className="pt-4 border-t border-zinc-800/80 flex justify-end">
+              <button
+                type="button"
+                disabled={!servicioId}
+                onClick={handleNext}
+                className="px-6 py-3 rounded-xl text-zinc-950 font-black transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm uppercase tracking-wide cursor-pointer"
+                style={{ backgroundColor: colorPrimario }}
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -172,8 +260,21 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
           <h3 className="text-xl font-bold text-zinc-200">3. Tus Datos</h3>
           
           {selectedService && (
-            <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-400 mb-2">
-              <span className="font-semibold text-zinc-300">Resumen:</span> {selectedService.nombre} ({selectedService.duracionMinutos} min) • {fecha} a las {hora} hs
+            <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-400 mb-2 space-y-1">
+              <div>
+                <span className="font-semibold text-zinc-300">Paquete:</span> {selectedService.nombre}
+              </div>
+              {extraIds.length > 0 && (
+                <div>
+                  <span className="font-semibold text-zinc-300">Extras:</span> {extraIds.map(id => servicios.find(s => s.id === id)?.nombre.replace('Extra: ', '')).join(', ')}
+                </div>
+              )}
+              <div className="pt-1 text-xs border-t border-zinc-800/50 flex justify-between">
+                <span>Duración total: {
+                  selectedService.duracionMinutos + extraIds.reduce((sum, id) => sum + (servicios.find(s => s.id === id)?.duracionMinutos || 0), 0)
+                } min</span>
+                <span>Fecha: {fecha} a las {hora} hs</span>
+              </div>
             </div>
           )}
 
@@ -211,6 +312,19 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
               placeholder="juan@ejemplo.com"
             />
           </div>
+
+          {askForAddress && (
+            <div className="space-y-1">
+              <label className="block text-zinc-400 text-sm font-medium">Dirección para el servicio (Opcional)</label>
+              <input
+                type="text"
+                value={direccionServicio}
+                onChange={(e) => setDireccionServicio(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-[#0b0c0e] border border-zinc-800 text-zinc-100 placeholder-zinc-600 outline-none transition-colors text-sm"
+                placeholder="Ej. Calle Morelos 123, Col. Centro"
+              />
+            </div>
+          )}
 
           <div className="space-y-1">
             <label className="block text-zinc-400 text-sm font-medium">Notas o Comentarios</label>
@@ -278,7 +392,7 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
               className="flex-1 px-5 py-3.5 rounded-xl text-zinc-950 font-black transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 shadow-[0_0_15px_rgba(14,165,233,0.25)] hover:shadow-[0_0_25px_rgba(14,165,233,0.4)] text-sm cursor-pointer uppercase tracking-wide"
               style={{ backgroundColor: colorPrimario }}
             >
-              Confirmar • ${(selectedService?.precio || 0) + propina} MXN
+              Confirmar • ${(selectedService?.precio || 0) + extraIds.reduce((sum, id) => sum + (servicios.find(s => s.id === id)?.precio || 0), 0) + propina} MXN
             </button>
           </div>
         </form>

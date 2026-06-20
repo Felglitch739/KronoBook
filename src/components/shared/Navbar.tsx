@@ -11,7 +11,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) => {
   const location = useLocation();
   const { slug: routeSlug } = useParams<{ slug?: string }>();
-  const activeSlug = routeSlug || slug || 'barberia-chaga';
+  const activeSlug = routeSlug || slug || 'demo';
   const currentPath = location.pathname;
 
   // Evaluar si estamos en la sección de administración
