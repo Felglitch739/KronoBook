@@ -19,7 +19,7 @@ export const useBookings = () => {
   const refetch = () => setRefreshTrigger((prev) => prev + 1);
 
   // Detectar si el usuario está dentro del panel de administración o superadmin
-  const isAdminPage = location.pathname.startsWith('/admin') || location.pathname.startsWith('/superadmin');
+  const isAdminPage = location.pathname.includes('/admin') || location.pathname.startsWith('/superadmin');
 
   useEffect(() => {
     const loadTenantData = async () => {

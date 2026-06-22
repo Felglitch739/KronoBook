@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -9,20 +8,15 @@ export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { hasBusiness } = useAuth();
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        // Si ya tiene sesión, decidir a dónde ir
-        if (hasBusiness === false) {
-          navigate('/onboarding', { replace: true });
-        } else {
-          navigate('/admin/dashboard', { replace: true });
-        }
+        // We will just let them click a button if they already have session, or redirect them.
+        // Actually, if they arrive at /login and already have a session, let's redirect them to /admin.
+        navigate('/admin', { replace: true });
       }
     });
-  }, [navigate, hasBusiness]);
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,19 +35,30 @@ export const Login: React.FC = () => {
         return;
       }
 
-      // Verificar si el usuario tiene negocio
+      // Verificar a cuántos negocios tiene acceso el usuario
       const userId = signInData.user?.id;
       if (userId) {
-        const { data: bizData } = await supabase
+        const { data: staffData } = await supabase
           .from('negocio_staff')
-          .select('negocio_id')
-          .eq('user_id', userId)
-          .limit(1);
+          .select(`
+            negocio_id,
+            negocios ( slug )
+          `)
+          .eq('user_id', userId);
 
-        if (!bizData || bizData.length === 0) {
-          navigate('/onboarding', { replace: true });
+        if (!staffData || staffData.length === 0) {
+          setErrorMsg('No tienes acceso a ningún panel de administración.');
+          setLoading(false);
+          await supabase.auth.signOut();
+        } else if (staffData.length === 1) {
+          const slug = (staffData[0].negocios as any)?.slug;
+          if (slug) {
+            navigate(`/${slug}/admin`, { replace: true });
+          } else {
+            navigate('/admin', { replace: true });
+          }
         } else {
-          navigate('/admin/dashboard', { replace: true });
+          navigate('/admin', { replace: true });
         }
       }
     } catch (err) {
@@ -167,7 +172,7 @@ export const Login: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-zinc-500 text-sm">
             ¿No tienes cuenta?{' '}
-            <Link to="/admin/signup" className="text-sky-400 hover:text-sky-300 font-bold transition-colors">
+            <Link to="/signup" className="text-sky-400 hover:text-sky-300 font-bold transition-colors">
               Regístrate
             </Link>
           </p>

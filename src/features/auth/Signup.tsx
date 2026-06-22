@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 
 export const Signup: React.FC = () => {
   const [nombre, setNombre] = useState('');
@@ -11,19 +10,13 @@ export const Signup: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { hasBusiness } = useAuth();
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        if (hasBusiness === false) {
-          navigate('/onboarding', { replace: true });
-        } else if (hasBusiness === true) {
-          navigate('/admin/dashboard', { replace: true });
-        }
+        navigate('/admin', { replace: true });
       }
     });
-  }, [navigate, hasBusiness]);
+  }, [navigate]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +43,7 @@ export const Signup: React.FC = () => {
 
       if (data.session) {
         // Logged in automatically
-        navigate('/onboarding', { replace: true });
+        navigate('/admin', { replace: true });
       } else {
         // Confirm email may be required depending on Supabase settings
         setSuccessMsg('Registro exitoso. Revisa tu correo para confirmar tu cuenta (si es necesario), o inicia sesión.');
@@ -198,8 +191,8 @@ export const Signup: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-zinc-500 text-sm">
             ¿Ya tienes cuenta?{' '}
-            <Link to="/admin/login" className="text-sky-400 hover:text-sky-300 font-bold transition-colors">
-              Inicia sesión
+            <Link to="/login" className="text-sky-400 hover:text-sky-300 font-bold transition-colors">
+              Inicia Sesión
             </Link>
           </p>
         </div>

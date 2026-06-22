@@ -1,13 +1,11 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface AuthContextType {
   user: any;
   profile: any;
   loading: boolean;
-  hasBusiness: boolean | null; // null = aún no verificado, true/false = verificado
   signOut: () => Promise<void>;
-  recheckBusiness: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,32 +14,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [hasBusiness, setHasBusiness] = useState<boolean | null>(null);
-
-  const checkBusiness = useCallback(async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('negocio_staff')
-        .select('id')
-        .eq('user_id', userId)
-        .limit(1);
-
-      if (error) {
-        console.error('Error verificando negocio:', error.message);
-        setHasBusiness(false);
-      } else {
-        setHasBusiness(data && data.length > 0);
-      }
-    } catch {
-      setHasBusiness(false);
-    }
-  }, []);
-
-  const recheckBusiness = useCallback(async () => {
-    if (user) {
-      await checkBusiness(user.id);
-    }
-  }, [user, checkBusiness]);
 
   useEffect(() => {
     // 1. Obtener sesión inicial
@@ -50,10 +22,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentUser);
       if (currentUser) {
         fetchProfile(currentUser);
-        checkBusiness(currentUser.id);
       } else {
         setProfile(null);
-        setHasBusiness(null);
         setLoading(false);
       }
     });
@@ -64,10 +34,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentUser);
       if (currentUser) {
         fetchProfile(currentUser);
-        checkBusiness(currentUser.id);
       } else {
         setProfile(null);
-        setHasBusiness(null);
         setLoading(false);
       }
     });
@@ -115,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, hasBusiness, signOut, recheckBusiness }}>
+    <AuthContext.Provider value={{ user, profile, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

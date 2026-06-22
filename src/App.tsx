@@ -7,7 +7,7 @@ import { BookingFlow } from './features/agenda/BookingFlow';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { Login } from './features/auth/Login';
 import { Signup } from './features/auth/Signup';
-import { Onboarding } from './features/onboarding/Onboarding';
+// Removed Onboarding
 import { KronoBookLanding } from './pages/KronoBookLanding';
 import { useBookings } from './hooks/useBookings';
 import { mockBarberia, mockServicios } from './data/mockData';
@@ -99,24 +99,17 @@ function TenantApp() {
             />
           } 
         />
-        <Route path="/admin" element={<Navigate to={`/admin/${slug}/dashboard`} replace />} />
+        {/* Rutas administrativas del tenant protegido */}
+        <Route path="/admin/*" element={<TenantAdminGuard />} />
       </Routes>
     </Layout>
   );
 }
 
-// Admin component with active auth check + onboarding guard
-function AdminApp() {
-  const { user, loading: loadingAuth, hasBusiness } = useAuth();
-  // El DashboardWrapper se encarga de usar useBookings según el slug de la ruta
-  
-  // Extraer el slug de la URL actual si existe
-  const location = window.location.pathname;
-  // '/admin/:slug/dashboard' -> match
-  const match = location.match(/\/admin\/([^\/]+)\/dashboard/);
-  const currentAdminSlug = match ? match[1] : undefined;
+function TenantAdminGuard() {
+  const { user, loading } = useAuth();
 
-  if (loadingAuth || hasBusiness === null) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -126,24 +119,32 @@ function AdminApp() {
   }
 
   if (!user) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Si tiene sesión pero NO tiene negocio → Onboarding
-  if (hasBusiness === false) {
-    return <Navigate to="/onboarding" replace />;
+  return <DashboardWrapper />;
+}
+
+// Global Admin App for the business selector
+function GlobalAdminApp() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-zinc-400 text-lg animate-pulse font-medium">Verificando sesión...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   return (
-    <Layout isAdmin={true} slug={currentAdminSlug}>
-      <Routes>
-        {/* Opción B: Si no hay slug, mostrar selector de negocio */}
-        <Route path="/dashboard" element={<SelectBusiness />} />
-        {/* Dashboard específico por slug */}
-        <Route path="/:slug/dashboard" element={<DashboardWrapper />} />
-        
-        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-      </Routes>
+    <Layout isAdmin={true} slug="global">
+      <SelectBusiness />
     </Layout>
   );
 }
@@ -167,7 +168,7 @@ function DashboardWrapper() {
         <h2 className="text-3xl font-black text-red-500">Acceso Denegado</h2>
         <p className="text-zinc-400">No tienes permisos para administrar este negocio o no existe.</p>
         <button 
-          onClick={() => window.location.href = '/admin/dashboard'}
+          onClick={() => window.location.href = '/admin'}
           className="mt-4 px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-lg transition-all"
         >
           Ir a mis negocios
@@ -215,9 +216,8 @@ function SelectBusiness() {
             
           if (negociosData) {
             setNegocios(negociosData);
-            // Si solo tiene 1 negocio, redirigir automáticamente
             if (negociosData.length === 1) {
-              navigate(`/admin/${negociosData[0].slug}/dashboard`, { replace: true });
+              navigate(`/${negociosData[0].slug}/admin`, { replace: true });
             }
           }
         }
@@ -241,7 +241,7 @@ function SelectBusiness() {
         {negocios.map(negocio => (
           <button
             key={negocio.id}
-            onClick={() => navigate(`/admin/${negocio.slug}/dashboard`)}
+            onClick={() => navigate(`/${negocio.slug}/admin`)}
             className="flex flex-col items-center justify-center p-8 bg-zinc-900 border border-white/10 hover:border-sky-500/50 rounded-2xl transition-all duration-300 hover:scale-105 group"
           >
             <div className="w-16 h-16 bg-zinc-800 group-hover:bg-sky-500/20 text-sky-400 rounded-2xl flex items-center justify-center mb-4 transition-colors">
@@ -251,11 +251,6 @@ function SelectBusiness() {
             <p className="text-sm text-zinc-500 mt-2">/ {negocio.slug}</p>
           </button>
         ))}
-      </div>
-      <div className="mt-12">
-        <button onClick={() => navigate('/onboarding')} className="text-sky-400 hover:text-sky-300 font-medium underline">
-          + Registrar otro negocio
-        </button>
       </div>
     </div>
   );
@@ -279,41 +274,14 @@ function App() {
         </div>
       } />
 
-      <Route path="/admin/login" element={<Login />} />
-      <Route path="/admin/signup" element={<Signup />} />
-      <Route path="/onboarding" element={<OnboardingGuard />} />
-      <Route path="/admin/*" element={<AdminApp />} />
-      {/* Rutas de tenants: /:slug y /:slug/reservar */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/admin/*" element={<GlobalAdminApp />} />
+      {/* Rutas de tenants: /:slug y /:slug/admin */}
       <Route path="/:slug/*" element={<TenantApp />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
-}
-
-/** Protección: Solo usuarios autenticados sin negocio pueden ver onboarding */
-function OnboardingGuard() {
-  const { user, loading, hasBusiness } = useAuth();
-
-  if (loading || hasBusiness === null) {
-    return (
-      <div className="min-h-screen bg-[#0b0c0e] text-zinc-100 flex flex-col items-center justify-center">
-        <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-zinc-400 text-lg animate-pulse font-medium">Verificando sesión...</p>
-      </div>
-    );
-  }
-
-  // No autenticado → Login
-  if (!user) {
-    return <Navigate to="/admin/login" replace />;
-  }
-
-  // Ya tiene negocio → Admin
-  if (hasBusiness === true) {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-
-  return <Onboarding />;
 }
 
 export default App;
