@@ -58,7 +58,7 @@ function TenantApp() {
 
   // Si no hay datos, usamos los mockData por defecto temporalmente para previsualización
   const activeNegocio = negocio || mockBarberia;
-  const activeServicios = servicios.length > 0 ? servicios : mockServicios;
+  const activeServicios = negocio ? servicios : mockServicios;
 
   // Check if it's the custom car wash partition
   const isCarWash = slug === 'kronowash' || slug === 'lavado';
@@ -99,6 +99,7 @@ function TenantApp() {
             />
           } 
         />
+        <Route path="/admin" element={<Navigate to={`/admin/${slug}/dashboard`} replace />} />
       </Routes>
     </Layout>
   );
@@ -149,13 +150,36 @@ function AdminApp() {
 
 // Wrapper para inyectar useBookings dentro del contexto de /:slug/
 function DashboardWrapper() {
-  const { citas, servicios, negocio, updateCitaEstado, eliminarServicio, eliminarCita, crearServicio, refetch } = useBookings();
-  const activeServicios = servicios.length > 0 ? servicios : mockServicios;
+  const { citas, servicios, negocio, loading, updateCitaEstado, eliminarServicio, eliminarCita, crearServicio, refetch } = useBookings();
+  
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-zinc-400">Cargando dashboard...</p>
+      </div>
+    );
+  }
+
+  if (!negocio) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-4 text-center">
+        <h2 className="text-3xl font-black text-red-500">Acceso Denegado</h2>
+        <p className="text-zinc-400">No tienes permisos para administrar este negocio o no existe.</p>
+        <button 
+          onClick={() => window.location.href = '/admin/dashboard'}
+          className="mt-4 px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-lg transition-all"
+        >
+          Ir a mis negocios
+        </button>
+      </div>
+    );
+  }
 
   return (
     <Dashboard 
       citas={citas} 
-      servicios={activeServicios} 
+      servicios={servicios} 
       onUpdateStatus={updateCitaEstado} 
       negocioId={negocio?.id} 
       negocioName={negocio?.nombre}

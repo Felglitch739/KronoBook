@@ -115,7 +115,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servici
               </button>
 
               <a
-                href="tel:+521234567890"
+                href="tel:+528662040513"
                 className="group flex items-center gap-3 px-8 py-5 rounded-2xl border border-white/10 hover:border-sky-500/40 bg-white/5 hover:bg-sky-500/10 backdrop-blur-sm transition-all duration-300"
               >
                 <Phone className="w-5 h-5 text-sky-400 group-hover:scale-110 transition-transform" />
