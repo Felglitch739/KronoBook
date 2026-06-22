@@ -5,7 +5,7 @@ import { useBookings } from '../../hooks/useBookings';
 
 interface BookingFlowProps {
   servicios: Servicio[];
-  onBookingComplete: (citaData: Omit<Cita, 'id' | 'estado' | 'barberiaId'>) => void;
+  onBookingComplete: (citaData: Omit<Cita, 'id' | 'estado' | 'negocioId'>) => void;
   onCancel: () => void;
   askForAddress?: boolean;
 }
@@ -16,8 +16,8 @@ export const BookingFlow: React.FC<BookingFlowProps> = ({
   onCancel,
   askForAddress = false,
 }) => {
-  const { barberia } = useBookings();
-  const colorPrimario = barberia?.colorPrimario || '#0ea5e9';
+  const { negocio } = useBookings();
+  const colorPrimario = negocio?.colorPrimario || '#0ea5e9';
 
   const [step, setStep] = useState(1);
   // Multi-selección de paquetes base

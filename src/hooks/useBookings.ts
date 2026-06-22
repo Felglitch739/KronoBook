@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { type Cita, type Servicio, type Barberia } from '../types';
+import { type Cita, type Servicio, type Negocio } from '../types';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,7 +12,7 @@ export const useBookings = () => {
   
   const [citas, setCitas] = useState<Cita[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
-  const [barberia, setBarberia] = useState<Barberia | null>(null);
+  const [negocio, setNegocio] = useState<Negocio | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -30,32 +30,40 @@ export const useBookings = () => {
         // CASO A: ESTAMOS EN EL DASHBOARD DE ADMINISTRACIÓN
         if (isAdminPage) {
           if (!user) {
-            setBarberia(null);
+            setNegocio(null);
             setServicios([]);
             setCitas([]);
             setLoading(false);
             return;
           }
 
-          // Para CUALQUIER usuario admin (owner o superadmin):
-          // Buscar el negocio vinculado a su owner_id
-          const { data: ownerData, error: ownerError } = await supabase
-            .from('barberias')
-            .select('*')
-            .eq('owner_id', user.id)
-            .maybeSingle();
+          if (slug) {
+            // Buscar el negocio por slug al que el usuario tiene acceso
+            const { data: staffData } = await supabase
+              .from('negocio_staff')
+              .select('negocio_id')
+              .eq('user_id', user.id);
+            
+            if (staffData && staffData.length > 0) {
+              const negocioIds = staffData.map(s => s.negocio_id);
+              const { data: ownerData, error: ownerError } = await supabase
+                .from('negocios')
+                .select('*')
+                .eq('slug', slug)
+                .in('id', negocioIds)
+                .maybeSingle();
 
-          if (!ownerError && ownerData) {
-            currentBusiness = ownerData;
+              if (!ownerError && ownerData) {
+                currentBusiness = ownerData;
+              }
+            }
           }
-          // Si no tiene negocio, currentBusiness queda null.
-          // La capa de routing (App.tsx → AdminApp) redirigirá a /onboarding.
         } 
         // CASO B: ESTAMOS EN LA LANDING PÚBLICA (VISTA DEL CLIENTE)
         else {
           const currentSlug = slug || 'barberia-chaga';
           const { data, error } = await supabase
-            .from('barberias')
+            .from('negocios')
             .select('*')
             .eq('slug', currentSlug)
             .maybeSingle();
@@ -71,8 +79,7 @@ export const useBookings = () => {
         }
 
         if (currentBusiness) {
-          // Mapear el objeto crudo de Supabase al tipo Barberia (incluye colores de marca)
-          setBarberia({
+          setNegocio({
             id: currentBusiness.id,
             nombre: currentBusiness.nombre,
             slug: currentBusiness.slug,
@@ -87,20 +94,20 @@ export const useBookings = () => {
           const { data: srvData } = await supabase
             .from('servicios')
             .select('*')
-            .eq('barberia_id', currentBusiness.id)
+            .eq('negocio_id', currentBusiness.id)
             .order('precio', { ascending: true });
 
           // Descargar las citas vinculadas a este negocio
           const { data: citasData } = await supabase
             .from('citas')
             .select('*')
-            .eq('barberia_id', currentBusiness.id)
+            .eq('negocio_id', currentBusiness.id)
             .order('fecha', { ascending: false });
 
           if (srvData) {
             const formattedServicios: Servicio[] = srvData.map((data: any) => ({
               id: data.id,
-              barberiaId: data.barberia_id,
+              negocioId: data.negocio_id,
               nombre: data.nombre,
               precio: Number(data.precio),
               duracionMinutos: data.duracion_minutos,
@@ -112,7 +119,7 @@ export const useBookings = () => {
           if (citasData) {
             interface SupabaseCita {
               id: string;
-              barberia_id: string;
+              negocio_id: string;
               servicio_id: string;
               cliente_nombre: string;
               cliente_telefono: string;
@@ -126,7 +133,7 @@ export const useBookings = () => {
             }
             const formattedCitas: Cita[] = (citasData as SupabaseCita[]).map((data) => ({
               id: data.id,
-              barberiaId: data.barberia_id,
+              negocioId: data.negocio_id,
               servicioId: data.servicio_id,
               clienteNombre: data.cliente_nombre,
               clienteTelefono: data.cliente_telefono,
@@ -153,11 +160,11 @@ export const useBookings = () => {
     loadTenantData();
   }, [slug, isAdminPage, user, profile, navigate, refreshTrigger]);
 
-  const addCita = async (citaData: Omit<Cita, 'id' | 'estado' | 'barberiaId'>) => {
-    if (!barberia) throw new Error("No barberia loaded");
+  const addCita = async (citaData: Omit<Cita, 'id' | 'estado' | 'negocioId'>) => {
+    if (!negocio) throw new Error("No negocio loaded");
     try {
       const newCitaInsert = {
-        barberia_id: barberia.id,
+        negocio_id: negocio.id,
         servicio_id: citaData.servicioId,
         cliente_nombre: citaData.clienteNombre,
         cliente_telefono: citaData.clienteTelefono,
@@ -179,7 +186,7 @@ export const useBookings = () => {
 
       const formattedCita: Cita = {
         id: data.id,
-        barberiaId: data.barberia_id,
+        negocioId: data.negocio_id,
         servicioId: data.servicio_id,
         clienteNombre: data.cliente_nombre,
         clienteTelefono: data.cliente_telefono,
@@ -203,22 +210,20 @@ export const useBookings = () => {
 
   const updateCitaEstado = async (id: string, estado: Cita['estado']) => {
     try {
-      if (!barberia) {
-        throw new Error("No se ha cargado ninguna barbería para actualizar la cita");
+      if (!negocio) {
+        throw new Error("No se ha cargado ningún negocio para actualizar la cita");
       }
 
-      // Realizar la mutación real en Supabase con validación de barberia_id
       const { error } = await supabase
         .from('citas')
         .update({ estado })
         .eq('id', id)
-        .eq('barberia_id', barberia.id);
+        .eq('negocio_id', negocio.id);
 
       if (error) {
         throw error;
       }
 
-      // Si la petición es exitosa, actualizar el estado local
       setCitas((prev) =>
         prev.map((c) => (c.id === id ? { ...c, estado } : c))
       );
@@ -229,22 +234,21 @@ export const useBookings = () => {
 
   const updateBarberiaAppearance = async (tema: string, colorPrimario: string, colorSecundario: string) => {
     try {
-      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+      if (!negocio) throw new Error("No se ha cargado ningún negocio");
       
       const { error } = await supabase
-        .from('barberias')
+        .from('negocios')
         .update({
           tema,
           color_primario: colorPrimario,
           color_secundario: colorSecundario
         })
-        .eq('id', barberia.id);
+        .eq('id', negocio.id);
 
       if (error) throw error;
 
-      // Update local state
-      setBarberia({
-        ...barberia,
+      setNegocio({
+        ...negocio,
         tema: tema as any,
         colorPrimario,
         colorSecundario
@@ -257,17 +261,16 @@ export const useBookings = () => {
 
   const eliminarServicio = async (id: string) => {
     try {
-      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+      if (!negocio) throw new Error("No se ha cargado ningún negocio");
       
       const { error } = await supabase
         .from('servicios')
         .delete()
         .eq('id', id)
-        .eq('barberia_id', barberia.id);
+        .eq('negocio_id', negocio.id);
 
       if (error) throw error;
 
-      // Actualizar el estado local de React inmediatamente
       setServicios((prev) => prev.filter((s) => s.id !== id));
     } catch (error) {
       console.error('Error al eliminar el servicio:', error);
@@ -277,17 +280,16 @@ export const useBookings = () => {
 
   const eliminarCita = async (id: string) => {
     try {
-      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+      if (!negocio) throw new Error("No se ha cargado ningún negocio");
 
       const { error } = await supabase
         .from('citas')
         .delete()
         .eq('id', id)
-        .eq('barberia_id', barberia.id);
+        .eq('negocio_id', negocio.id);
 
       if (error) throw error;
 
-      // Actualizar el estado local de React inmediatamente
       setCitas((prev) => prev.filter((c) => c.id !== id));
     } catch (error) {
       console.error('Error al eliminar la cita:', error);
@@ -295,12 +297,12 @@ export const useBookings = () => {
     }
   };
 
-  const crearServicio = async (servicioData: Omit<Servicio, 'id' | 'barberiaId'>): Promise<Servicio> => {
+  const crearServicio = async (servicioData: Omit<Servicio, 'id' | 'negocioId'>): Promise<Servicio> => {
     try {
-      if (!barberia) throw new Error("No se ha cargado ninguna barbería");
+      if (!negocio) throw new Error("No se ha cargado ningún negocio");
 
       const newServiceInsert = {
-        barberia_id: barberia.id,
+        negocio_id: negocio.id,
         nombre: servicioData.nombre,
         precio: servicioData.precio,
         duracion_minutos: servicioData.duracionMinutos,
@@ -317,7 +319,7 @@ export const useBookings = () => {
 
       const formattedService: Servicio = {
         id: data.id,
-        barberiaId: data.barberia_id,
+        negocioId: data.negocio_id,
         nombre: data.nombre,
         precio: Number(data.precio),
         duracionMinutos: data.duracion_minutos,
@@ -335,7 +337,7 @@ export const useBookings = () => {
   return {
     citas,
     servicios,
-    barberia,
+    negocio,
     loading,
     addCita,
     updateCitaEstado,

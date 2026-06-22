@@ -1,6 +1,6 @@
-import { type Barberia, type Servicio, type Cita } from '../types';
+import { type Negocio, type Servicio, type Cita } from '../types';
 
-export const mockBarberia: Barberia = {
+export const mockBarberia: Negocio = {
   id: "barberia-1",
   nombre: "Barbería Chaga",
   slug: "barberia-chaga",
@@ -12,7 +12,7 @@ export const mockBarberia: Barberia = {
 export const mockServicios: Servicio[] = [
   {
     id: "s1",
-    barberiaId: "barberia-1",
+    negocioId: "barberia-1",
     nombre: "Corte de Cabello Clásico",
     precio: 150,
     duracionMinutos: 30,
@@ -20,7 +20,7 @@ export const mockServicios: Servicio[] = [
   },
   {
     id: "s2",
-    barberiaId: "barberia-1",
+    negocioId: "barberia-1",
     nombre: "Arreglo de Barba Pro",
     precio: 100,
     duracionMinutos: 20,
@@ -28,7 +28,7 @@ export const mockServicios: Servicio[] = [
   },
   {
     id: "s3",
-    barberiaId: "barberia-1",
+    negocioId: "barberia-1",
     nombre: "Combo Imperial",
     precio: 220,
     duracionMinutos: 50,
@@ -39,7 +39,7 @@ export const mockServicios: Servicio[] = [
 export const mockCitas: Cita[] = [
   {
     id: "c1",
-    barberiaId: "barberia-1",
+    negocioId: "barberia-1",
     clienteNombre: "Carlos Gómez",
     clienteTelefono: "8681234567",
     servicioId: "s1",
@@ -49,7 +49,7 @@ export const mockCitas: Cita[] = [
   },
   {
     id: "c2",
-    barberiaId: "barberia-1",
+    negocioId: "barberia-1",
     clienteNombre: "Luis Martínez",
     clienteTelefono: "8687654321",
     servicioId: "s3",

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useBookings } from '../../hooks/useBookings';
 
 export const AparienciaTab: React.FC = () => {
-  const { barberia, updateBarberiaAppearance } = useBookings();
+  const { negocio, updateBarberiaAppearance } = useBookings();
   const [tema, setTema] = useState<'dark' | 'light' | 'elegant'>('elegant');
   const [colorPrimario, setColorPrimario] = useState('#1d4ed8');
   const [colorSecundario, setColorSecundario] = useState('#b91c1c');
@@ -10,12 +10,12 @@ export const AparienciaTab: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    if (barberia) {
-      setTema(barberia.tema || 'elegant');
-      setColorPrimario(barberia.colorPrimario || '#1d4ed8');
-      setColorSecundario(barberia.colorSecundario || '#b91c1c');
+    if (negocio) {
+      setTema(negocio.tema || 'elegant');
+      setColorPrimario(negocio.colorPrimario || '#1d4ed8');
+      setColorSecundario(negocio.colorSecundario || '#b91c1c');
     }
-  }, [barberia]);
+  }, [negocio]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -42,7 +42,7 @@ export const AparienciaTab: React.FC = () => {
 
   const primaryText = getTextColor(colorPrimario);
 
-  if (!barberia) return null;
+  if (!negocio) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
@@ -160,8 +160,8 @@ export const AparienciaTab: React.FC = () => {
                 <span className="text-[10px] uppercase font-bold tracking-widest" style={{ color: colorPrimario }}>Demo</span>
                 <div className="h-px w-6" style={{ backgroundColor: colorPrimario }}></div>
               </div>
-              <h2 className="text-3xl font-black mb-2" style={tema === 'elegant' ? { fontFamily: 'serif' } : {}}>{barberia.nombre}</h2>
-              <p className="text-xs opacity-60 mb-6">{barberia.direccion}</p>
+              <h2 className="text-3xl font-black mb-2" style={tema === 'elegant' ? { fontFamily: 'serif' } : {}}>{negocio.nombre}</h2>
+              <p className="text-xs opacity-60 mb-6">{negocio.direccion}</p>
               
               <button 
                 className="w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider"

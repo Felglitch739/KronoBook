@@ -22,20 +22,20 @@ interface DashboardProps {
   citas: Cita[];
   servicios: Servicio[];
   onUpdateStatus: (id: string, estado: Cita['estado']) => void;
-  barberiaId?: string;
-  barberiaName?: string;
+  negocioId?: string;
+  negocioName?: string;
   onAddSuccess?: () => void;
   onDeleteService: (id: string) => Promise<void>;
   onDeleteCita: (id: string) => Promise<void>;
-  onAddService: (servicio: Omit<Servicio, 'id' | 'barberiaId'>) => Promise<Servicio>;
+  onAddService: (servicio: Omit<Servicio, 'id' | 'negocioId'>) => Promise<Servicio>;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
   citas,
   servicios,
   onUpdateStatus,
-  barberiaId,
-  barberiaName,
+  negocioId,
+  negocioName,
   onAddSuccess,
   onDeleteService,
   onDeleteCita,
@@ -99,7 +99,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
           {/* Botón Registrar Cita */}
-          {barberiaId && (
+          {negocioId && (
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex justify-center items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold rounded-xl transition-all duration-200 border border-sky-500/20 hover:border border-sky-500/30 active:scale-95 cursor-pointer text-sm"
@@ -179,13 +179,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             servicios={servicios} 
             onUpdateStatus={onUpdateStatus} 
             onDeleteCita={onDeleteCita}
-            businessName={barberiaName}
+            businessName={negocioName}
           />
         ) : activeTab === 'finanzas' ? (
           <FinanzasTab 
             citas={citas} 
             servicios={servicios} 
-            businessName={barberiaName} 
+            businessName={negocioName}
             onDeleteCita={onDeleteCita}
           />
         ) : activeTab === 'servicios' ? (
@@ -200,11 +200,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Modal de Cita Rápida / Venta */}
-      {barberiaId && (
+      {negocioId && (
         <AddAppointmentModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          barberiaId={barberiaId}
+          negocioId={negocioId}
           services={servicios}
           onSuccess={handleAddSuccess}
         />
@@ -215,7 +215,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         isOpen={!!justCreatedTx}
         onClose={() => setJustCreatedTx(null)}
         transaction={justCreatedTx}
-        businessName={barberiaName}
+        businessName={negocioName}
       />
     </div>
   );

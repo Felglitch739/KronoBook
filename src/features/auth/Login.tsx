@@ -45,12 +45,12 @@ export const Login: React.FC = () => {
       const userId = signInData.user?.id;
       if (userId) {
         const { data: bizData } = await supabase
-          .from('barberias')
-          .select('id')
-          .eq('owner_id', userId)
-          .maybeSingle();
+          .from('negocio_staff')
+          .select('negocio_id')
+          .eq('user_id', userId)
+          .limit(1);
 
-        if (!bizData) {
+        if (!bizData || bizData.length === 0) {
           navigate('/onboarding', { replace: true });
         } else {
           navigate('/admin/dashboard', { replace: true });

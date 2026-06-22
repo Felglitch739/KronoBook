@@ -14,40 +14,37 @@ import { mockBarberia, mockServicios } from './data/mockData';
 import { useAuth } from './context/AuthContext';
 
 function TenantApp() {
-  const { servicios, barberia, loading, addCita } = useBookings();
+  const { servicios, negocio, loading, addCita } = useBookings();
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
-  // Obtener el slug del negocio propiedad del usuario logueado
-  const { user } = useAuth();
-  // barberia en TenantApp carga el negocio según el slug de la ruta.
-  // Para saber si el usuario logueado es owner de ESTE negocio, comparamos:
-  // - barberia?.ownerIdCol (no tenemos eso en el tipo) así que lo inferimos via slug
-  // - El slug del negocio del admin viene de useBookings en modo admin — no disponible aquí.
-  // Solución: guardar el slug del negocio del user en AuthContext, o usar barberia.slug
-  // Por ahora: si el usuario está logueado Y el slug de la url coincide con barberia.slug
-  // (que fue cargado por useBookings desde Supabase por ese slug), es su negocio solo si
-  // la base de datos lo confirmó. Pasamos barberia?.slug como ownerSlug si el user está logueado.
-  // El Navbar hará la comparación slug === ownerSlug.
-  // Para que funcione correctamente, necesitamos saber el slug del negocio del USER, no del tenant.
-  // Usamos un estado adicional:
-  const [userBusinessSlug, setUserBusinessSlug] = React.useState<string | undefined>(undefined);
+  const [userBusinessSlugs, setUserBusinessSlugs] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     if (user) {
-      import('./lib/supabase').then(({ supabase }) => {
-        supabase
-          .from('barberias')
-          .select('slug')
-          .eq('owner_id', user.id)
-          .maybeSingle()
-          .then(({ data }) => {
-            setUserBusinessSlug(data?.slug ?? undefined);
-          });
+      import('./lib/supabase').then(async ({ supabase }) => {
+        const { data: staffData } = await supabase
+          .from('negocio_staff')
+          .select('negocio_id')
+          .eq('user_id', user.id);
+          
+        if (staffData && staffData.length > 0) {
+          const negocioIds = staffData.map(s => s.negocio_id);
+          const { data: negociosData } = await supabase
+            .from('negocios')
+            .select('slug')
+            .in('id', negocioIds);
+            
+          if (negociosData) {
+            setUserBusinessSlugs(negociosData.map(n => n.slug));
+          }
+        }
       });
     } else {
-      setUserBusinessSlug(undefined);
+      setUserBusinessSlugs([]);
     }
   }, [user]);
+
+  const isStaffForCurrentSlug = Boolean(slug && userBusinessSlugs.includes(slug));
 
   if (loading) {
     return (
@@ -59,27 +56,27 @@ function TenantApp() {
   }
 
   // Si no hay datos, usamos los mockData por defecto temporalmente para previsualización
-  const activeBarberia = barberia || mockBarberia;
+  const activeNegocio = negocio || mockBarberia;
   const activeServicios = servicios.length > 0 ? servicios : mockServicios;
 
   // Check if it's the custom car wash partition
   const isCarWash = slug === 'kronowash' || slug === 'lavado';
 
   return (
-    <Layout slug={slug || 'demo'} ownerSlug={userBusinessSlug}>
+    <Layout slug={slug || 'demo'} isStaffForCurrentSlug={isStaffForCurrentSlug}>
       <Routes>
         <Route 
           path="/" 
           element={
             isCarWash ? (
               <CarWashLanding
-                barberia={activeBarberia}
+                barberia={activeNegocio}
                 servicios={activeServicios}
                 onBookClick={() => navigate(`/${slug}/reservar`)}
               />
             ) : (
               <LandingPage
-                barberia={activeBarberia}
+                barberia={activeNegocio}
                 servicios={activeServicios}
                 onBookClick={() => navigate(`/${slug}/reservar`)}
               />
@@ -109,8 +106,13 @@ function TenantApp() {
 // Admin component with active auth check + onboarding guard
 function AdminApp() {
   const { user, loading: loadingAuth, hasBusiness } = useAuth();
-  const { citas, servicios, barberia, updateCitaEstado, eliminarServicio, eliminarCita, crearServicio, refetch } = useBookings();
-  const activeServicios = servicios.length > 0 ? servicios : mockServicios;
+  // El DashboardWrapper se encarga de usar useBookings según el slug de la ruta
+  
+  // Extraer el slug de la URL actual si existe
+  const location = window.location.pathname;
+  // '/admin/:slug/dashboard' -> match
+  const match = location.match(/\/admin\/([^\/]+)\/dashboard/);
+  const currentAdminSlug = match ? match[1] : undefined;
 
   if (loadingAuth || hasBusiness === null) {
     return (
@@ -131,27 +133,106 @@ function AdminApp() {
   }
 
   return (
-    <Layout isAdmin={true} slug={barberia?.slug}>
+    <Layout isAdmin={true} slug={currentAdminSlug}>
       <Routes>
-        <Route 
-          path="/dashboard" 
-          element={
-            <Dashboard 
-              citas={citas} 
-              servicios={activeServicios} 
-              onUpdateStatus={updateCitaEstado} 
-              barberiaId={barberia?.id} 
-              barberiaName={barberia?.nombre}
-              onAddSuccess={refetch} 
-              onDeleteService={eliminarServicio}
-              onDeleteCita={eliminarCita}
-              onAddService={crearServicio}
-            />
-          } 
-        />
+        {/* Opción B: Si no hay slug, mostrar selector de negocio */}
+        <Route path="/dashboard" element={<SelectBusiness />} />
+        {/* Dashboard específico por slug */}
+        <Route path="/:slug/dashboard" element={<DashboardWrapper />} />
+        
         <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </Layout>
+  );
+}
+
+// Wrapper para inyectar useBookings dentro del contexto de /:slug/
+function DashboardWrapper() {
+  const { citas, servicios, negocio, updateCitaEstado, eliminarServicio, eliminarCita, crearServicio, refetch } = useBookings();
+  const activeServicios = servicios.length > 0 ? servicios : mockServicios;
+
+  return (
+    <Dashboard 
+      citas={citas} 
+      servicios={activeServicios} 
+      onUpdateStatus={updateCitaEstado} 
+      barberiaId={negocio?.id} 
+      barberiaName={negocio?.nombre}
+      onAddSuccess={refetch} 
+      onDeleteService={eliminarServicio}
+      onDeleteCita={eliminarCita}
+      onAddService={crearServicio}
+    />
+  );
+}
+
+// Componente para seleccionar a qué negocio entrar (Opción B)
+function SelectBusiness() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [negocios, setNegocios] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (user) {
+      import('./lib/supabase').then(async ({ supabase }) => {
+        const { data: staffData } = await supabase
+          .from('negocio_staff')
+          .select('negocio_id')
+          .eq('user_id', user.id);
+          
+        if (staffData && staffData.length > 0) {
+          const negocioIds = staffData.map(s => s.negocio_id);
+          const { data: negociosData } = await supabase
+            .from('negocios')
+            .select('id, nombre, slug')
+            .in('id', negocioIds);
+            
+          if (negociosData) {
+            setNegocios(negociosData);
+            // Si solo tiene 1 negocio, redirigir automáticamente
+            if (negociosData.length === 1) {
+              navigate(`/admin/${negociosData[0].slug}/dashboard`, { replace: true });
+            }
+          }
+        }
+        setLoading(false);
+      });
+    }
+  }, [user, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+      <h2 className="text-3xl font-black text-white mb-8">Selecciona un Negocio</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
+        {negocios.map(negocio => (
+          <button
+            key={negocio.id}
+            onClick={() => navigate(`/admin/${negocio.slug}/dashboard`)}
+            className="flex flex-col items-center justify-center p-8 bg-zinc-900 border border-white/10 hover:border-sky-500/50 rounded-2xl transition-all duration-300 hover:scale-105 group"
+          >
+            <div className="w-16 h-16 bg-zinc-800 group-hover:bg-sky-500/20 text-sky-400 rounded-2xl flex items-center justify-center mb-4 transition-colors">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+            </div>
+            <h3 className="text-xl font-bold text-white text-center">{negocio.nombre}</h3>
+            <p className="text-sm text-zinc-500 mt-2">/ {negocio.slug}</p>
+          </button>
+        ))}
+      </div>
+      <div className="mt-12">
+        <button onClick={() => navigate('/onboarding')} className="text-sky-400 hover:text-sky-300 font-medium underline">
+          + Registrar otro negocio
+        </button>
+      </div>
+    </div>
   );
 }
 

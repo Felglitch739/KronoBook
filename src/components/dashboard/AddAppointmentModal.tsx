@@ -5,7 +5,7 @@ import { type Servicio } from '../../types';
 interface AddAppointmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  barberiaId: string;
+  negocioId: string;
   services: Servicio[];
   onSuccess: (newCita?: any) => void;
 }
@@ -13,7 +13,7 @@ interface AddAppointmentModalProps {
 export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
   isOpen,
   onClose,
-  barberiaId,
+  negocioId,
   services,
   onSuccess
 }) => {
@@ -49,7 +49,7 @@ export const AddAppointmentModal: React.FC<AddAppointmentModalProps> = ({
     try {
       const { data, error } = await supabase.from('citas').insert([
         {
-          barberia_id: barberiaId,
+          negocio_id: negocioId,
           servicio_id: servicioId,
           cliente_nombre: 'Walk-in (Presencial)', // Nombre genérico automático
           cliente_telefono: 'Walk-in',

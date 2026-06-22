@@ -4,10 +4,10 @@ import {
   MapPin, Clock, ShieldCheck, Droplets, Sparkles, ChevronRight,
   CheckCircle2, CarFront, Wind, Star, Phone, Zap, Award
 } from 'lucide-react';
-import { type Barberia, type Servicio } from '../../types';
+import { type Negocio, type Servicio } from '../../types';
 
 interface CarWashLandingProps {
-  barberia: Barberia;
+  negocio: Negocio;
   servicios: Servicio[];
   onBookClick: () => void;
 }
@@ -26,7 +26,7 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.12 } }
 };
 
-export const CarWashLanding: React.FC<CarWashLandingProps> = ({ barberia, servicios, onBookClick }) => {
+export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servicios, onBookClick }) => {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
@@ -480,17 +480,17 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ barberia, servic
       <footer className="border-t border-white/5 py-12 px-6 relative z-20 bg-[#030712]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
-            <h4 className="text-2xl font-black text-white tracking-tight mb-1">{barberia.nombre}</h4>
+            <h4 className="text-2xl font-black text-white tracking-tight mb-1">{negocio.nombre}</h4>
             <p className="text-sm text-zinc-500 flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 text-sky-500" />
-              {barberia.direccion}
+              {negocio.direccion}
             </p>
           </div>
 
           <div className="flex items-center gap-6 text-zinc-600 text-sm">
             <span className="flex items-center gap-1.5">
               <Clock className="w-4 h-4" />
-              {barberia.horario || 'Lun–Dom: 8am–8pm'}
+              {negocio.horario || 'Lun–Dom: 8am–8pm'}
             </span>
           </div>
 

@@ -1,4 +1,4 @@
-export interface Barberia {
+export interface Negocio {
   id: string;
   nombre: string;
   slug: string;
@@ -14,7 +14,7 @@ export interface Barberia {
 
 export interface Servicio {
   id: string;
-  barberiaId: string;
+  negocioId: string;
   nombre: string;
   precio: number;
   duracionMinutos: number;
@@ -23,7 +23,7 @@ export interface Servicio {
 
 export interface Cita {
   id: string;
-  barberiaId: string;
+  negocioId: string;
   clienteNombre: string;
   clienteTelefono: string;
   clienteEmail?: string;
@@ -35,4 +35,11 @@ export interface Cita {
   createdAt?: string;
   propina?: number;
   direccionServicio?: string;
+}
+
+export interface NegocioStaff {
+  id: string;
+  negocio_id: string;
+  user_id: string;
+  rol: 'owner' | 'admin' | 'staff';
 }

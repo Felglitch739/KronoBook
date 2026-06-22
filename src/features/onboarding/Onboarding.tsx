@@ -48,7 +48,7 @@ export const Onboarding: React.FC = () => {
     try {
       // Verificar que el slug no exista
       const { data: existing } = await supabase
-        .from('barberias')
+        .from('negocios')
         .select('id')
         .eq('slug', slug)
         .maybeSingle();
@@ -60,32 +60,47 @@ export const Onboarding: React.FC = () => {
       }
 
       // Insertar el negocio
-      const { error } = await supabase
-        .from('barberias')
+      const { data: negocioData, error } = await supabase
+        .from('negocios')
         .insert({
           nombre: nombre.trim(),
           slug,
           direccion: direccion.trim(),
           horario: horario.trim(),
-          owner_id: user.id,
           color_primario: '#0ea5e9',
           color_secundario: '#22d3ee',
           tema: 'dark',
-        });
+        })
+        .select('id')
+        .single();
 
-      if (error) {
-        if (error.message.includes('duplicate') || error.message.includes('unique')) {
+      if (error || !negocioData) {
+        if (error?.message.includes('duplicate') || error?.message.includes('unique')) {
           setErrorMsg('Ya tienes un negocio registrado o el nombre ya está en uso.');
         } else {
-          setErrorMsg(`Error al registrar: ${error.message}`);
+          setErrorMsg(`Error al registrar: ${error?.message || 'Error desconocido'}`);
         }
         setIsSubmitting(false);
         return;
       }
 
+      // Insertar al usuario como owner en negocio_staff
+      const { error: staffError } = await supabase
+        .from('negocio_staff')
+        .insert({
+          negocio_id: negocioData.id,
+          user_id: user.id,
+          rol: 'owner',
+        });
+
+      if (staffError) {
+        console.error('Error insertando en negocio_staff:', staffError);
+        // Continuamos de todas formas o manejar el error (esto es un caso borde, asumiendo éxito)
+      }
+
       // Actualizar contexto y redirigir
       await recheckBusiness();
-      navigate('/admin/dashboard', { replace: true });
+      navigate(`/admin/${slug}/dashboard`, { replace: true });
 
     } catch (err) {
       console.error('Error en onboarding:', err);

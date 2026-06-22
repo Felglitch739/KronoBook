@@ -21,16 +21,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkBusiness = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('barberias')
+        .from('negocio_staff')
         .select('id')
-        .eq('owner_id', userId)
-        .maybeSingle();
+        .eq('user_id', userId)
+        .limit(1);
 
       if (error) {
         console.error('Error verificando negocio:', error.message);
         setHasBusiness(false);
       } else {
-        setHasBusiness(!!data);
+        setHasBusiness(data && data.length > 0);
       }
     } catch {
       setHasBusiness(false);

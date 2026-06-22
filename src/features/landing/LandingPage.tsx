@@ -1,19 +1,19 @@
 import React from 'react';
-import { type Barberia, type Servicio } from '../../types';
+import { type Negocio, type Servicio } from '../../types';
 import { themeConfig } from '../../config/themeConfig';
 
 interface LandingPageProps {
-  barberia: Barberia;
+  negocio: Negocio;
   servicios: Servicio[];
   onBookClick: () => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ barberia, servicios, onBookClick }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({ negocio, servicios, onBookClick }) => {
   // ── Colores de marca dinámicos con fallback neutral ──────────────────
   // Cada negocio puede tener su propio color_primario / color_secundario en Supabase.
   // Si no están definidos, usamos ámbar clásico de barbería.
-  const primary = barberia.colorPrimario ?? '#1d4ed8'; // Barber Pole Blue
-  const secondary = barberia.colorSecundario ?? '#b91c1c'; // Barber Pole Red
+  const primary = negocio.colorPrimario ?? '#1d4ed8'; // Barber Pole Blue
+  const secondary = negocio.colorSecundario ?? '#b91c1c'; // Barber Pole Red
 
   // Para los textos sobre fondo primario: si el color es muy oscuro usamos blanco, si no zinc-950
   // Heurística rápida: si empieza con #1 o #0 asumimos oscuro → texto blanco
@@ -26,7 +26,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ barberia, servicios, o
     return luminance > 0.55 ? '#09090b' : '#fafafa'; // zinc-950 ó zinc-50
   })();
 
-  const tema = barberia.tema || 'elegant';
+  const tema = negocio.tema || 'elegant';
   const theme = themeConfig[tema];
 
   return (
@@ -66,12 +66,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ barberia, servicios, o
 
           {/* Título con fuente Serif */}
           <h1 className={`${theme.fontTitle} text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-none tracking-tight ${theme.title} drop-shadow-2xl`}>
-            {barberia.nombre}
+            {negocio.nombre}
           </h1>
 
           <div className={`${theme.textMuted} text-base md:text-lg mb-12 max-w-xl mx-auto font-light leading-relaxed space-y-2`}>
-            <p className="uppercase tracking-widest text-xs text-zinc-400 font-semibold">{barberia.direccion}</p>
-            <p className="text-sm font-semibold" style={{ color: primary }}>{barberia.horario}</p>
+            <p className="uppercase tracking-widest text-xs text-zinc-400 font-semibold">{negocio.direccion}</p>
+            <p className="text-sm font-semibold" style={{ color: primary }}>{negocio.horario}</p>
           </div>
 
           {/* CTA — Neobrutalismo con color primario del negocio o override del tema */}
@@ -180,7 +180,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ barberia, servicios, o
       {/* ─── FOOTER minimal ─── */}
       <footer className={`${theme.bgSecondary} border-t ${theme.border} py-12 px-4 flex flex-col items-center justify-center`}>
         <p className={`${theme.textMuted} text-xs tracking-widest uppercase font-semibold mb-4`}>
-          {barberia.nombre}
+          {negocio.nombre}
         </p>
         <a href="/" className="group flex items-center gap-2 opacity-50 hover:opacity-100 transition-all duration-300">
           <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold group-hover:text-zinc-400">Powered by</span>

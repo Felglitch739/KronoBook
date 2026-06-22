@@ -6,11 +6,11 @@ import { Logo } from './Logo';
 interface NavbarProps {
   slug?: string;
   isAdmin?: boolean;
-  /** Slug del negocio del que el usuario logueado es owner */
-  ownerSlug?: string;
+  /** True si el usuario logueado es parte del staff del negocio que se está visualizando */
+  isStaffForCurrentSlug?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin, ownerSlug }) => {
+export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin, isStaffForCurrentSlug }) => {
   const location = useLocation();
   const { slug: routeSlug } = useParams<{ slug?: string }>();
   const activeSlug = routeSlug || slug || 'demo';
@@ -30,7 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin, owne
   const userName = profile?.nombre || user?.user_metadata?.nombre || user?.email?.split('@')[0] || 'Admin';
 
   // Solo mostramos el botón de admin si el usuario es owner del negocio que se está viendo
-  const isOwnBusiness = hasSession && !!ownerSlug && ownerSlug === activeSlug;
+  const isOwnBusiness = hasSession && isStaffForCurrentSlug;
 
   return (
     <>
@@ -91,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin, owne
               </Link>
               {isOwnBusiness && (
                 <Link
-                  to="/admin/dashboard"
+                  to={`/admin/${activeSlug}/dashboard`}
                   className="px-4 py-2 rounded-lg text-sm font-bold text-sky-500 hover:text-zinc-950 bg-transparent hover:bg-sky-500 border border-sky-500/40 hover:border-sky-500 shadow-[inset_0_0_12px_rgba(14,165,233,0.05)] transition-all duration-300 flex items-center gap-1.5"
                 >
                   <span>Panel</span>
@@ -154,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin, owne
             </Link>
             {isOwnBusiness && (
               <Link
-                to="/admin/dashboard"
+                to={`/admin/${activeSlug}/dashboard`}
                 className="flex flex-col items-center gap-1 p-2 rounded-xl min-w-[70px] text-sky-500/90 active:bg-zinc-800/50 active:text-sky-400 active:scale-95 transition-all duration-200"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
