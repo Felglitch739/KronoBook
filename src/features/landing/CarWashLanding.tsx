@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { MapPin, Clock, ShieldCheck, Droplets, Sparkles, ChevronRight, CheckCircle2, PlusCircle, CarFront, Wind } from 'lucide-react';
 import { type Barberia, type Servicio } from '../../types';
 
@@ -24,12 +24,12 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ barberia, servic
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 30, opacity: 0 },
     visible: { 
       y: 0, 
       opacity: 1,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
     }
   };
 

@@ -3,62 +3,62 @@ import { supabase } from '../../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-export const Login: React.FC = () => {
+export const Signup: React.FC = () => {
+  const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const navigate = useNavigate();
   const { hasBusiness } = useAuth();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        // Si ya tiene sesión, decidir a dónde ir
         if (hasBusiness === false) {
           navigate('/onboarding', { replace: true });
-        } else {
+        } else if (hasBusiness === true) {
           navigate('/admin/dashboard', { replace: true });
         }
       }
     });
   }, [navigate, hasBusiness]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
+    setSuccessMsg(null);
 
     try {
-      const { data: signInData, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            nombre,
+          }
+        }
       });
 
       if (error) {
-        setErrorMsg('Credenciales incorrectas o usuario no registrado.');
+        setErrorMsg(error.message || 'Ocurrió un error al registrarse.');
         setLoading(false);
         return;
       }
 
-      // Verificar si el usuario tiene negocio
-      const userId = signInData.user?.id;
-      if (userId) {
-        const { data: bizData } = await supabase
-          .from('barberias')
-          .select('id')
-          .eq('owner_id', userId)
-          .maybeSingle();
-
-        if (!bizData) {
-          navigate('/onboarding', { replace: true });
-        } else {
-          navigate('/admin/dashboard', { replace: true });
-        }
+      if (data.session) {
+        // Logged in automatically
+        navigate('/onboarding', { replace: true });
+      } else {
+        // Confirm email may be required depending on Supabase settings
+        setSuccessMsg('Registro exitoso. Revisa tu correo para confirmar tu cuenta (si es necesario), o inicia sesión.');
       }
     } catch (err) {
       console.error(err);
-      setErrorMsg('Ocurrió un error inesperado al iniciar sesión.');
+      setErrorMsg('Ocurrió un error inesperado al registrarse.');
+    } finally {
       setLoading(false);
     }
   };
@@ -66,11 +66,11 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0b0c0e] flex flex-col justify-center items-center px-4 relative overflow-hidden">
       {/* Background Ambient Glows */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-sky-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse duration-5000" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-zinc-800/20 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/4 right-1/4 translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-sky-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse duration-5000" />
+      <div className="absolute bottom-1/4 left-1/4 -translate-x-1/2 translate-y-1/2 w-96 h-96 bg-zinc-800/20 rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Login Card */}
-      <div className="max-w-md w-full bg-[#1e2326]/70 backdrop-blur-xl p-8 rounded-3xl border border-zinc-800/80 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden animate-scale-up group hover:border-zinc-700/50 transition-all duration-300">
+      {/* Signup Card */}
+      <div className="max-w-md w-full bg-[#1e2326]/70 backdrop-blur-xl p-8 rounded-3xl border border-zinc-800/80 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group hover:border-zinc-700/50 transition-all duration-300">
         
         {/* Top Accent Bar */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sky-600 via-sky-400 to-cyan-500 rounded-t-3xl" />
@@ -86,12 +86,12 @@ export const Login: React.FC = () => {
             KronoBook
           </h2>
           <p className="text-sm text-zinc-400 font-medium mt-1">
-            Panel de Administración Global
+            Crea tu cuenta de Administrador
           </p>
         </div>
 
         {errorMsg && (
-          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm p-4 rounded-2xl mb-6 animate-fade-in flex items-center gap-3">
+          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm p-4 rounded-2xl mb-6 flex items-center gap-3">
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
@@ -99,7 +99,37 @@ export const Login: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        {successMsg && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm p-4 rounded-2xl mb-6 flex items-center gap-3">
+            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="font-medium">{successMsg}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSignup} className="space-y-5">
+          <div>
+            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">
+              Nombre o Apodo
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-500">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                required
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 pl-11 pr-4 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-sky-500/80 focus:ring-4 focus:ring-sky-500/5 transition-all text-sm"
+                placeholder="Ej. Luis Mario"
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">
               Correo Electrónico
@@ -134,6 +164,7 @@ export const Login: React.FC = () => {
               <input
                 type="password"
                 required
+                minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-[#1e2326]/50 border border-zinc-800 rounded-xl py-3 pl-11 pr-4 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-sky-500/80 focus:ring-4 focus:ring-sky-500/5 transition-all text-sm"
@@ -145,7 +176,7 @@ export const Login: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full relative group bg-sky-500 hover:bg-sky-400 disabled:opacity-75 disabled:hover:bg-sky-500 text-zinc-950 font-bold py-3.5 px-4 rounded-xl transition-all duration-300 border border-sky-500/20 hover:border border-sky-500/30 active:scale-[0.98] overflow-hidden cursor-pointer flex justify-center items-center gap-2"
+            className="w-full relative group bg-sky-500 hover:bg-sky-400 disabled:opacity-75 disabled:hover:bg-sky-500 text-zinc-950 font-bold py-3.5 px-4 rounded-xl transition-all duration-300 border border-sky-500/20 hover:border border-sky-500/30 active:scale-[0.98] overflow-hidden cursor-pointer flex justify-center items-center gap-2 mt-2"
           >
             {/* Hover shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
@@ -156,19 +187,19 @@ export const Login: React.FC = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                <span>Cargando...</span>
+                <span>Registrando...</span>
               </>
             ) : (
-              <span>Iniciar Sesión</span>
+              <span>Crear cuenta</span>
             )}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-zinc-500 text-sm">
-            ¿No tienes cuenta?{' '}
-            <Link to="/admin/signup" className="text-sky-400 hover:text-sky-300 font-bold transition-colors">
-              Regístrate
+            ¿Ya tienes cuenta?{' '}
+            <Link to="/admin/login" className="text-sky-400 hover:text-sky-300 font-bold transition-colors">
+              Inicia sesión
             </Link>
           </p>
         </div>

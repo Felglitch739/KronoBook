@@ -5,6 +5,7 @@ import { CarWashLanding } from './features/landing/CarWashLanding';
 import { BookingFlow } from './features/agenda/BookingFlow';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { Login } from './features/auth/Login';
+import { Signup } from './features/auth/Signup';
 import { Onboarding } from './features/onboarding/Onboarding';
 import { KronoBookLanding } from './pages/KronoBookLanding';
 import { useBookings } from './hooks/useBookings';
@@ -141,6 +142,7 @@ function App() {
       } />
 
       <Route path="/admin/login" element={<Login />} />
+      <Route path="/admin/signup" element={<Signup />} />
       <Route path="/onboarding" element={<OnboardingGuard />} />
       <Route path="/admin/*" element={<AdminApp />} />
       {/* Rutas de tenants: /:slug y /:slug/reservar */}
