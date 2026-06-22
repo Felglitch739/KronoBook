@@ -6,9 +6,11 @@ import { Logo } from './Logo';
 interface NavbarProps {
   slug?: string;
   isAdmin?: boolean;
+  /** Slug del negocio del que el usuario logueado es owner */
+  ownerSlug?: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) => {
+export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin, ownerSlug }) => {
   const location = useLocation();
   const { slug: routeSlug } = useParams<{ slug?: string }>();
   const activeSlug = routeSlug || slug || 'demo';
@@ -26,6 +28,9 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) =>
 
   const hasSession = !!user;
   const userName = profile?.nombre || user?.user_metadata?.nombre || user?.email?.split('@')[0] || 'Admin';
+
+  // Solo mostramos el botón de admin si el usuario es owner del negocio que se está viendo
+  const isOwnBusiness = hasSession && !!ownerSlug && ownerSlug === activeSlug;
 
   return (
     <>
@@ -84,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) =>
               >
                 Reservar
               </Link>
-              {hasSession && (
+              {isOwnBusiness && (
                 <Link
                   to="/admin/dashboard"
                   className="px-4 py-2 rounded-lg text-sm font-bold text-sky-500 hover:text-zinc-950 bg-transparent hover:bg-sky-500 border border-sky-500/40 hover:border-sky-500 shadow-[inset_0_0_12px_rgba(14,165,233,0.05)] transition-all duration-300 flex items-center gap-1.5"
@@ -147,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({ slug, isAdmin: propIsAdmin }) =>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
               <span className="text-[10px] font-bold">Reservar</span>
             </Link>
-            {hasSession && (
+            {isOwnBusiness && (
               <Link
                 to="/admin/dashboard"
                 className="flex flex-col items-center gap-1 p-2 rounded-xl min-w-[70px] text-sky-500/90 active:bg-zinc-800/50 active:text-sky-400 active:scale-95 transition-all duration-200"

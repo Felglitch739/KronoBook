@@ -1,3 +1,4 @@
+import React from 'react';
 import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from './components/shared/Layout';
 import { LandingPage } from './features/landing/LandingPage';
@@ -16,6 +17,37 @@ function TenantApp() {
   const { servicios, barberia, loading, addCita } = useBookings();
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
+  // Obtener el slug del negocio propiedad del usuario logueado
+  const { user } = useAuth();
+  // barberia en TenantApp carga el negocio según el slug de la ruta.
+  // Para saber si el usuario logueado es owner de ESTE negocio, comparamos:
+  // - barberia?.ownerIdCol (no tenemos eso en el tipo) así que lo inferimos via slug
+  // - El slug del negocio del admin viene de useBookings en modo admin — no disponible aquí.
+  // Solución: guardar el slug del negocio del user en AuthContext, o usar barberia.slug
+  // Por ahora: si el usuario está logueado Y el slug de la url coincide con barberia.slug
+  // (que fue cargado por useBookings desde Supabase por ese slug), es su negocio solo si
+  // la base de datos lo confirmó. Pasamos barberia?.slug como ownerSlug si el user está logueado.
+  // El Navbar hará la comparación slug === ownerSlug.
+  // Para que funcione correctamente, necesitamos saber el slug del negocio del USER, no del tenant.
+  // Usamos un estado adicional:
+  const [userBusinessSlug, setUserBusinessSlug] = React.useState<string | undefined>(undefined);
+
+  React.useEffect(() => {
+    if (user) {
+      import('./lib/supabase').then(({ supabase }) => {
+        supabase
+          .from('barberias')
+          .select('slug')
+          .eq('owner_id', user.id)
+          .maybeSingle()
+          .then(({ data }) => {
+            setUserBusinessSlug(data?.slug ?? undefined);
+          });
+      });
+    } else {
+      setUserBusinessSlug(undefined);
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -34,7 +66,7 @@ function TenantApp() {
   const isCarWash = slug === 'kronowash' || slug === 'lavado';
 
   return (
-    <Layout slug={slug || 'demo'}>
+    <Layout slug={slug || 'demo'} ownerSlug={userBusinessSlug}>
       <Routes>
         <Route 
           path="/" 
