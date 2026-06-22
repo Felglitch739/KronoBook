@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
 import {
   MapPin, Clock, ShieldCheck, Droplets, Sparkles, ChevronRight,
   CheckCircle2, CarFront, Wind, Star, Phone, Zap, Award
@@ -35,9 +35,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servici
   const mainPackages = servicios.filter(s => !s.nombre.toLowerCase().includes('extra'));
   const extras = servicios.filter(s => s.nombre.toLowerCase().includes('extra'));
 
-  // Color palette
-  const blue = '#0ea5e9';
-  const cyan = '#22d3ee';
+  // Color palette (omitted unused blue/cyan for standard UI styling)
 
   const vehicleIcons: Record<number, React.ReactNode> = {
     0: <CarFront className="w-7 h-7" />,

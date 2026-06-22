@@ -14,6 +14,7 @@ import { mockBarberia, mockServicios } from './data/mockData';
 import { useAuth } from './context/AuthContext';
 
 function TenantApp() {
+  const { user } = useAuth();
   const { servicios, negocio, loading, addCita } = useBookings();
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
@@ -70,13 +71,13 @@ function TenantApp() {
           element={
             isCarWash ? (
               <CarWashLanding
-                barberia={activeNegocio}
+                negocio={activeNegocio}
                 servicios={activeServicios}
                 onBookClick={() => navigate(`/${slug}/reservar`)}
               />
             ) : (
               <LandingPage
-                barberia={activeNegocio}
+                negocio={activeNegocio}
                 servicios={activeServicios}
                 onBookClick={() => navigate(`/${slug}/reservar`)}
               />
@@ -156,8 +157,8 @@ function DashboardWrapper() {
       citas={citas} 
       servicios={activeServicios} 
       onUpdateStatus={updateCitaEstado} 
-      barberiaId={negocio?.id} 
-      barberiaName={negocio?.nombre}
+      negocioId={negocio?.id} 
+      negocioName={negocio?.nombre}
       onAddSuccess={refetch} 
       onDeleteService={eliminarServicio}
       onDeleteCita={eliminarCita}

@@ -55,7 +55,7 @@ import { Trash2, Plus } from 'lucide-react';
 interface ServicesManagerProps {
   servicios: Servicio[];
   onDeleteService: (id: string) => Promise<void>;
-  onAddService: (servicio: Omit<Servicio, 'id' | 'barberiaId'>) => Promise<Servicio>;
+  onAddService: (servicio: Omit<Servicio, 'id' | 'negocioId'>) => Promise<Servicio>;
 }
 
 export const ServicesManager: React.FC<ServicesManagerProps> = ({
