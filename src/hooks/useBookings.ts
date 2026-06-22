@@ -61,23 +61,10 @@ export const useBookings = () => {
             .maybeSingle();
 
           if (error || !data) {
-            if (currentSlug === 'kronowash' || currentSlug === 'lavado') {
-              currentBusiness = {
-                id: 'mock-kronowash-id',
-                nombre: 'KronoWash',
-                slug: currentSlug,
-                direccion: 'Servicio a Domicilio',
-                horario: 'Lunes a Domingo: 8:00 AM - 8:00 PM',
-                color_primario: '#0ea5e9',
-                color_secundario: '#10b981',
-                tema: 'dark'
-              };
-            } else {
-              if (slug) {
-                navigate('/404');
-              }
-              return;
+            if (slug) {
+              navigate('/404');
             }
+            return;
           } else {
             currentBusiness = data;
           }
@@ -97,28 +84,18 @@ export const useBookings = () => {
           });
 
           // Descargar los servicios vinculados a este negocio
-          const { data: srvData } = currentBusiness.id === 'mock-kronowash-id'
-            ? { data: [
-                { id: 'mock-srv-1', barberia_id: 'mock-kronowash-id', nombre: 'Detallado Básico - Autos (Sedán / Compactos)', precio: 400, duracion_minutos: 90, descripcion: 'Incluye lavado exterior con hidrolavadora, aspirado profundo y acabado en plásticos interiores.' },
-                { id: 'mock-srv-2', barberia_id: 'mock-kronowash-id', nombre: 'Detallado Básico - SUV (Camionetas de 2 filas)', precio: 500, duracion_minutos: 120, descripcion: 'Incluye lavado exterior con hidrolavadora, aspirado profundo y acabado en plásticos interiores.' },
-                { id: 'mock-srv-3', barberia_id: 'mock-kronowash-id', nombre: 'Detallado Básico - Pick-ups y Vans (3 filas)', precio: 600, duracion_minutos: 150, descripcion: 'Incluye lavado exterior con hidrolavadora, aspirado profundo y acabado en plásticos interiores.' },
-                { id: 'mock-srv-4', barberia_id: 'mock-kronowash-id', nombre: 'Extra: Restauración de Faros', precio: 150, duracion_minutos: 30, descripcion: 'Eliminación del tono amarillento y opaco para recuperar la claridad de tus luces.' },
-                { id: 'mock-srv-5', barberia_id: 'mock-kronowash-id', nombre: 'Extra: Remoción extrema de pelo de mascota', precio: 100, duracion_minutos: 30, descripcion: 'Para alfombras y asientos con exceso de pelo que requieren cepillado especial.' }
-              ] }
-            : await supabase
-              .from('servicios')
-              .select('*')
-              .eq('barberia_id', currentBusiness.id)
-              .order('precio', { ascending: true });
+          const { data: srvData } = await supabase
+            .from('servicios')
+            .select('*')
+            .eq('barberia_id', currentBusiness.id)
+            .order('precio', { ascending: true });
 
           // Descargar las citas vinculadas a este negocio
-          const { data: citasData } = currentBusiness.id === 'mock-kronowash-id'
-            ? { data: [] }
-            : await supabase
-              .from('citas')
-              .select('*')
-              .eq('barberia_id', currentBusiness.id)
-              .order('fecha', { ascending: false });
+          const { data: citasData } = await supabase
+            .from('citas')
+            .select('*')
+            .eq('barberia_id', currentBusiness.id)
+            .order('fecha', { ascending: false });
 
           if (srvData) {
             const formattedServicios: Servicio[] = srvData.map((data: any) => ({
@@ -179,25 +156,6 @@ export const useBookings = () => {
   const addCita = async (citaData: Omit<Cita, 'id' | 'estado' | 'barberiaId'>) => {
     if (!barberia) throw new Error("No barberia loaded");
     try {
-      if (barberia.id === 'mock-kronowash-id') {
-        const mockNewCita: Cita = {
-          id: `mock-cita-${Date.now()}`,
-          barberiaId: barberia.id,
-          servicioId: citaData.servicioId,
-          clienteNombre: citaData.clienteNombre,
-          clienteTelefono: citaData.clienteTelefono,
-          clienteEmail: citaData.clienteEmail || undefined,
-          fecha: citaData.fecha,
-          hora: citaData.hora,
-          estado: 'pendiente',
-          notas: citaData.notas || undefined,
-          propina: 0,
-          direccionServicio: citaData.direccionServicio
-        };
-        setCitas((prev) => [mockNewCita, ...prev]);
-        return mockNewCita;
-      }
-
       const newCitaInsert = {
         barberia_id: barberia.id,
         servicio_id: citaData.servicioId,
