@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sparkles, Clock } from 'lucide-react';
 import { type Negocio, type Servicio } from '../../types';
 import { themeConfig } from '../../config/themeConfig';
 
@@ -83,7 +84,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ negocio, servicios, on
               rounded-xl
               transition-all duration-500 ease-out
               text-base md:text-lg cursor-pointer
-              ${theme.buttonPrimary}
+              shadow-[0_0_30px_var(--color-primario)] hover:shadow-[0_0_50px_var(--color-primario)]
+              hover:-translate-y-1
             `}
             style={tema !== 'light' ? { backgroundColor: primary, color: primaryTextColor } : undefined}
           >
@@ -126,13 +128,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ negocio, servicios, on
                   p-6 md:p-8 flex flex-col h-full cursor-pointer
                 `}
               >
-                {/* Nombre del servicio con color primario del negocio */}
-                <h3
-                  className={`${theme.fontTitle} text-xl md:text-2xl font-black mb-3 leading-tight`}
-                  style={{ color: primary }}
-                >
-                  {servicio.nombre}
-                </h3>
+                {/* Header del servicio con icono sutil */}
+                <div className="flex items-start justify-between mb-4">
+                  <h3
+                    className={`${theme.fontTitle} text-xl md:text-2xl font-black leading-tight`}
+                    style={{ color: primary }}
+                  >
+                    {servicio.nombre}
+                  </h3>
+                  <div className="p-2 rounded-xl bg-[var(--color-primario)]/10 text-[var(--color-primario)] group-hover:bg-[var(--color-primario)]/20 transition-colors">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                </div>
                 <p className={`${theme.textMuted} mb-8 flex-grow leading-relaxed text-sm md:text-base`}>
                   {servicio.descripcion}
                 </p>
@@ -147,9 +154,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ negocio, servicios, on
                   <div className="text-right">
                     <span className="text-[10px] text-zinc-500 uppercase tracking-wider block mb-0.5 font-bold">Duración</span>
                     <span className={`text-sm font-black ${theme.title} ${theme.bg} px-3 py-1.5 border ${theme.border} rounded-lg flex items-center gap-1.5 transition-colors duration-300 group-hover:${theme.bgSecondary} group-hover:${theme.borderHover}`}>
-                      <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-125" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: primary }}>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
+                      <Clock className="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-110" style={{ color: primary }} />
                       {servicio.duracionMinutos} min
                     </span>
                   </div>
@@ -167,7 +172,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ negocio, servicios, on
               px-10 py-4 rounded-xl
               transition-all duration-500 ease-out
               text-sm cursor-pointer
-              ${theme.buttonSecondary}
+              shadow-md hover:shadow-lg hover:-translate-y-1
             `}
               style={tema !== 'elegant' ? { backgroundColor: secondary, color: '#fafafa' } : undefined}
             >

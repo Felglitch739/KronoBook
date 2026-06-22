@@ -126,9 +126,9 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servici
             {/* Trust badges */}
             <motion.div variants={fadeUp} className="mt-12 flex flex-wrap gap-6 items-center">
               {[
-                { icon: <Star className="w-4 h-4 fill-amber-400 text-amber-400" />, label: '4.9 ★ en Google' },
-                { icon: <ShieldCheck className="w-4 h-4 text-emerald-400" />, label: 'Sin rayones garantizado' },
-                { icon: <MapPin className="w-4 h-4 text-sky-400" />, label: 'Llegamos donde estás' },
+                { icon: <Star className="w-4 h-4 fill-amber-400 text-amber-400" />, label: 'Productos Premium' },
+                { icon: <ShieldCheck className="w-4 h-4 text-emerald-400" />, label: 'Atención Meticulosa' },
+                { icon: <MapPin className="w-4 h-4 text-sky-400" />, label: 'Servicio a Domicilio' },
               ].map((b, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-zinc-400">
                   {b.icon}
@@ -156,10 +156,10 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servici
       <section className="relative z-20 border-y border-white/5 bg-[#080d1a]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/5">
           {[
-            { value: '500+', label: 'Autos detallados' },
-            { value: '100%', label: 'Sin rayones' },
-            { value: '4.9★', label: 'Calificación promedio' },
-            { value: '2h', label: 'Tiempo promedio' },
+            { value: 'Domicilio', label: 'Llegamos a ti' },
+            { value: 'Premium', label: 'Productos de alta gama' },
+            { value: 'Detalle', label: 'Atención meticulosa' },
+            { value: 'Garantía', label: 'Sin rayones' },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -169,7 +169,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servici
               transition={{ delay: i * 0.1, duration: 0.6 }}
               className="text-center px-4 py-2"
             >
-              <div className="text-3xl font-black text-white mb-1">{stat.value}</div>
+              <div className="text-2xl md:text-3xl font-black text-white mb-1">{stat.value}</div>
               <div className="text-sm text-zinc-500 font-medium">{stat.label}</div>
             </motion.div>
           ))}
