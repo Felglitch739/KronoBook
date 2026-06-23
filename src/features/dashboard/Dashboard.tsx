@@ -7,6 +7,7 @@ import { ServicesManager } from '../../components/admin/ServicesManager';
 import { AddAppointmentModal } from '../../components/dashboard/AddAppointmentModal';
 import { DigitalReceiptModal } from '../../components/dashboard/DigitalReceiptModal';
 import { useAuth } from '../../context/AuthContext';
+import { usePushNotifications } from '../../hooks/usePushNotifications';
 
 interface QuickTransaction {
   id: string;
@@ -45,6 +46,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [justCreatedTx, setJustCreatedTx] = useState<QuickTransaction | null>(null);
   const { signOut } = useAuth();
+  const { isSupported, isSubscribed, permission, loading: pushLoading, subscribeToPush } = usePushNotifications();
 
   const fechaActual = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -170,6 +172,27 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
+      {/* Banner de Notificaciones Push */}
+      {isSupported && permission !== 'granted' && !isSubscribed && (
+        <div className="mb-6 p-4 bg-sky-950/40 border border-sky-500/30 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in-up">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-sky-500/20 rounded-lg text-sky-400">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+            </div>
+            <div>
+              <h4 className="text-white font-bold text-sm">Activar Notificaciones en este dispositivo</h4>
+              <p className="text-zinc-400 text-xs mt-0.5">Recibe alertas instantáneas cuando agenden nuevas citas.</p>
+            </div>
+          </div>
+          <button
+            onClick={subscribeToPush}
+            disabled={pushLoading}
+            className="px-4 py-2 bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-white font-bold rounded-lg text-sm transition-colors whitespace-nowrap"
+          >
+            {pushLoading ? 'Activando...' : 'Activar Ahora'}
+          </button>
+        </div>
+      )}
 
       {/* Contenido de la Pestaña */}
       <div className="animate-fade-in mt-6" key={activeTab}>
