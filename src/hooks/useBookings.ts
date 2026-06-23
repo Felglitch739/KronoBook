@@ -41,20 +41,16 @@ export const useBookings = () => {
             // Buscar el negocio por slug al que el usuario tiene acceso
             const { data: staffData } = await supabase
               .from('negocio_staff')
-              .select('negocio_id')
+              .select(`
+                negocio_id,
+                negocios (*)
+              `)
               .eq('user_id', user.id);
             
             if (staffData && staffData.length > 0) {
-              const negocioIds = staffData.map(s => s.negocio_id);
-              const { data: ownerData, error: ownerError } = await supabase
-                .from('negocios')
-                .select('*')
-                .eq('slug', slug)
-                .in('id', negocioIds)
-                .maybeSingle();
-
-              if (!ownerError && ownerData) {
-                currentBusiness = ownerData;
+              const matchedStaff = staffData.find((s: any) => s.negocios && s.negocios.slug === slug);
+              if (matchedStaff) {
+                currentBusiness = matchedStaff.negocios;
               }
             }
           }

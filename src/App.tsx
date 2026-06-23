@@ -25,19 +25,17 @@ function TenantApp() {
       import('./lib/supabase').then(async ({ supabase }) => {
         const { data: staffData } = await supabase
           .from('negocio_staff')
-          .select('negocio_id')
+          .select(`
+            negocio_id,
+            negocios (slug)
+          `)
           .eq('user_id', user.id);
           
         if (staffData && staffData.length > 0) {
-          const negocioIds = staffData.map(s => s.negocio_id);
-          const { data: negociosData } = await supabase
-            .from('negocios')
-            .select('slug')
-            .in('id', negocioIds);
-            
-          if (negociosData) {
-            setUserBusinessSlugs(negociosData.map(n => n.slug));
-          }
+          const slugs = staffData
+            .map((s: any) => s.negocios?.slug)
+            .filter(Boolean);
+          setUserBusinessSlugs(slugs);
         }
       });
     } else {
@@ -204,17 +202,22 @@ function SelectBusiness() {
       import('./lib/supabase').then(async ({ supabase }) => {
         const { data: staffData } = await supabase
           .from('negocio_staff')
-          .select('negocio_id')
+          .select(`
+            negocio_id,
+            negocios (
+              id,
+              nombre,
+              slug
+            )
+          `)
           .eq('user_id', user.id);
           
         if (staffData && staffData.length > 0) {
-          const negocioIds = staffData.map(s => s.negocio_id);
-          const { data: negociosData } = await supabase
-            .from('negocios')
-            .select('id, nombre, slug')
-            .in('id', negocioIds);
+          const negociosData = staffData
+            .map((s: any) => s.negocios)
+            .filter(Boolean);
             
-          if (negociosData) {
+          if (negociosData && negociosData.length > 0) {
             setNegocios(negociosData);
             if (negociosData.length === 1) {
               navigate(`/${negociosData[0].slug}/admin`, { replace: true });
