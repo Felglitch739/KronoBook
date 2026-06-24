@@ -213,8 +213,8 @@ export const useBookings = () => {
       const { error } = await supabase
         .from('citas')
         .update({ estado })
-        .eq('id', id)
-        .eq('negocio_id', negocio.id);
+        .eq('citas.id', id)
+        .eq('citas.negocio_id', negocio.id);
 
       if (error) {
         throw error;
@@ -239,7 +239,7 @@ export const useBookings = () => {
           color_primario: colorPrimario,
           color_secundario: colorSecundario
         })
-        .eq('id', negocio.id);
+        .eq('negocios.id', negocio.id);
 
       if (error) throw error;
 
@@ -262,8 +262,8 @@ export const useBookings = () => {
       const { error } = await supabase
         .from('servicios')
         .delete()
-        .eq('id', id)
-        .eq('negocio_id', negocio.id);
+        .eq('servicios.id', id)
+        .eq('servicios.negocio_id', negocio.id);
 
       if (error) throw error;
 
@@ -281,8 +281,8 @@ export const useBookings = () => {
       const { error } = await supabase
         .from('citas')
         .delete()
-        .eq('id', id)
-        .eq('negocio_id', negocio.id);
+        .eq('citas.id', id)
+        .eq('citas.negocio_id', negocio.id);
 
       if (error) throw error;
 
