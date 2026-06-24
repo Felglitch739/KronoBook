@@ -3,18 +3,24 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
+  try {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
 
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
 
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  } catch (error: any) {
+    console.error("Error convirtiendo VAPID key:", error);
+    alert("VAPID Conversion Error: " + error.message);
+    throw error;
   }
-  return outputArray;
 }
 
 export const usePushNotifications = () => {
@@ -63,8 +69,8 @@ export const usePushNotifications = () => {
 
       const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
       
-      // Temporarily using a dummy string if the env variable is missing, as requested
-      const activeVapidKey = vapidPublicKey || 'BKsS5-mG2N220Fk2Y_hD-8hY9O3L9R_p9L4aZ5k0e3H8N5tZ7wU8cE6R9V2Q5bL8D1K4F7X3V9X2V9X2V9X2V9A=';
+      // Limpiar el string para evitar saltos de linea o espacios
+      const activeVapidKey = vapidPublicKey ? vapidPublicKey.trim() : 'BKsS5-mG2N220Fk2Y_hD-8hY9O3L9R_p9L4aZ5k0e3H8N5tZ7wU8cE6R9V2Q5bL8D1K4F7X3V9X2V9X2V9X2V9A=';
 
       const registration = await navigator.serviceWorker.ready;
 
@@ -90,8 +96,9 @@ export const usePushNotifications = () => {
 
       setIsSubscribed(true);
       return true;
-    } catch (error) {
-      console.error('Error al suscribir a push:', error);
+    } catch (error: any) {
+      console.error('Error detallado de Push:', error);
+      alert("Error: " + (error.message || JSON.stringify(error)));
       setIsSubscribed(false);
       return false;
     } finally {
