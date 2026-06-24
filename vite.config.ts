@@ -11,6 +11,7 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
+      includeAssets: ['KronoBookLogo_192px.png', 'KronoBookLogo_512px.png'],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
       },
