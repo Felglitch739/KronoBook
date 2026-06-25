@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
 import {
   MapPin, Clock, ShieldCheck, Droplets, Sparkles, ChevronRight,
-  CheckCircle2, CarFront, Wind, Star, Phone, Zap, Award
+  CheckCircle2, CarFront, Wind, Star, Phone, Zap, Award, MessageCircle
 } from 'lucide-react';
 import { type Negocio, type Servicio } from '../../types';
 
@@ -115,11 +115,21 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, servici
               </button>
 
               <a
+                href="https://wa.me/528662040513?text=Hola,%20me%20gustar%C3%ADa%20solicitar%20informaci%C3%B3n%20sobre%20sus%20servicios%20de%20lavado."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 px-8 py-5 rounded-2xl border border-white/10 hover:border-emerald-500/40 bg-white/5 hover:bg-emerald-500/10 backdrop-blur-sm transition-all duration-300"
+              >
+                <MessageCircle className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                <span className="text-white font-bold text-base">Contáctanos</span>
+              </a>
+
+              <a
                 href="tel:+528662040513"
-                className="group flex items-center gap-3 px-8 py-5 rounded-2xl border border-white/10 hover:border-sky-500/40 bg-white/5 hover:bg-sky-500/10 backdrop-blur-sm transition-all duration-300"
+                className="group flex items-center gap-3 px-8 py-5 rounded-2xl border border-white/10 hover:border-sky-500/40 bg-white/5 hover:bg-sky-500/10 backdrop-blur-sm transition-all duration-300 hidden xl:flex"
               >
                 <Phone className="w-5 h-5 text-sky-400 group-hover:scale-110 transition-transform" />
-                <span className="text-white font-bold text-base">Llamar Ahora</span>
+                <span className="text-white font-bold text-base">Llamar</span>
               </a>
             </motion.div>
 
