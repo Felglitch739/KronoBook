@@ -531,10 +531,10 @@ export const KronoBookLanding: React.FC = () => {
               </div>
             </Link>
 
-            {/* Demo Kronowash */}
+            {/* Demo DualFX */}
             <Link
-              to="/kronowash"
-              className="w-full rounded-2xl border border-white/10 bg-[#16191e]/40 backdrop-blur-md shadow-xl overflow-hidden group hover:border-cyan-500/40 hover:shadow-[0_20px_60px_rgba(34,211,238,0.15)] transition-all duration-700 ease-out hover:-translate-y-3 block"
+              to="/dualfx"
+              className="w-full rounded-2xl border border-white/10 bg-[#16191e]/40 backdrop-blur-md shadow-xl overflow-hidden group hover:border-[#6E3BFF]/40 hover:shadow-[0_20px_60px_rgba(110,59,255,0.15)] transition-all duration-700 ease-out hover:-translate-y-3 block"
             >
               <div className="bg-[#16191e] px-4 py-3 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -546,7 +546,7 @@ export const KronoBookLanding: React.FC = () => {
                   <svg className="w-3 h-3 text-zinc-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  <span className="truncate">kronobook.com/kronowash</span>
+                  <span className="truncate">kronobook.com/dualfx</span>
                 </div>
                 <div className="flex gap-1.5 opacity-0 md:opacity-100">
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
@@ -554,12 +554,14 @@ export const KronoBookLanding: React.FC = () => {
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
                 </div>
               </div>
-              <div className="relative overflow-hidden aspect-video bg-[#050914] flex flex-col items-center justify-center text-center p-6">
-                <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&q=80&w=1000")' }}></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050914] to-transparent z-0"></div>
+              <div className="relative overflow-hidden aspect-video bg-[#111111] flex flex-col items-center justify-center text-center p-6">
+                <div className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-luminosity transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=1000")' }}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111111] to-transparent z-0"></div>
+                {/* Purple ambient glow */}
+                <div className="absolute top-1/4 right-1/4 w-40 h-40 bg-[#6E3BFF]/10 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="relative z-10">
-                  <div className="text-cyan-400 font-black text-2xl tracking-tight mb-2 drop-shadow-lg">Kronowash</div>
-                  <div className="text-zinc-300 text-xs font-semibold tracking-widest uppercase bg-white/10 backdrop-blur px-3 py-1 rounded-full border border-white/10">Detallado Automotriz</div>
+                  <div className="text-white font-black text-2xl tracking-tight mb-2 drop-shadow-lg" style={{ fontFamily: 'Outfit, sans-serif' }}>Dual<span className="text-[#6E3BFF]">FX</span></div>
+                  <div className="text-zinc-300 text-xs font-semibold tracking-widest uppercase bg-white/10 backdrop-blur px-3 py-1 rounded-full border border-white/10">Detailing Automotriz</div>
                 </div>
               </div>
             </Link>

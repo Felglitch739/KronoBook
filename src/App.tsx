@@ -59,7 +59,7 @@ function TenantApp() {
   const activeServicios = negocio ? servicios : mockServicios;
 
   // Check if it's the custom car wash partition
-  const isCarWash = slug === 'kronowash' || slug === 'lavado';
+  const isCarWash = slug === 'dualfx' || slug === 'kronowash' || slug === 'lavado';
 
   return (
     <Layout slug={slug || 'demo'} isStaffForCurrentSlug={isStaffForCurrentSlug}>
