@@ -25,22 +25,6 @@ const fadeUp: Variants = {
   })
 };
 
-const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    transition: { duration: 1, delay, ease: 'easeOut' }
-  })
-};
-
-const scaleIn: Variants = {
-  hidden: { scale: 0.88, opacity: 0 },
-  visible: (delay: number = 0) => ({
-    scale: 1, opacity: 1,
-    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }
-  })
-};
-
 const slideInLeft: Variants = {
   hidden: { x: -60, opacity: 0 },
   visible: (delay: number = 0) => ({
@@ -332,7 +316,7 @@ const Marquee: React.FC<{ items: string[] }> = ({ items }) => {
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT — DualFX Landing Page
    ═══════════════════════════════════════════════════ */
-export const CarWashLanding: React.FC<CarWashLandingProps> = ({ negocio, onBookClick }) => {
+export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
