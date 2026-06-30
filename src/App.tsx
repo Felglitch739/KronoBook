@@ -62,7 +62,12 @@ function TenantApp() {
   const isCarWash = slug === 'dualfx' || slug === 'kronowash' || slug === 'lavado';
 
   return (
-    <Layout slug={slug || 'demo'} isStaffForCurrentSlug={isStaffForCurrentSlug}>
+    <Layout 
+      slug={slug || 'demo'} 
+      isStaffForCurrentSlug={isStaffForCurrentSlug}
+      hideNavbar={isCarWash}
+      hideFooter={isCarWash}
+    >
       <Routes>
         <Route 
           path="/" 

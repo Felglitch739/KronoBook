@@ -173,10 +173,12 @@ interface ServiceCardProps {
   onBookClick: () => void;
   accent?: boolean;
   index: number;
+  price?: string;
+  duration?: string;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
-  icon, title, description, features, ctaLabel, onBookClick, accent = false, index
+  icon, title, description, features, ctaLabel, onBookClick, accent = false, index, price, duration
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -228,7 +230,16 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           {icon}
         </motion.div>
 
-        <h3 className="text-xl md:text-2xl font-display font-semibold mb-4 tracking-tight group-hover:text-white transition-colors duration-500">{title}</h3>
+        <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 tracking-tight group-hover:text-white transition-colors duration-500">{title}</h3>
+        
+        {(price || duration) && (
+          <div className="flex items-center gap-4 mb-4 text-xs font-semibold uppercase tracking-widest text-dfx-purple/90">
+            {price && <span>Desde {price}</span>}
+            {price && duration && <span className="w-1 h-1 rounded-full bg-white/20" />}
+            {duration && <span>{duration}</span>}
+          </div>
+        )}
+
         <p className="text-dfx-offwhite/50 text-sm leading-relaxed mb-8 flex-grow">{description}</p>
 
         <ul className="space-y-3.5 mb-10">
@@ -317,6 +328,42 @@ const Marquee: React.FC<{ items: string[] }> = ({ items }) => {
    MAIN COMPONENT — DualFX Landing Page
    ═══════════════════════════════════════════════════ */
 export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) => {
+  type VehicleType = 'Sedán' | 'SUV' | 'Pick-Up';
+  const [activeVehicle, setActiveVehicle] = useState<VehicleType>('Sedán');
+
+  const vehicleData = {
+    'Sedán': {
+      exterior: {
+        price: '$450', duration: '1.5 - 2 hrs',
+        desc: 'Descontaminación de carrocería, rines y pasos de rueda con espumas de pH neutro. Ideal para compactos.',
+      },
+      interior: {
+        price: '$550', duration: '2 - 3 hrs',
+        desc: 'Aspirado de cabina, limpieza con vapor de polímeros y textiles en espacios estándar. Protección UV.',
+      }
+    },
+    'SUV': {
+      exterior: {
+        price: '$650', duration: '2 - 2.5 hrs',
+        desc: 'Limpieza intensiva para dimensiones medianas/grandes. Descontaminación profunda de tolvas y chasis.',
+      },
+      interior: {
+        price: '$750', duration: '3 - 4 hrs',
+        desc: 'Aspirado profundo de 3 filas de asientos y carga. Desinfección integral con vapor y acondicionador.',
+      }
+    },
+    'Pick-Up': {
+      exterior: {
+        price: '$750', duration: '2.5 - 3 hrs',
+        desc: 'Lavado especializado de batea y carrocería. Tratamiento de plásticos exteriores y eliminación de lodo pesado.',
+      },
+      interior: {
+        price: '$650', duration: '2.5 - 3 hrs',
+        desc: 'Limpieza ruda de cabina, tapetes y textiles. Restauración de plásticos interiores expuestos al uso rudo.',
+      }
+    }
+  };
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -687,7 +734,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
       <AnimatedSection id="servicios" className="py-24 md:py-40 px-5 md:px-10 bg-dfx-matte relative z-20">
         <div className="max-w-7xl mx-auto">
           {/* Section header */}
-          <div className="text-center mb-16 md:mb-24">
+          <div className="text-center mb-10 md:mb-16">
             <motion.p variants={fadeUp} custom={0} className="text-dfx-purple text-[11px] font-semibold tracking-[0.2em] uppercase mb-5">
               Servicios
             </motion.p>
@@ -700,33 +747,61 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             </motion.p>
           </div>
 
+          {/* Vehicle Type Tabs */}
+          <motion.div variants={fadeUp} custom={0.3} className="flex justify-center mb-16">
+            <div className="inline-flex bg-[#16191e]/80 backdrop-blur border border-white/[0.06] rounded-full p-1.5 shadow-xl">
+              {(['Sedán', 'SUV', 'Pick-Up'] as VehicleType[]).map(type => (
+                <button
+                  key={type}
+                  onClick={() => setActiveVehicle(type)}
+                  className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+                    activeVehicle === type ? 'text-white' : 'text-dfx-offwhite/50 hover:text-dfx-offwhite/80'
+                  }`}
+                >
+                  {activeVehicle === type && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-dfx-purple rounded-full shadow-[0_0_15px_rgba(110,59,255,0.4)]"
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    />
+                  )}
+                  <span className="relative z-10">{type}</span>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
           {/* Service cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
             <ServiceCard
               icon={<Droplets className="w-5 h-5" />}
               title="Detailing Exterior"
-              description="Descontaminación de carrocería, rines y pasos de rueda con espumas de pH neutro y técnica de dos cubetas. Secado por aire comprimido y microfibras de grado profesional."
+              description={vehicleData[activeVehicle].exterior.desc}
+              price={vehicleData[activeVehicle].exterior.price}
+              duration={vehicleData[activeVehicle].exterior.duration}
               features={[
                 'Lavado sin contacto directo',
                 'Descontaminación de rines y llantas',
                 'Secado seguro anti-rayaduras',
                 'Sellador rápido de protección',
               ]}
-              ctaLabel="Solicitar Exterior"
+              ctaLabel={`Solicitar Exterior (${activeVehicle})`}
               onBookClick={onBookClick}
               index={0}
             />
             <ServiceCard
               icon={<Wind className="w-5 h-5" />}
               title="Detailing Interior"
-              description="Aspirado industrial de cabina completa, limpieza con vapor de polímeros y textiles. Desinfección de conductos de aire y protección UV mate en todas las superficies."
+              description={vehicleData[activeVehicle].interior.desc}
+              price={vehicleData[activeVehicle].interior.price}
+              duration={vehicleData[activeVehicle].interior.duration}
               features={[
                 'Aspirado intensivo de cabina',
                 'Limpieza de plásticos y viniles',
                 'Tratamiento UV mate en tablero',
                 'Acondicionamiento de asientos',
               ]}
-              ctaLabel="Solicitar Interior"
+              ctaLabel={`Solicitar Interior (${activeVehicle})`}
               onBookClick={onBookClick}
               accent
               index={1}
