@@ -4,7 +4,7 @@ import {
   useSpring, AnimatePresence, type Variants 
 } from 'framer-motion';
 import { 
-  MapPin, Phone, Droplets, Wind, CheckCircle2, ArrowRight, 
+  MapPin, Phone, Droplets, Wind, ArrowRight, 
   Shield, Gem, ChevronDown, Menu, X, MessageCircle, ArrowUpRight,
   Car, Truck, Clock, Check
 } from 'lucide-react';
