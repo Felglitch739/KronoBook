@@ -92,7 +92,7 @@ const AnimatedCounter: React.FC<{ value: string; label: string }> = ({ value, la
         initial={{ opacity: 0, y: 10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="text-[10px] uppercase tracking-[0.2em] text-dfx-offwhite/35 font-medium"
+        className="text-[10px] uppercase tracking-[0.2em] text-tenant-text/35 font-medium"
       >
         {label}
       </motion.div>
@@ -198,7 +198,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       custom={index * 0.15}
       whileHover={{ y: -6, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
       onMouseMove={handleMouseMove}
-      className="group relative bg-dfx-graphite rounded-xl p-8 lg:p-10 border border-white/[0.06] hover:border-dfx-purple/30 transition-all duration-700 flex flex-col overflow-hidden cursor-pointer"
+      className="group relative bg-tenant-card rounded-xl p-8 lg:p-10 border border-white/[0.06] hover:border-tenant-primary/30 transition-all duration-700 flex flex-col overflow-hidden cursor-pointer"
     >
       {/* Radial glow following mouse */}
       <motion.div
@@ -214,18 +214,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: index * 0.2 }}
-        className={`absolute top-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-transparent ${accent ? 'via-dfx-purple/60' : 'via-white/10'} to-transparent`}
+        className={`absolute top-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-transparent ${accent ? 'via-tenant-primary/60' : 'via-white/10'} to-transparent`}
       />
 
       {/* Ambient corner glow */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-dfx-purple/0 group-hover:bg-dfx-purple/[0.06] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.06] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full">
         {/* Icon with pulse on hover */}
         <motion.div
           whileHover={{ scale: 1.1, rotate: 3 }}
           transition={{ type: 'spring', stiffness: 300 }}
-          className="w-14 h-14 bg-dfx-matte rounded-xl flex items-center justify-center mb-8 border border-white/[0.06] text-dfx-purple group-hover:border-dfx-purple/20 group-hover:shadow-[0_0_20px_rgba(110,59,255,0.15)] transition-all duration-700"
+          className="w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center mb-8 border border-white/[0.06] text-tenant-primary group-hover:border-tenant-primary/20 group-hover:shadow-[0_0_20px_rgba(var(--tenant-primary),0.15)] transition-all duration-700"
         >
           {icon}
         </motion.div>
@@ -233,14 +233,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 tracking-tight group-hover:text-white transition-colors duration-500">{title}</h3>
         
         {(price || duration) && (
-          <div className="flex items-center gap-4 mb-4 text-xs font-semibold uppercase tracking-widest text-dfx-purple/90">
+          <div className="flex items-center gap-4 mb-4 text-xs font-semibold uppercase tracking-widest text-tenant-primary/90">
             {price && <span>Desde {price}</span>}
             {price && duration && <span className="w-1 h-1 rounded-full bg-white/20" />}
             {duration && <span>{duration}</span>}
           </div>
         )}
 
-        <p className="text-dfx-offwhite/50 text-sm leading-relaxed mb-8 flex-grow">{description}</p>
+        <p className="text-tenant-text/50 text-sm leading-relaxed mb-8 flex-grow">{description}</p>
 
         <ul className="space-y-3.5 mb-10">
           {features.map((item, i) => (
@@ -250,9 +250,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 + i * 0.08, duration: 0.5 }}
-              className="flex items-start gap-3 text-sm text-dfx-offwhite/60 group-hover:text-dfx-offwhite/80 transition-colors duration-500"
+              className="flex items-start gap-3 text-sm text-tenant-text/60 group-hover:text-tenant-text/80 transition-colors duration-500"
             >
-              <CheckCircle2 className="w-4 h-4 text-dfx-purple/70 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-tenant-primary/70 mt-0.5 flex-shrink-0" />
               <span>{item}</span>
             </motion.li>
           ))}
@@ -262,8 +262,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           onClick={onBookClick}
           className={`w-full py-4 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all duration-500 active:scale-[0.97] group/btn relative overflow-hidden
             ${accent
-              ? 'bg-dfx-purple hover:bg-[#5d30e6] text-white shadow-lg shadow-dfx-purple/15 hover:shadow-dfx-purple/30'
-              : 'border border-white/15 hover:border-dfx-purple/50 hover:bg-dfx-purple/5 text-dfx-offwhite hover:text-white'
+              ? 'bg-tenant-primary hover:bg-[#5d30e6] text-white shadow-lg shadow-tenant-primary/15 hover:shadow-tenant-primary/30'
+              : 'border border-white/15 hover:border-tenant-primary/50 hover:bg-tenant-primary/5 text-tenant-text hover:text-white'
             }`}
         >
           {/* Button shine effect */}
@@ -281,7 +281,7 @@ const FloatingParticles: React.FC = () => (
     {[...Array(6)].map((_, i) => (
       <motion.div
         key={i}
-        className="absolute w-1 h-1 rounded-full bg-dfx-purple/20"
+        className="absolute w-1 h-1 rounded-full bg-tenant-primary/20"
         style={{
           left: `${15 + i * 15}%`,
           top: `${20 + (i % 3) * 25}%`,
@@ -306,16 +306,16 @@ const FloatingParticles: React.FC = () => (
 const Marquee: React.FC<{ items: string[] }> = ({ items }) => {
   const doubled = [...items, ...items];
   return (
-    <div className="overflow-hidden py-6 border-y border-white/[0.04] bg-dfx-matte/50 backdrop-blur">
+    <div className="overflow-hidden py-6 border-y border-white/[0.04] bg-tenant-background/50 backdrop-blur">
       <motion.div
         className="flex gap-12 whitespace-nowrap"
         animate={{ x: ['0%', '-50%'] }}
         transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
       >
         {doubled.map((item, i) => (
-          <span key={i} className="text-[11px] uppercase tracking-[0.3em] text-dfx-offwhite/15 font-semibold flex items-center gap-12">
+          <span key={i} className="text-[11px] uppercase tracking-[0.3em] text-tenant-text/15 font-semibold flex items-center gap-12">
             {item}
-            <span className="w-1.5 h-1.5 rounded-full bg-dfx-purple/30" />
+            <span className="w-1.5 h-1.5 rounded-full bg-tenant-primary/30" />
           </span>
         ))}
       </motion.div>
@@ -385,7 +385,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
   ];
 
   return (
-    <div className="min-h-screen bg-dfx-matte text-dfx-white font-sans overflow-x-hidden selection:bg-dfx-purple/30 selection:text-white">
+    <div className="min-h-screen bg-tenant-background text-tenant-text font-sans overflow-x-hidden selection:bg-tenant-primary/30 selection:text-white">
 
       {/* ═══════════════ NAVBAR ═══════════════ */}
       <motion.nav
@@ -394,46 +394,48 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'backdrop-blur-2xl bg-dfx-matte/80 border-b border-white/[0.06] shadow-lg shadow-black/20'
+            ? 'backdrop-blur-2xl bg-tenant-background/80 border-b border-white/[0.06] shadow-lg shadow-black/20'
             : 'bg-transparent border-b border-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 md:px-10 flex items-center justify-between h-16 md:h-[72px]">
+        <div className="max-w-7xl mx-auto px-5 md:px-10 flex items-center justify-between h-16 md:h-[72px] w-full">
           {/* Logo with hover effect */}
           <motion.a 
             href="#" 
-            className="flex items-center gap-1.5 group"
+            className="flex items-center gap-1.5 group w-1/3"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             <span className="text-[22px] font-display font-bold tracking-tight text-white">
-              Dual<span className="text-dfx-purple group-hover:drop-shadow-[0_0_8px_rgba(110,59,255,0.5)] transition-all duration-500">FX</span>
+              Dual<span className="text-tenant-primary group-hover:drop-shadow-[0_0_8px_rgba(var(--tenant-primary),0.5)] transition-all duration-500">FX</span>
             </span>
           </motion.a>
 
           {/* Desktop links with underline animation */}
-          <div className="hidden md:flex items-center gap-10 text-[13px] font-medium text-dfx-offwhite/60 tracking-wide">
+          <div className="hidden md:flex items-center justify-center gap-10 text-[13px] font-medium text-tenant-text/60 tracking-wide w-1/3">
             {navLinks.map(l => (
               <a key={l.href} href={l.href} className="relative group py-2 hover:text-white transition-colors duration-300">
                 {l.label}
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-dfx-purple group-hover:w-full transition-all duration-300" />
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-tenant-primary group-hover:w-full transition-all duration-300" />
               </a>
             ))}
           </div>
 
           {/* Desktop CTA */}
-          <MagneticButton
+          <div className="hidden md:flex justify-end w-1/3">
+            <MagneticButton
             onClick={onBookClick}
-            className="hidden md:inline-flex items-center gap-2 bg-dfx-purple text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold hover:bg-[#5d30e6] transition-all duration-300 shadow-lg shadow-dfx-purple/15 hover:shadow-[0_4px_25px_rgba(110,59,255,0.35)] active:scale-[0.97]"
+            className="hidden md:inline-flex items-center gap-2 bg-tenant-primary text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold hover:opacity-90 transition-all duration-300 shadow-lg shadow-tenant-primary/15 hover:shadow-[0_4px_25px_rgba(var(--tenant-primary),0.35)] active:scale-[0.97]"
           >
             Reservar Cita
           </MagneticButton>
+          </div>
 
           {/* Mobile hamburger */}
           <motion.button 
             whileTap={{ scale: 0.9 }}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-            className="md:hidden p-2 text-dfx-offwhite"
+            className="md:hidden p-2 text-tenant-text"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </motion.button>
@@ -447,7 +449,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="md:hidden overflow-hidden bg-dfx-matte/98 backdrop-blur-2xl border-t border-white/[0.04]"
+              className="md:hidden overflow-hidden bg-tenant-background/98 backdrop-blur-2xl border-t border-white/[0.04]"
             >
               <div className="px-5 py-8 flex flex-col gap-6">
                 {navLinks.map((l, i) => (
@@ -458,10 +460,10 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-dfx-offwhite/80 text-lg font-medium hover:text-white transition-colors flex items-center justify-between"
+                    className="text-tenant-text/80 text-lg font-medium hover:text-white transition-colors flex items-center justify-between"
                   >
                     {l.label}
-                    <ArrowUpRight className="w-4 h-4 text-dfx-purple/50" />
+                    <ArrowUpRight className="w-4 h-4 text-tenant-primary/50" />
                   </motion.a>
                 ))}
                 <motion.button
@@ -469,7 +471,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                   onClick={() => { onBookClick(); setMobileMenuOpen(false); }}
-                  className="w-full bg-dfx-purple text-white py-4 rounded-xl text-sm font-semibold mt-4 shadow-lg shadow-dfx-purple/20"
+                  className="w-full bg-tenant-primary text-white py-4 rounded-xl text-sm font-semibold mt-4 shadow-lg shadow-tenant-primary/20"
                 >
                   Reservar Cita
                 </motion.button>
@@ -484,7 +486,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
       <section ref={heroRef} className="relative min-h-[100svh] flex items-center pt-20 overflow-hidden">
         {/* Parallax background */}
         <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-dfx-matte" />
+          <div className="absolute inset-0 bg-tenant-background" />
           {/* Photo layer */}
           <motion.div
             initial={{ scale: 1.1 }}
@@ -500,7 +502,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               opacity: [0.06, 0.1, 0.06]
             }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-dfx-purple blur-[180px]"
+            className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-tenant-primary blur-[180px]"
           />
           <motion.div
             animate={{
@@ -508,7 +510,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               opacity: [0.03, 0.06, 0.03]
             }}
             transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-            className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-dfx-purple blur-[150px]"
+            className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-tenant-primary blur-[150px]"
           />
           {/* Grid pattern overlay */}
           <div 
@@ -519,7 +521,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             }}
           />
           {/* Dark gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-dfx-matte/20 via-dfx-matte/50 to-dfx-matte" />
+          <div className="absolute inset-0 bg-gradient-to-b from-tenant-background/20 via-tenant-background/50 to-tenant-background" />
         </motion.div>
 
         <FloatingParticles />
@@ -535,13 +537,13 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="w-10 h-px bg-dfx-purple origin-left"
+                className="w-10 h-px bg-tenant-primary origin-left"
               />
               <motion.span
                 initial={{ opacity: 0, letterSpacing: '0.5em' }}
                 animate={{ opacity: 1, letterSpacing: '0.2em' }}
                 transition={{ duration: 1, delay: 0.6 }}
-                className="text-dfx-purple text-[11px] md:text-xs font-semibold uppercase"
+                className="text-tenant-primary text-[11px] md:text-xs font-semibold uppercase"
               >
                 Detailing Automotriz Premium
               </motion.span>
@@ -557,21 +559,21 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   <CharReveal 
                     text="automotriz." 
                     delay={0.9}
-                    className="text-transparent bg-clip-text bg-gradient-to-r from-dfx-purple via-[#9b6cff] to-dfx-purple"
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-tenant-primary to-purple-400"
                   />
                   {/* Animated underline */}
                   <motion.span
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     transition={{ duration: 0.8, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-dfx-purple/0 via-dfx-purple/50 to-dfx-purple/0 origin-left"
+                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-tenant-primary/0 via-tenant-primary/50 to-tenant-primary/0 origin-left"
                   />
                 </span>
               </span>
             </motion.h1>
 
             {/* Subhead */}
-            <motion.p variants={fadeUp} custom={0.35} className="text-base md:text-lg text-dfx-offwhite/50 max-w-xl leading-relaxed mb-10">
+            <motion.p variants={fadeUp} custom={0.35} className="text-base md:text-lg text-tenant-text/50 max-w-xl leading-relaxed mb-10">
               No somos un autolavado. Somos precisión, artesanía y tecnología — diseñados para restaurar y proteger la estética de tu vehículo.
             </motion.p>
 
@@ -579,7 +581,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             <motion.div variants={fadeUp} custom={0.5} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <MagneticButton
                 onClick={onBookClick}
-                className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-dfx-purple text-white font-semibold text-sm rounded-xl shadow-xl shadow-dfx-purple/20 hover:shadow-[0_8px_40px_rgba(110,59,255,0.4)] hover:bg-[#5d30e6] transition-all duration-500 active:scale-[0.97] relative overflow-hidden"
+                className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-tenant-primary text-white font-semibold text-sm rounded-xl shadow-xl shadow-tenant-primary/20 hover:shadow-[0_8px_40px_rgba(var(--tenant-primary),0.4)] hover:bg-[#5d30e6] transition-all duration-500 active:scale-[0.97] relative overflow-hidden"
               >
                 {/* Shine sweep */}
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -590,7 +592,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               </MagneticButton>
               <a
                 href="#filosofia"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/10 text-dfx-offwhite/70 font-medium text-sm rounded-xl hover:bg-white/[0.03] hover:border-white/20 hover:text-white transition-all duration-500"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/10 text-tenant-text/70 font-medium text-sm rounded-xl hover:bg-white/[0.03] hover:border-white/20 hover:text-white transition-all duration-500"
               >
                 Conoce el proceso
               </a>
@@ -608,9 +610,9 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2 + i * 0.15, duration: 0.5 }}
-                  className="flex items-center gap-2 text-[11px] md:text-xs text-dfx-offwhite/30 font-medium tracking-wide uppercase"
+                  className="flex items-center gap-2 text-[11px] md:text-xs text-tenant-text/30 font-medium tracking-wide uppercase"
                 >
-                  <span className="text-dfx-purple/60">{pill.icon}</span>
+                  <span className="text-tenant-primary/60">{pill.icon}</span>
                   {pill.label}
                 </motion.div>
               ))}
@@ -629,7 +631,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             animate={{ y: [0, 6, 0] }}
             transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
           >
-            <ChevronDown className="w-5 h-5 text-dfx-offwhite/50" />
+            <ChevronDown className="w-5 h-5 text-tenant-text/50" />
           </motion.div>
         </motion.div>
       </section>
@@ -640,14 +642,14 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
 
 
       {/* ═══════════════ PHILOSOPHY ═══════════════ */}
-      <AnimatedSection id="filosofia" className="py-24 md:py-40 px-5 md:px-10 bg-dfx-matte relative z-20">
+      <AnimatedSection id="filosofia" className="py-24 md:py-40 px-5 md:px-10 bg-tenant-background relative z-20">
         <FloatingParticles />
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
             {/* Text column */}
             <div>
-              <motion.p variants={fadeUp} custom={0} className="text-dfx-purple text-[11px] font-semibold tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
-                <motion.span variants={lineReveal} className="w-8 h-px bg-dfx-purple origin-left" />
+              <motion.p variants={fadeUp} custom={0} className="text-tenant-primary text-[11px] font-semibold tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
+                <motion.span variants={lineReveal} className="w-8 h-px bg-tenant-primary origin-left" />
                 Nuestra Filosofía
               </motion.p>
               
@@ -655,18 +657,18 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 Donde la ingeniería <br className="hidden md:block" />
                 se encuentra con el{' '}
                 <span className="relative inline-block">
-                  <span className="text-dfx-purple">detalle.</span>
+                  <span className="text-tenant-primary">detalle.</span>
                   <motion.span
                     variants={lineReveal}
-                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-dfx-purple/30 origin-left"
+                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-tenant-primary/30 origin-left"
                   />
                 </span>
               </motion.h2>
               
-              <motion.p variants={fadeUp} custom={0.25} className="text-dfx-offwhite/45 text-base leading-[1.8] mb-5">
+              <motion.p variants={fadeUp} custom={0.25} className="text-tenant-text/45 text-base leading-[1.8] mb-5">
                 Cada vehículo merece un trato meticuloso. No vendemos "lavados" — aplicamos técnicas de detailing profesional apoyadas por herramientas de precisión y productos de grado clínico.
               </motion.p>
-              <motion.p variants={fadeUp} custom={0.35} className="text-dfx-offwhite/45 text-base leading-[1.8] mb-14">
+              <motion.p variants={fadeUp} custom={0.35} className="text-tenant-text/45 text-base leading-[1.8] mb-14">
                 El resultado es una restauración visual profunda: eliminamos contaminantes y devolvemos el brillo original sin comprometer la integridad de la pintura.
               </motion.p>
 
@@ -699,7 +701,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               </motion.div>
               
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-dfx-matte via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-tenant-background via-transparent to-transparent pointer-events-none" />
               
               {/* Corner info */}
               <motion.div
@@ -710,15 +712,15 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 className="absolute bottom-6 left-6 right-6 flex items-end justify-between pointer-events-none"
               >
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.25em] text-dfx-offwhite/25 font-medium mb-1">Resultado</div>
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-tenant-text/25 font-medium mb-1">Resultado</div>
                   <div className="text-sm font-display font-semibold text-white/70">Acabado de Exhibición</div>
                 </div>
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="w-8 h-8 rounded-full border border-dfx-purple/30 flex items-center justify-center"
+                  className="w-8 h-8 rounded-full border border-tenant-primary/30 flex items-center justify-center"
                 >
-                  <div className="w-2 h-2 rounded-full bg-dfx-purple/60" />
+                  <div className="w-2 h-2 rounded-full bg-tenant-primary/60" />
                 </motion.div>
               </motion.div>
 
@@ -730,83 +732,87 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
       </AnimatedSection>
 
 
-      {/* ═══════════════ SERVICES ═══════════════ */}
-      <AnimatedSection id="servicios" className="py-24 md:py-40 px-5 md:px-10 bg-dfx-matte relative z-20">
-        <div className="max-w-7xl mx-auto">
-          {/* Section header */}
-          <div className="text-center mb-10 md:mb-16">
-            <motion.p variants={fadeUp} custom={0} className="text-dfx-purple text-[11px] font-semibold tracking-[0.2em] uppercase mb-5">
-              Servicios
-            </motion.p>
-            <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5">
-              Fundamentos del Cuidado
-            </motion.h2>
-            <motion.div variants={lineReveal} className="w-16 h-px bg-dfx-purple mx-auto mb-6 origin-center" />
-            <motion.p variants={fadeUp} custom={0.2} className="text-dfx-offwhite/40 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
-              Protocolos diseñados para una limpieza profunda y técnica, preservando la estética original de tu vehículo.
-            </motion.p>
-          </div>
+      {/* ═══════════════ SERVICES (PROCESO Y PRECIOS) ═══════════════ */}
+      <AnimatedSection id="servicios" className="py-24 md:py-40 px-5 md:px-10 bg-tenant-background relative z-20">
+        <div className="max-w-7xl mx-auto space-y-32">
+          
+          {/* Bloque 1: El Proceso */}
+          <div>
+            <div className="text-center mb-16">
+              <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5">
+                Del exterior al interior, cubrimos todo.
+              </motion.h2>
+              <motion.div variants={lineReveal} className="w-16 h-px bg-tenant-primary mx-auto origin-center" />
+            </div>
 
-          {/* Vehicle Type Tabs */}
-          <motion.div variants={fadeUp} custom={0.3} className="flex justify-center mb-16">
-            <div className="inline-flex bg-[#16191e]/80 backdrop-blur border border-white/[0.06] rounded-full p-1.5 shadow-xl">
-              {(['Sedán', 'SUV', 'Pick-Up'] as VehicleType[]).map(type => (
-                <button
-                  key={type}
-                  onClick={() => setActiveVehicle(type)}
-                  className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    activeVehicle === type ? 'text-white' : 'text-dfx-offwhite/50 hover:text-dfx-offwhite/80'
-                  }`}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+              {[
+                { icon: <Droplets className="w-6 h-6" />, title: 'Exterior Premium', desc: 'Lavado a presión, descontaminación de rines y secado anti-rayaduras.' },
+                { icon: <Wind className="w-6 h-6" />, title: 'Interior Profundo', desc: 'Aspirado intensivo, limpieza de plásticos y desinfección de cabina.' },
+                { icon: <Shield className="w-6 h-6" />, title: 'Acabado y Protección', desc: 'Aplicación de protector UV y control de calidad final.' },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  custom={i * 0.15}
+                  className="bg-tenant-card p-8 rounded-2xl border border-white/[0.06] hover:border-tenant-primary/30 transition-all duration-300 flex flex-col items-center text-center group"
                 >
-                  {activeVehicle === type && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-dfx-purple rounded-full shadow-[0_0_15px_rgba(110,59,255,0.4)]"
-                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    />
-                  )}
-                  <span className="relative z-10">{type}</span>
-                </button>
+                  <div className="w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center text-tenant-primary mb-6 border border-white/[0.06] group-hover:scale-110 transition-transform duration-500">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-xl font-display font-bold mb-3">{item.title}</h3>
+                  <p className="text-tenant-text/60 text-sm leading-relaxed">{item.desc}</p>
+                </motion.div>
               ))}
             </div>
-          </motion.div>
-
-          {/* Service cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
-            <ServiceCard
-              icon={<Droplets className="w-5 h-5" />}
-              title="Detailing Exterior"
-              description={vehicleData[activeVehicle].exterior.desc}
-              price={vehicleData[activeVehicle].exterior.price}
-              duration={vehicleData[activeVehicle].exterior.duration}
-              features={[
-                'Lavado sin contacto directo',
-                'Descontaminación de rines y llantas',
-                'Secado seguro anti-rayaduras',
-                'Sellador rápido de protección',
-              ]}
-              ctaLabel={`Solicitar Exterior (${activeVehicle})`}
-              onBookClick={onBookClick}
-              index={0}
-            />
-            <ServiceCard
-              icon={<Wind className="w-5 h-5" />}
-              title="Detailing Interior"
-              description={vehicleData[activeVehicle].interior.desc}
-              price={vehicleData[activeVehicle].interior.price}
-              duration={vehicleData[activeVehicle].interior.duration}
-              features={[
-                'Aspirado intensivo de cabina',
-                'Limpieza de plásticos y viniles',
-                'Tratamiento UV mate en tablero',
-                'Acondicionamiento de asientos',
-              ]}
-              ctaLabel={`Solicitar Interior (${activeVehicle})`}
-              onBookClick={onBookClick}
-              accent
-              index={1}
-            />
           </div>
+
+          {/* Bloque 2: Precios */}
+          <div>
+            <div className="text-center mb-16">
+              <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5">
+                Precios transparentes. Elige tu vehículo.
+              </motion.h2>
+              <motion.div variants={lineReveal} className="w-16 h-px bg-tenant-primary mx-auto origin-center" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+              {[
+                { title: 'Autos', sub: '(Sedán / Compactos)', price: '$400 MXN', popular: false },
+                { title: 'SUV', sub: '(Camionetas de 2 filas)', price: '$500 MXN', popular: true },
+                { title: 'Pick-ups y Vans', sub: '(3 filas)', price: '$600 MXN', popular: false },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  custom={i * 0.15}
+                  className={`relative bg-tenant-card p-8 rounded-2xl border flex flex-col ${item.popular ? 'border-tenant-primary shadow-[0_0_30px_rgba(var(--tenant-primary),0.15)]' : 'border-white/[0.06]'}`}
+                >
+                  {item.popular && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-tenant-primary text-white text-[10px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-full">
+                      Más Popular
+                    </div>
+                  )}
+                  <div className="text-center mb-8 flex-grow">
+                    <h3 className="text-2xl font-display font-bold mb-1">{item.title}</h3>
+                    <p className="text-tenant-text/50 text-sm mb-6">{item.sub}</p>
+                    <div className="text-4xl font-black text-tenant-primary">{item.price}</div>
+                  </div>
+                  <button
+                    onClick={onBookClick}
+                    className={`w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                      item.popular 
+                        ? 'bg-tenant-primary text-white hover:opacity-90 shadow-lg shadow-tenant-primary/20' 
+                        : 'bg-tenant-card text-white border border-white/[0.06] hover:bg-white/[0.03] hover:border-white/20'
+                    }`}
+                  >
+                    Agendar Cita
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </AnimatedSection>
 
@@ -821,7 +827,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               opacity: [0.04, 0.08, 0.04],
             }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -inset-20 bg-dfx-purple rounded-full blur-[120px] pointer-events-none"
+            className="absolute -inset-20 bg-tenant-primary rounded-full blur-[120px] pointer-events-none"
           />
 
           <div className="relative text-center">
@@ -829,23 +835,23 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               ¿Listo para ver tu auto <br className="hidden sm:block" />
               al nivel de{' '}
               <span className="relative inline-block">
-                <span className="text-dfx-purple">exhibición?</span>
+                <span className="text-tenant-primary">exhibición?</span>
                 <motion.span
                   initial={{ scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-dfx-purple/40 origin-left"
+                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-tenant-primary/40 origin-left"
                 />
               </span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={0.1} className="text-dfx-offwhite/40 text-sm md:text-base mb-12 max-w-md mx-auto">
+            <motion.p variants={fadeUp} custom={0.1} className="text-tenant-text/40 text-sm md:text-base mb-12 max-w-md mx-auto">
               Agenda en menos de 2 minutos. Sin cuentas, sin complicaciones.
             </motion.p>
             <motion.div variants={fadeUp} custom={0.2} className="flex flex-col sm:flex-row gap-4 justify-center">
               <MagneticButton
                 onClick={onBookClick}
-                className="group inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-dfx-purple text-white font-semibold text-sm rounded-xl shadow-xl shadow-dfx-purple/20 hover:shadow-[0_8px_40px_rgba(110,59,255,0.4)] hover:bg-[#5d30e6] transition-all duration-500 active:scale-[0.97] relative overflow-hidden"
+                className="group inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-tenant-primary text-white font-semibold text-sm rounded-xl shadow-xl shadow-tenant-primary/20 hover:shadow-[0_8px_40px_rgba(var(--tenant-primary),0.4)] hover:bg-[#5d30e6] transition-all duration-500 active:scale-[0.97] relative overflow-hidden"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 <span className="relative flex items-center gap-2.5">
@@ -857,7 +863,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 href="https://wa.me/528662040513?text=Hola,%20me%20gustaría%20agendar%20una%20cita%20con%20DualFX."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 border border-white/10 text-dfx-offwhite/60 font-medium text-sm rounded-xl hover:bg-white/[0.03] hover:border-white/20 hover:text-white transition-all duration-500"
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 border border-white/10 text-tenant-text/60 font-medium text-sm rounded-xl hover:bg-white/[0.03] hover:border-white/20 hover:text-white transition-all duration-500"
               >
                 <MessageCircle className="w-4 h-4" />
                 WhatsApp
@@ -869,7 +875,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
 
 
       {/* ═══════════════ FOOTER ═══════════════ */}
-      <footer id="contacto" className="bg-dfx-matte border-t border-white/[0.04] pt-16 md:pt-24 pb-8 px-5 md:px-10 relative">
+      <footer id="contacto" className="bg-tenant-background border-t border-white/[0.04] pt-16 md:pt-24 pb-8 px-5 md:px-10 relative">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-16">
             {/* Brand */}
@@ -880,9 +886,9 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 viewport={{ once: true }}
                 className="text-2xl font-display font-bold tracking-tight mb-5 block text-white"
               >
-                Dual<span className="text-dfx-purple">FX</span>
+                Dual<span className="text-tenant-primary">FX</span>
               </motion.span>
-              <p className="text-dfx-offwhite/30 text-sm max-w-xs leading-relaxed">
+              <p className="text-tenant-text/30 text-sm max-w-xs leading-relaxed">
                 Detailing automotriz de precisión. Redefiniendo el estándar del cuidado vehicular en Matamoros, Tamaulipas.
               </p>
             </div>
@@ -890,7 +896,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             {/* Quick links */}
             <div>
               <h4 className="text-white/80 text-[11px] font-semibold uppercase tracking-[0.15em] mb-5">Navegación</h4>
-              <ul className="space-y-3 text-sm text-dfx-offwhite/30">
+              <ul className="space-y-3 text-sm text-tenant-text/30">
                 <li><a href="#filosofia" className="hover:text-white transition-colors duration-300">Filosofía</a></li>
                 <li><a href="#servicios" className="hover:text-white transition-colors duration-300">Servicios</a></li>
                 <li><button onClick={onBookClick} className="hover:text-white transition-colors duration-300">Agendar Cita</button></li>
@@ -900,7 +906,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             {/* Contact */}
             <div>
               <h4 className="text-white/80 text-[11px] font-semibold uppercase tracking-[0.15em] mb-5">Contacto</h4>
-              <ul className="space-y-3 text-sm text-dfx-offwhite/30">
+              <ul className="space-y-3 text-sm text-tenant-text/30">
                 <li className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>Matamoros, Tamaulipas, México</span>
@@ -915,13 +921,13 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
 
           {/* Bottom bar */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/[0.04]">
-            <p className="text-[11px] text-dfx-offwhite/20 tracking-wide">
+            <p className="text-[11px] text-tenant-text/20 tracking-wide">
               © {new Date().getFullYear()} DualFX Detailing. Todos los derechos reservados.
             </p>
-            <a href="/" className="group flex items-center gap-2 text-dfx-offwhite/20 hover:text-dfx-offwhite/40 transition-colors duration-300">
+            <a href="/" className="group flex items-center gap-2 text-tenant-text/20 hover:text-tenant-text/40 transition-colors duration-300">
               <span className="text-[10px] uppercase tracking-widest font-medium">Powered by</span>
               <span className="text-xs font-bold tracking-tight">
-                Krono<span className="text-dfx-purple/50 group-hover:text-dfx-purple transition-colors duration-300">Book</span>
+                Krono<span className="text-tenant-primary/50 group-hover:text-tenant-primary transition-colors duration-300">Book</span>
               </span>
             </a>
           </div>
@@ -933,11 +939,11 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ delay: 1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-dfx-matte/90 backdrop-blur-2xl border-t border-white/[0.06] px-4 py-3 safe-area-pb"
+        className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-tenant-background/90 backdrop-blur-2xl border-t border-white/[0.06] px-4 py-3 safe-area-pb"
       >
         <button
           onClick={onBookClick}
-          className="w-full bg-dfx-purple text-white py-3.5 rounded-xl text-sm font-semibold shadow-lg shadow-dfx-purple/20 active:scale-[0.98] transition-transform"
+          className="w-full bg-tenant-primary text-white py-3.5 rounded-xl text-sm font-semibold shadow-lg shadow-tenant-primary/20 active:scale-[0.98] transition-transform"
         >
           Reservar Cita
         </button>

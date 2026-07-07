@@ -12,6 +12,7 @@ import { KronoBookLanding } from './pages/KronoBookLanding';
 import { useBookings } from './hooks/useBookings';
 import { mockBarberia, mockServicios } from './data/mockData';
 import { useAuth } from './context/AuthContext';
+import { ThemeProvider } from './components/ThemeProvider';
 
 function TenantApp() {
   const { user } = useAuth();
@@ -59,53 +60,56 @@ function TenantApp() {
   const activeServicios = negocio ? servicios : mockServicios;
 
   // Check if it's the custom car wash partition
-  const isCarWash = slug === 'dualfx' || slug === 'kronowash' || slug === 'lavado';
+  const normalizedSlug = slug?.toLowerCase();
+  const isCarWash = normalizedSlug === 'dualfx' || normalizedSlug === 'kronowash' || normalizedSlug === 'lavado';
 
   return (
-    <Layout 
-      slug={slug || 'demo'} 
-      isStaffForCurrentSlug={isStaffForCurrentSlug}
-      hideNavbar={isCarWash}
-      hideFooter={isCarWash}
-    >
-      <Routes>
-        <Route 
-          path="/" 
-          element={
-            isCarWash ? (
-              <CarWashLanding
-                negocio={activeNegocio}
+    <ThemeProvider slug={slug || 'demo'}>
+      <Layout 
+        slug={slug || 'demo'} 
+        isStaffForCurrentSlug={isStaffForCurrentSlug}
+        hideNavbar={isCarWash}
+        hideFooter={isCarWash}
+      >
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              isCarWash ? (
+                <CarWashLanding
+                  negocio={activeNegocio}
+                  servicios={activeServicios}
+                  onBookClick={() => navigate(`/${slug}/reservar`)}
+                />
+              ) : (
+                <LandingPage
+                  negocio={activeNegocio}
+                  servicios={activeServicios}
+                  onBookClick={() => navigate(`/${slug}/reservar`)}
+                />
+              )
+            } 
+          />
+          <Route 
+            path="/reservar" 
+            element={
+              <BookingFlow
                 servicios={activeServicios}
-                onBookClick={() => navigate(`/${slug}/reservar`)}
+                onBookingComplete={(citaData) => {
+                  addCita(citaData);
+                  // Redirigir al inicio o página de éxito
+                  navigate(`/${slug}`);
+                }}
+                onCancel={() => navigate(`/${slug}`)}
+                askForAddress={isCarWash}
               />
-            ) : (
-              <LandingPage
-                negocio={activeNegocio}
-                servicios={activeServicios}
-                onBookClick={() => navigate(`/${slug}/reservar`)}
-              />
-            )
-          } 
-        />
-        <Route 
-          path="/reservar" 
-          element={
-            <BookingFlow
-              servicios={activeServicios}
-              onBookingComplete={(citaData) => {
-                addCita(citaData);
-                // Redirigir al inicio o página de éxito
-                navigate(`/${slug}`);
-              }}
-              onCancel={() => navigate(`/${slug}`)}
-              askForAddress={isCarWash}
-            />
-          } 
-        />
-        {/* Rutas administrativas del tenant protegido */}
-        <Route path="/admin/*" element={<TenantAdminGuard />} />
-      </Routes>
-    </Layout>
+            } 
+          />
+          {/* Rutas administrativas del tenant protegido */}
+          <Route path="/admin/*" element={<TenantAdminGuard />} />
+        </Routes>
+      </Layout>
+    </ThemeProvider>
   );
 }
 

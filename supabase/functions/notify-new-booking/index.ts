@@ -1,6 +1,12 @@
+// @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+// @ts-ignore
 import webpush from "npm:web-push@3.6.7";
+
+// Declaración para evitar errores del IDE si no está configurada la extensión de Deno
+declare const Deno: any;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,7 +45,7 @@ serve(async (req: Request) => {
        return new Response(JSON.stringify({ message: "No staff found for this negocio" }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const userIds = staff.map(s => s.user_id);
+    const userIds = staff.map((s: any) => s.user_id);
 
     // 2. Obtener las suscripciones activas de esos usuarios
     const { data: subscriptions, error: subsError } = await supabase

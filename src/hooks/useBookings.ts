@@ -57,7 +57,9 @@ export const useBookings = () => {
         } 
         // CASO B: ESTAMOS EN LA LANDING PÚBLICA (VISTA DEL CLIENTE)
         else {
-          const currentSlug = slug || 'barberia-chaga';
+          const rawSlug = slug || 'barberia-chaga';
+          const currentSlug = rawSlug.toLowerCase();
+          
           const { data, error } = await supabase
             .from('negocios')
             .select('*')
@@ -65,7 +67,9 @@ export const useBookings = () => {
             .maybeSingle();
 
           if (error || !data) {
-            if (slug) {
+            // Slugs estáticos para demostración que pueden no estar en la BD aún
+            const staticSlugs = ['demo', 'dualfx', 'kronowash', 'lavado'];
+            if (slug && !staticSlugs.includes(currentSlug)) {
               navigate('/404');
             }
             return;
