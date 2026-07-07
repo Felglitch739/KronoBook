@@ -164,23 +164,71 @@ const MagneticButton: React.FC<{
   );
 };
 
-/* ─── Service Card with hover glow ─── */
-interface ServiceCardProps {
+/* ─── Process Card with hover glow ─── */
+interface ProcessCardProps {
   icon: React.ReactNode;
   title: string;
-  description: string;
-  features: string[];
-  ctaLabel: string;
-  onBookClick: () => void;
-  accent?: boolean;
+  desc: string;
   index: number;
-  price?: string;
-  duration?: string;
 }
 
-// @ts-ignore - Componente en desarrollo
-const _ServiceCard: React.FC<ServiceCardProps> = ({
-  icon, title, description, features, ctaLabel, onBookClick, accent = false, index, price, duration
+const ProcessCard: React.FC<ProcessCardProps> = ({ icon, title, desc, index }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      variants={fadeUp}
+      custom={index * 0.15}
+      onMouseMove={handleMouseMove}
+      className="relative bg-tenant-card p-8 rounded-2xl border border-white/[0.06] hover:border-tenant-primary/30 hover:shadow-[0_0_30px_rgba(110,59,255,0.05)] transition-all duration-500 flex flex-col items-center text-center group overflow-hidden cursor-pointer"
+    >
+      {/* Radial glow following mouse */}
+      <motion.div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+        style={{
+          background: `radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(110, 59, 255, 0.08), transparent 60%)`,
+        }}
+      />
+      
+      {/* Ambient corner glow */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.04] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
+
+      <div className="relative z-10 w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center text-tenant-primary mb-6 border border-white/[0.06] group-hover:border-tenant-primary/40 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(110,59,255,0.2)] transition-all duration-500">
+        {icon}
+      </div>
+      <h3 className="relative z-10 text-xl font-display font-bold mb-3 text-white group-hover:text-white transition-colors duration-500">{title}</h3>
+      <p className="relative z-10 text-tenant-text/60 text-sm leading-relaxed group-hover:text-tenant-text/80 transition-colors duration-500">{desc}</p>
+    </motion.div>
+  );
+};
+
+
+/* ─── Pricing Card with hover glow ─── */
+interface PricingCardProps {
+  title: string;
+  sub: string;
+  desc: string;
+  price: string;
+  duration: string;
+  popular: boolean;
+  icon: React.ReactNode;
+  features: string[];
+  onBookClick: () => void;
+  index: number;
+}
+
+const PricingCard: React.FC<PricingCardProps> = ({
+  title, sub, desc, price, duration, popular, icon, features, onBookClick, index
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -198,81 +246,69 @@ const _ServiceCard: React.FC<ServiceCardProps> = ({
       ref={cardRef}
       variants={fadeUp}
       custom={index * 0.15}
-      whileHover={{ y: -6, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
       onMouseMove={handleMouseMove}
-      className="group relative bg-tenant-card rounded-xl p-8 lg:p-10 border border-white/[0.06] hover:border-tenant-primary/30 transition-all duration-700 flex flex-col overflow-hidden cursor-pointer"
+      className={`relative bg-[#121212] flex flex-col p-8 rounded-2xl transition-all duration-500 group overflow-hidden ${
+        popular ? 'border border-white/20' : 'border border-white/5 hover:border-tenant-primary/30'
+      }`}
     >
       {/* Radial glow following mouse */}
       <motion.div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
         style={{
-          background: `radial-gradient(400px circle at ${mouseX.get()}px ${mouseY.get()}px, rgba(110, 59, 255, 0.06), transparent 60%)`,
+          background: `radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(110, 59, 255, 0.1), transparent 60%)`,
         }}
       />
-
-      {/* Top accent line with animation */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: index * 0.2 }}
-        className={`absolute top-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-transparent ${accent ? 'via-tenant-primary/60' : 'via-white/10'} to-transparent`}
-      />
-
+      
       {/* Ambient corner glow */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.06] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.04] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Icon with pulse on hover */}
-        <motion.div
-          whileHover={{ scale: 1.1, rotate: 3 }}
-          transition={{ type: 'spring', stiffness: 300 }}
-          className="w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center mb-8 border border-white/[0.06] text-tenant-primary group-hover:border-tenant-primary/20 group-hover:shadow-[0_0_20px_rgba(var(--tenant-primary),0.15)] transition-all duration-700"
-        >
+      {popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10">
+          Más Popular
+        </div>
+      )}
+
+      <div className="text-center mb-6 relative z-10">
+        <div className="text-white group-hover:scale-110 transition-transform duration-500">
           {icon}
-        </motion.div>
-
-        <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 tracking-tight group-hover:text-white transition-colors duration-500">{title}</h3>
-        
-        {(price || duration) && (
-          <div className="flex items-center gap-4 mb-4 text-xs font-semibold uppercase tracking-widest text-tenant-primary/90">
-            {price && <span>Desde {price}</span>}
-            {price && duration && <span className="w-1 h-1 rounded-full bg-white/20" />}
-            {duration && <span>{duration}</span>}
-          </div>
-        )}
-
-        <p className="text-tenant-text/50 text-sm leading-relaxed mb-8 flex-grow">{description}</p>
-
-        <ul className="space-y-3.5 mb-10">
-          {features.map((item, i) => (
-            <motion.li
-              key={i}
-              initial={{ opacity: 0, x: -15 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 + i * 0.08, duration: 0.5 }}
-              className="flex items-start gap-3 text-sm text-tenant-text/60 group-hover:text-tenant-text/80 transition-colors duration-500"
-            >
-              <CheckCircle2 className="w-4 h-4 text-tenant-primary/70 mt-0.5 flex-shrink-0" />
-              <span>{item}</span>
-            </motion.li>
-          ))}
-        </ul>
-
-        <button
-          onClick={onBookClick}
-          className={`w-full py-4 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all duration-500 active:scale-[0.97] group/btn relative overflow-hidden
-            ${accent
-              ? 'bg-tenant-primary hover:bg-[#5d30e6] text-white shadow-lg shadow-tenant-primary/15 hover:shadow-tenant-primary/30'
-              : 'border border-white/15 hover:border-tenant-primary/50 hover:bg-tenant-primary/5 text-tenant-text hover:text-white'
-            }`}
-        >
-          {/* Button shine effect */}
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-          <span className="relative">{ctaLabel}</span>
-        </button>
+        </div>
+        <h3 className="text-xl font-bold text-white mt-3">
+          {title} 
+          <span className="block text-sm font-normal text-gray-400 mt-1">{sub}</span>
+        </h3>
+        <p className="text-xs text-gray-500 mt-1">{desc}</p>
       </div>
+
+      <div className="text-center mb-6 relative z-10">
+        <span className="text-5xl font-extrabold text-white">${price}</span>
+        <span className="text-lg text-gray-400 ml-1">MXN</span>
+        <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
+          <Clock className="w-4 h-4" />
+          Duración estimada: {duration} min
+        </p>
+      </div>
+
+      <hr className="border-gray-800 mb-6 relative z-10" />
+
+      <ul className="space-y-4 mb-8 text-sm text-gray-300 flex-1 relative z-10">
+        {features.map((feature, idx) => (
+          <li key={idx} className="flex items-start gap-3">
+            <Check className="w-5 h-5 text-white shrink-0 group-hover:text-tenant-primary transition-colors duration-300" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <button
+        onClick={onBookClick}
+        className={`w-full font-bold py-3 rounded-lg transition-colors duration-300 relative z-10 ${
+          popular 
+            ? 'bg-white text-black hover:bg-gray-200' 
+            : 'bg-[#0b0b0b] text-white border border-gray-800 hover:border-gray-500 hover:bg-[#1a1a1a]'
+        }`}
+      >
+        Agendar Cita
+      </button>
     </motion.div>
   );
 };
@@ -759,19 +795,13 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 { icon: <Wind className="w-6 h-6" />, title: 'Interior Profundo', desc: 'Aspirado intensivo, limpieza de plásticos y desinfección de cabina.' },
                 { icon: <Shield className="w-6 h-6" />, title: 'Acabado y Protección', desc: 'Aplicación de protector UV y control de calidad final.' },
               ].map((item, i) => (
-                <motion.div
+                <ProcessCard
                   key={i}
-                  variants={fadeUp}
-                  custom={i * 0.15}
-                  className="relative bg-tenant-card p-8 rounded-2xl border border-white/[0.06] hover:border-tenant-primary/30 hover:shadow-[0_0_30px_rgba(var(--tenant-primary),0.05)] transition-all duration-300 flex flex-col items-center text-center group overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-tenant-primary/0 group-hover:to-tenant-primary/5 transition-colors duration-500 pointer-events-none" />
-                  <div className="relative z-10 w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center text-tenant-primary mb-6 border border-white/[0.06] group-hover:border-tenant-primary/40 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(var(--tenant-primary),0.2)] transition-all duration-500">
-                    {item.icon}
-                  </div>
-                  <h3 className="relative z-10 text-xl font-display font-bold mb-3">{item.title}</h3>
-                  <p className="relative z-10 text-tenant-text/60 text-sm leading-relaxed">{item.desc}</p>
-                </motion.div>
+                  icon={item.icon}
+                  title={item.title}
+                  desc={item.desc}
+                  index={i}
+                />
               ))}
             </div>
           </div>
@@ -844,58 +874,19 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   ]
                 },
               ].map((item, i) => (
-                <motion.div
+                <PricingCard
                   key={i}
-                  variants={fadeUp}
-                  custom={i * 0.15}
-                  className={`relative bg-[#121212] flex flex-col p-8 rounded-2xl ${item.popular ? 'border border-white/20' : 'border border-white/5'}`}
-                >
-                  {item.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                      Más Popular
-                    </div>
-                  )}
-
-                  <div className="text-center mb-6">
-                    {item.icon}
-                    <h3 className="text-xl font-bold text-white">
-                      {item.title} 
-                      <span className="block text-sm font-normal text-gray-400 mt-1">{item.sub}</span>
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
-                  </div>
-
-                  <div className="text-center mb-6">
-                    <span className="text-5xl font-extrabold text-white">${item.price}</span>
-                    <span className="text-lg text-gray-400 ml-1">MXN</span>
-                    <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      Duración estimada: {item.duration} min
-                    </p>
-                  </div>
-
-                  <hr className="border-gray-800 mb-6" />
-
-                  <ul className="space-y-4 mb-8 text-sm text-gray-300 flex-1">
-                    {item.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-white shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button
-                    onClick={onBookClick}
-                    className={`w-full font-bold py-3 rounded-lg transition-colors duration-300 ${
-                      item.popular 
-                        ? 'bg-white text-black hover:bg-gray-200' 
-                        : 'bg-[#0b0b0b] text-white border border-gray-800 hover:border-gray-500 hover:bg-[#1a1a1a]'
-                    }`}
-                  >
-                    Agendar Cita
-                  </button>
-                </motion.div>
+                  title={item.title}
+                  sub={item.sub}
+                  desc={item.desc}
+                  price={item.price}
+                  duration={item.duration}
+                  popular={item.popular}
+                  icon={item.icon}
+                  features={item.features}
+                  onBookClick={onBookClick}
+                  index={i}
+                />
               ))}
             </div>
           </div>
