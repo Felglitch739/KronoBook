@@ -247,8 +247,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
       variants={fadeUp}
       custom={index * 0.15}
       onMouseMove={handleMouseMove}
-      className={`relative bg-[#121212] flex flex-col p-8 rounded-2xl transition-all duration-500 group overflow-hidden ${
-        popular ? 'border border-white/20' : 'border border-white/5 hover:border-tenant-primary/30'
+      className={`relative bg-[#121212] flex flex-col p-8 rounded-2xl transition-all duration-300 ease-in-out hover:-translate-y-2 group overflow-hidden ${
+        popular 
+          ? 'border border-tenant-primary/50 hover:shadow-[0_0_30px_rgba(var(--tenant-primary),0.2)]' 
+          : 'border border-white/5 hover:border-tenant-primary/30'
       }`}
     >
       {/* Radial glow following mouse */}
@@ -263,7 +265,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.04] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
 
       {popular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 bg-tenant-primary text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full uppercase shadow-[0_0_15px_rgba(var(--tenant-primary),0.5)]">
           Más Popular
         </div>
       )}
@@ -290,10 +292,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
       <hr className="border-gray-800 mb-6 relative z-10" />
 
-      <ul className="space-y-4 mb-8 text-sm text-gray-300 flex-1 relative z-10">
+      <ul className="space-y-4 mb-8 text-sm text-gray-200 flex-1 relative z-10">
         {features.map((feature, idx) => (
           <li key={idx} className="flex items-start gap-3">
-            <Check className="w-5 h-5 text-white shrink-0 group-hover:text-tenant-primary transition-colors duration-300" />
+            <Check className="w-5 h-5 text-tenant-primary shrink-0" />
             <span>{feature}</span>
           </li>
         ))}
@@ -301,10 +303,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
       <button
         onClick={onBookClick}
-        className={`w-full font-bold py-3 rounded-lg transition-colors duration-300 relative z-10 ${
+        className={`w-full font-bold py-3 rounded-lg transition-all duration-300 relative z-10 ${
           popular 
-            ? 'bg-white text-black hover:bg-gray-200' 
-            : 'bg-[#0b0b0b] text-white border border-gray-800 hover:border-gray-500 hover:bg-[#1a1a1a]'
+            ? 'bg-tenant-primary text-white hover:bg-tenant-primary/80 hover:scale-[1.02]' 
+            : 'bg-transparent text-gray-400 border border-gray-700 hover:border-tenant-primary hover:text-tenant-primary'
         }`}
       >
         Agendar Cita
