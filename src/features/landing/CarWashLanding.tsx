@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { 
-  motion, useScroll, useTransform, useInView, useMotionValue, 
-  useSpring, AnimatePresence, type Variants 
+import {
+  motion, useScroll, useTransform, useInView, useMotionValue,
+  useSpring, AnimatePresence, type Variants
 } from 'framer-motion';
-import { 
-  MapPin, Phone, Droplets, Wind, ArrowRight, 
+import {
+  MapPin, Phone, Droplets, Wind, ArrowRight,
   Shield, Gem, ChevronDown, Menu, X, MessageCircle, ArrowUpRight,
   Car, Truck, Clock, Check
 } from 'lucide-react';
@@ -56,7 +56,7 @@ const lineReveal: Variants = {
 const CharReveal: React.FC<{ text: string; className?: string; delay?: number }> = ({ text, className = '', delay = 0 }) => {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
-  
+
   return (
     <span ref={ref} className={className}>
       {text.split('').map((char, i) => (
@@ -199,7 +199,7 @@ const ProcessCard: React.FC<ProcessCardProps> = ({ icon, title, desc, index }) =
           background: `radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(110, 59, 255, 0.08), transparent 60%)`,
         }}
       />
-      
+
       {/* Ambient corner glow */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.04] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
 
@@ -213,7 +213,7 @@ const ProcessCard: React.FC<ProcessCardProps> = ({ icon, title, desc, index }) =
 };
 
 
-/* ─── Pricing Card with hover glow ─── */
+/* ─── Pricing Card with gradients and glow ─── */
 interface PricingCardProps {
   title: string;
   sub: string;
@@ -224,11 +224,12 @@ interface PricingCardProps {
   icon: React.ReactNode;
   features: string[];
   onBookClick: () => void;
+  whatsappUrl: string;
   index: number;
 }
 
 const PricingCard: React.FC<PricingCardProps> = ({
-  title, sub, desc, price, duration, popular, icon, features, onBookClick, index
+  title, sub, desc, price, duration, popular, icon, features, onBookClick, whatsappUrl, index
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -243,74 +244,132 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
   return (
     <motion.div
-      ref={cardRef}
       variants={fadeUp}
       custom={index * 0.15}
-      onMouseMove={handleMouseMove}
-      className={`relative bg-[#121212] flex flex-col p-8 rounded-2xl transition-all duration-300 ease-in-out hover:-translate-y-2 group overflow-hidden ${
-        popular 
-          ? 'border border-tenant-primary/50 hover:shadow-[0_0_30px_rgba(var(--tenant-primary),0.2)]' 
-          : 'border border-white/5 hover:border-tenant-primary/30'
-      }`}
+      whileHover={{ y: -8, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
+      className="relative cursor-pointer"
     >
-      {/* Radial glow following mouse */}
-      <motion.div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-        style={{
-          background: `radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(110, 59, 255, 0.1), transparent 60%)`,
-        }}
-      />
-      
-      {/* Ambient corner glow */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-tenant-primary/0 group-hover:bg-tenant-primary/[0.04] rounded-full blur-3xl transition-all duration-1000 pointer-events-none" />
-
+      {/* Badge lives OUTSIDE overflow-hidden so it doesn't clip */}
       {popular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 bg-tenant-primary text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full uppercase shadow-[0_0_15px_rgba(var(--tenant-primary),0.5)]">
+        <div
+          className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-white text-[10px] font-bold tracking-widest px-4 py-1.5 rounded-full uppercase"
+          style={{
+            background: 'linear-gradient(135deg, #6E3BFF 0%, #9B6DFF 100%)',
+            boxShadow: '0 0 20px rgba(110,59,255,0.6), 0 4px 15px rgba(110,59,255,0.3)',
+          }}
+        >
           Más Popular
         </div>
       )}
 
-      <div className="text-center mb-6 relative z-10">
-        <div className="text-white group-hover:scale-110 transition-transform duration-500">
-          {icon}
-        </div>
-        <h3 className="text-xl font-bold text-white mt-3">
-          {title} 
-          <span className="block text-sm font-normal text-gray-400 mt-1">{sub}</span>
-        </h3>
-        <p className="text-xs text-gray-500 mt-1">{desc}</p>
-      </div>
-
-      <div className="text-center mb-6 relative z-10">
-        <span className="text-5xl font-extrabold text-white">${price}</span>
-        <span className="text-lg text-gray-400 ml-1">MXN</span>
-        <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
-          <Clock className="w-4 h-4" />
-          Duración estimada: {duration} min
-        </p>
-      </div>
-
-      <hr className="border-gray-800 mb-6 relative z-10" />
-
-      <ul className="space-y-4 mb-8 text-sm text-gray-200 flex-1 relative z-10">
-        {features.map((feature, idx) => (
-          <li key={idx} className="flex items-start gap-3">
-            <Check className="w-5 h-5 text-tenant-primary shrink-0" />
-            <span>{feature}</span>
-          </li>
-        ))}
-      </ul>
-
-      <button
-        onClick={onBookClick}
-        className={`w-full font-bold py-3 rounded-lg transition-all duration-300 relative z-10 ${
-          popular 
-            ? 'bg-tenant-primary text-white hover:bg-tenant-primary/80 hover:scale-[1.02]' 
-            : 'bg-transparent text-gray-400 border border-gray-700 hover:border-tenant-primary hover:text-tenant-primary'
-        }`}
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        className={`relative flex flex-col p-8 rounded-2xl transition-all duration-300 group overflow-hidden h-full ${popular
+            ? 'border-2 border-[#6E3BFF]/60 shadow-[0_0_40px_rgba(110,59,255,0.25)]'
+            : 'border border-white/10 hover:border-[#6E3BFF]/40 hover:shadow-[0_0_25px_rgba(110,59,255,0.1)]'
+          }`}
+        style={{
+          background: popular
+            ? 'linear-gradient(135deg, #1a0a3e 0%, #0f0f1a 40%, #121212 100%)'
+            : 'linear-gradient(180deg, #1a1a2e 0%, #121212 50%)',
+        }}
       >
-        Agendar Cita
-      </button>
+        {/* Animated shimmer on popular card */}
+        {popular && (
+          <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+            <div
+              className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] animate-spin pointer-events-none"
+              style={{
+                background: 'conic-gradient(from 0deg, transparent 0%, transparent 70%, rgba(110,59,255,0.15) 80%, transparent 90%)',
+                animationDuration: '8s',
+              }}
+            />
+          </div>
+        )}
+
+        {/* Radial glow following mouse */}
+        <motion.div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+          style={{
+            background: `radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(110, 59, 255, 0.15), transparent 60%)`,
+          }}
+        />
+
+        {/* Top gradient line */}
+        <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent ${popular ? 'via-[#6E3BFF]' : 'via-[#6E3BFF]/30'} to-transparent`} />
+
+        {/* Icon */}
+        <div className="text-center mb-6 relative z-10">
+          <div
+            className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(110,59,255,0.3)]"
+            style={{
+              background: popular
+                ? 'linear-gradient(135deg, #6E3BFF 0%, #9B6DFF 100%)'
+                : 'linear-gradient(135deg, rgba(110,59,255,0.15) 0%, rgba(110,59,255,0.05) 100%)',
+              border: popular ? 'none' : '1px solid rgba(110,59,255,0.2)',
+            }}
+          >
+            <div className="text-white">{icon}</div>
+          </div>
+          <h3 className="text-xl font-bold text-white">
+            {title}
+            <span className="block text-sm font-normal text-gray-400 mt-1">{sub}</span>
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">{desc}</p>
+        </div>
+
+        {/* Price */}
+        <div className="text-center mb-6 relative z-10">
+          <span
+            className={`text-5xl font-extrabold ${popular ? 'text-transparent bg-clip-text' : 'text-white'}`}
+            style={popular ? { backgroundImage: 'linear-gradient(135deg, #fff 0%, #c4b5fd 100%)' } : undefined}
+          >
+            ${price}
+          </span>
+          <span className="text-lg text-gray-400 ml-1">MXN</span>
+          <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
+            <Clock className="w-4 h-4" />
+            Duración estimada: {duration} min
+          </p>
+        </div>
+
+        <hr className="border-[#6E3BFF]/20 mb-6 relative z-10" />
+
+        {/* Features */}
+        <ul className="space-y-4 mb-8 text-sm text-gray-200 flex-1 relative z-10">
+          {features.map((feature, idx) => (
+            <li key={idx} className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: 'linear-gradient(135deg, #6E3BFF 0%, #9B6DFF 100%)' }}>
+                <Check className="w-3 h-3 text-white" />
+              </div>
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* CTA Button — WhatsApp parametrizado por paquete */}
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={onBookClick}
+          className={`w-full font-bold py-3.5 rounded-xl transition-all duration-300 relative z-10 text-sm tracking-wide overflow-hidden group/btn flex items-center justify-center gap-2 ${popular
+              ? 'text-white shadow-lg hover:shadow-[0_4px_25px_rgba(110,59,255,0.4)] hover:scale-[1.02] active:scale-[0.98]'
+              : 'text-white border border-[#6E3BFF]/30 hover:border-[#6E3BFF]/60 hover:shadow-[0_0_20px_rgba(110,59,255,0.15)] active:scale-[0.98]'
+            }`}
+          style={{
+            background: popular
+              ? 'linear-gradient(135deg, #6E3BFF 0%, #9B6DFF 100%)'
+              : 'linear-gradient(135deg, rgba(110,59,255,0.1) 0%, rgba(110,59,255,0.02) 100%)',
+          }}
+        >
+          {/* Button shine sweep */}
+          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+          <MessageCircle className="w-4 h-4 relative shrink-0" />
+          <span className="relative">Agendar por WhatsApp</span>
+        </a>
+      </div>
     </motion.div>
   );
 };
@@ -428,23 +487,22 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
   ];
 
   return (
-    <div className="min-h-screen bg-tenant-background text-tenant-text font-sans overflow-x-hidden selection:bg-tenant-primary/30 selection:text-white">
+    <div className="min-h-screen bg-tenant-background text-tenant-text font-sans overflow-x-hidden selection:bg-tenant-primary/30 selection:text-white relative">
 
       {/* ═══════════════ NAVBAR ═══════════════ */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
             ? 'backdrop-blur-2xl bg-tenant-background/80 border-b border-white/[0.06] shadow-lg shadow-black/20'
             : 'bg-transparent border-b border-transparent'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-5 md:px-10 flex items-center justify-between h-16 md:h-[72px] w-full">
           {/* Logo with hover effect */}
-          <motion.a 
-            href="#" 
+          <motion.a
+            href="#"
             className="flex items-center gap-1.5 group w-1/3"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -467,17 +525,17 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
           {/* Desktop CTA */}
           <div className="hidden md:flex justify-end w-1/3">
             <MagneticButton
-            onClick={onBookClick}
-            className="hidden md:inline-flex items-center gap-2 bg-tenant-primary text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold hover:opacity-90 transition-all duration-300 shadow-lg shadow-tenant-primary/15 hover:shadow-[0_4px_25px_rgba(var(--tenant-primary),0.35)] active:scale-[0.97]"
-          >
-            Reservar Cita
-          </MagneticButton>
+              onClick={onBookClick}
+              className="hidden md:inline-flex items-center gap-2 bg-tenant-primary text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold hover:opacity-90 transition-all duration-300 shadow-lg shadow-tenant-primary/15 hover:shadow-[0_4px_25px_rgba(var(--tenant-primary),0.35)] active:scale-[0.97]"
+            >
+              Reservar Cita
+            </MagneticButton>
           </div>
 
           {/* Mobile hamburger */}
-          <motion.button 
+          <motion.button
             whileTap={{ scale: 0.9 }}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-tenant-text"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -540,7 +598,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
           />
           {/* Animated purple glow */}
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.15, 1],
               opacity: [0.06, 0.1, 0.06]
             }}
@@ -556,7 +614,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-tenant-primary blur-[150px]"
           />
           {/* Grid pattern overlay */}
-          <div 
+          <div
             className="absolute inset-0 opacity-[0.02]"
             style={{
               backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)',
@@ -599,8 +657,8 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               <span className="block mt-1">
                 <CharReveal text="al cuidado " delay={0.7} />
                 <span className="relative inline-block">
-                  <CharReveal 
-                    text="automotriz." 
+                  <CharReveal
+                    text="automotriz."
                     delay={0.9}
                     className="text-transparent bg-clip-text bg-gradient-to-r from-tenant-primary to-purple-400"
                   />
@@ -680,6 +738,18 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
       </section>
 
 
+      {/* ── Wrapper for sections that need noise overlay ── */}
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1] opacity-[0.12]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '200px 200px',
+          }}
+        />
+
       {/* ═══════════════ MARQUEE ═══════════════ */}
       <Marquee items={['Detailing Exterior', 'Protección Cerámica', 'Detailing Interior', 'Corrección de Pintura', 'Sellador UV', 'Descontaminación', 'Acabado de Exhibición']} />
 
@@ -695,7 +765,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 <motion.span variants={lineReveal} className="w-8 h-px bg-tenant-primary origin-left" />
                 Nuestra Filosofía
               </motion.p>
-              
+
               <motion.h2 variants={slideInLeft} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight leading-[1.12] mb-8">
                 Donde la ingeniería <br className="hidden md:block" />
                 se encuentra con el{' '}
@@ -707,7 +777,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   />
                 </span>
               </motion.h2>
-              
+
               <motion.p variants={fadeUp} custom={0.25} className="text-tenant-text/45 text-base leading-[1.8] mb-5">
                 Cada vehículo merece un trato meticuloso. No vendemos "lavados" — aplicamos técnicas de detailing profesional apoyadas por herramientas de precisión y productos de grado clínico.
               </motion.p>
@@ -729,7 +799,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
             >
               {/* Radial glow behind image */}
               <div className="absolute inset-0 bg-tenant-primary/10 blur-3xl pointer-events-none scale-125 z-0" />
-              
+
               {/* Image wrapper with clip reveal */}
               <motion.div
                 initial={{ clipPath: 'inset(100% 0 0 0)' }}
@@ -745,10 +815,10 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-80 transition-all duration-[1.5s] ease-out scale-105 group-hover:scale-100"
                 />
               </motion.div>
-              
+
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-tenant-background via-transparent to-transparent pointer-events-none" />
-              
+
               {/* Corner info */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -781,7 +851,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
       {/* ═══════════════ SERVICES (PROCESO Y PRECIOS) ═══════════════ */}
       <AnimatedSection id="servicios" className="py-24 md:py-40 px-5 md:px-10 bg-tenant-background relative z-20">
         <div className="max-w-7xl mx-auto space-y-32">
-          
+
           {/* Bloque 1: El Proceso */}
           <div>
             <div className="text-center mb-16">
@@ -810,9 +880,9 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
 
           {/* Bloque 2: Precios */}
           <div className="relative">
-            {/* Background Orb for Pricing */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[400px] bg-tenant-primary/10 blur-[150px] pointer-events-none z-0" />
-            
+            {/* Background Orb for Pricing — 6% opacidad */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[500px] bg-tenant-primary/[0.06] blur-[180px] pointer-events-none z-0" />
+
             <div className="text-center mb-16 relative z-10">
               <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5 text-white">
                 Precios transparentes. Elige tu vehículo.
@@ -820,16 +890,17 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               <motion.div variants={lineReveal} className="w-16 h-px bg-white/20 mx-auto origin-center" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto relative z-10 pt-6 md:pt-0">
               {[
-                { 
-                  title: 'Autos', 
-                  sub: '(Sedán / Compactos)', 
+                {
+                  title: 'Autos',
+                  sub: '(Sedán / Compactos)',
                   desc: 'Detallado básico completo',
-                  price: '400', 
+                  price: '400',
                   duration: '90',
                   popular: false,
                   icon: <Car className="w-8 h-8 text-white mx-auto mb-3" />,
+                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20Autos%20(%24400%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
                   features: [
                     'Lavado exterior a presión',
                     'Limpieza profunda de rines',
@@ -839,14 +910,15 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                     'Encerado express'
                   ]
                 },
-                { 
-                  title: 'SUV', 
-                  sub: '(Camionetas de 2 filas)', 
+                {
+                  title: 'SUV',
+                  sub: '(Camionetas de 2 filas)',
                   desc: 'Detallado básico completo',
-                  price: '500', 
+                  price: '500',
                   duration: '120',
                   popular: true,
                   icon: <Car className="w-8 h-8 text-white mx-auto mb-3" />,
+                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20SUV%20(%24500%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
                   features: [
                     'Lavado exterior a presión',
                     'Limpieza profunda de rines',
@@ -857,14 +929,15 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                     'Desinfección de cabina'
                   ]
                 },
-                { 
-                  title: 'Pick-ups y Vans', 
-                  sub: '(3 filas o batea)', 
+                {
+                  title: 'Pick-ups y Vans',
+                  sub: '(3 filas o batea)',
                   desc: 'Detallado básico completo',
-                  price: '600', 
+                  price: '600',
                   duration: '150',
                   popular: false,
                   icon: <Truck className="w-8 h-8 text-white mx-auto mb-3" />,
+                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20Pick-ups%20y%20Vans%20(%24600%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
                   features: [
                     'Lavado exterior a presión',
                     'Limpieza de batea/caja',
@@ -887,6 +960,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   icon={item.icon}
                   features={item.features}
                   onBookClick={onBookClick}
+                  whatsappUrl={item.whatsappUrl}
                   index={i}
                 />
               ))}
@@ -1013,6 +1087,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
           </div>
         </div>
       </footer>
+      </div>
 
       {/* ═══════════════ MOBILE FIXED CTA BAR ═══════════════ */}
       <motion.div
