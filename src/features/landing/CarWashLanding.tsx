@@ -5,7 +5,8 @@ import {
 } from 'framer-motion';
 import { 
   MapPin, Phone, Droplets, Wind, CheckCircle2, ArrowRight, 
-  Shield, Gem, ChevronDown, Menu, X, MessageCircle, ArrowUpRight
+  Shield, Gem, ChevronDown, Menu, X, MessageCircle, ArrowUpRight,
+  Car, Truck, Clock, Check
 } from 'lucide-react';
 import { type Negocio, type Servicio } from '../../types';
 
@@ -773,40 +774,115 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
           {/* Bloque 2: Precios */}
           <div>
             <div className="text-center mb-16">
-              <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5">
+              <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5 text-white">
                 Precios transparentes. Elige tu vehículo.
               </motion.h2>
-              <motion.div variants={lineReveal} className="w-16 h-px bg-tenant-primary mx-auto origin-center" />
+              <motion.div variants={lineReveal} className="w-16 h-px bg-white/20 mx-auto origin-center" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
               {[
-                { title: 'Autos', sub: '(Sedán / Compactos)', price: '$400 MXN', popular: false },
-                { title: 'SUV', sub: '(Camionetas de 2 filas)', price: '$500 MXN', popular: true },
-                { title: 'Pick-ups y Vans', sub: '(3 filas)', price: '$600 MXN', popular: false },
+                { 
+                  title: 'Autos', 
+                  sub: '(Sedán / Compactos)', 
+                  desc: 'Detallado básico completo',
+                  price: '400', 
+                  duration: '90',
+                  popular: false,
+                  icon: <Car className="w-8 h-8 text-white mx-auto mb-3" />,
+                  features: [
+                    'Lavado exterior a presión',
+                    'Limpieza profunda de rines',
+                    'Aspirado interior completo',
+                    'Limpieza de cristales',
+                    'Acondicionador de plásticos',
+                    'Encerado express'
+                  ]
+                },
+                { 
+                  title: 'SUV', 
+                  sub: '(Camionetas de 2 filas)', 
+                  desc: 'Detallado básico completo',
+                  price: '500', 
+                  duration: '120',
+                  popular: true,
+                  icon: <Car className="w-8 h-8 text-white mx-auto mb-3" />,
+                  features: [
+                    'Lavado exterior a presión',
+                    'Limpieza profunda de rines',
+                    'Aspirado interior completo',
+                    'Limpieza de cristales',
+                    'Acondicionador de plásticos',
+                    'Encerado express',
+                    'Desinfección de cabina'
+                  ]
+                },
+                { 
+                  title: 'Pick-ups y Vans', 
+                  sub: '(3 filas o batea)', 
+                  desc: 'Detallado básico completo',
+                  price: '600', 
+                  duration: '150',
+                  popular: false,
+                  icon: <Truck className="w-8 h-8 text-white mx-auto mb-3" />,
+                  features: [
+                    'Lavado exterior a presión',
+                    'Limpieza de batea/caja',
+                    'Aspirado interior completo',
+                    'Limpieza de cristales',
+                    'Acondicionador de plásticos',
+                    'Encerado express',
+                    'Tratamiento de lodo pesado'
+                  ]
+                },
               ].map((item, i) => (
                 <motion.div
                   key={i}
                   variants={fadeUp}
                   custom={i * 0.15}
-                  className={`relative bg-tenant-card p-8 rounded-2xl border flex flex-col ${item.popular ? 'border-tenant-primary shadow-[0_0_30px_rgba(var(--tenant-primary),0.15)]' : 'border-white/[0.06]'}`}
+                  className={`relative bg-[#121212] flex flex-col p-8 rounded-2xl ${item.popular ? 'border border-white/20' : 'border border-white/5'}`}
                 >
                   {item.popular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-tenant-primary text-white text-[10px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-full">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                       Más Popular
                     </div>
                   )}
-                  <div className="text-center mb-8 flex-grow">
-                    <h3 className="text-2xl font-display font-bold mb-1">{item.title}</h3>
-                    <p className="text-tenant-text/50 text-sm mb-6">{item.sub}</p>
-                    <div className="text-4xl font-black text-tenant-primary">{item.price}</div>
+
+                  <div className="text-center mb-6">
+                    {item.icon}
+                    <h3 className="text-xl font-bold text-white">
+                      {item.title} 
+                      <span className="block text-sm font-normal text-gray-400 mt-1">{item.sub}</span>
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
                   </div>
+
+                  <div className="text-center mb-6">
+                    <span className="text-5xl font-extrabold text-white">${item.price}</span>
+                    <span className="text-lg text-gray-400 ml-1">MXN</span>
+                    <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      Duración estimada: {item.duration} min
+                    </p>
+                  </div>
+
+                  <hr className="border-gray-800 mb-6" />
+
+                  <ul className="space-y-4 mb-8 text-sm text-gray-300 flex-1">
+                    {item.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-white shrink-0" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
                   <button
                     onClick={onBookClick}
-                    className={`w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    className={`w-full font-bold py-3 rounded-lg transition-colors duration-300 ${
                       item.popular 
-                        ? 'bg-tenant-primary text-white hover:opacity-90 shadow-lg shadow-tenant-primary/20' 
-                        : 'bg-tenant-card text-white border border-white/[0.06] hover:bg-white/[0.03] hover:border-white/20'
+                        ? 'bg-white text-black hover:bg-gray-200' 
+                        : 'bg-[#0b0b0b] text-white border border-gray-800 hover:border-gray-500 hover:bg-[#1a1a1a]'
                     }`}
                   >
                     Agendar Cita
