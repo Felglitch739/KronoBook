@@ -308,16 +308,17 @@ const FloatingParticles: React.FC = () => (
 const Marquee: React.FC<{ items: string[] }> = ({ items }) => {
   const doubled = [...items, ...items];
   return (
-    <div className="overflow-hidden py-6 border-y border-white/[0.04] bg-tenant-background/50 backdrop-blur">
+    <div className="relative overflow-hidden py-6 border-y border-white/[0.04] bg-tenant-background/50 backdrop-blur">
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-tenant-primary/5 to-transparent pointer-events-none" />
       <motion.div
         className="flex gap-12 whitespace-nowrap"
         animate={{ x: ['0%', '-50%'] }}
         transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
       >
         {doubled.map((item, i) => (
-          <span key={i} className="text-[11px] uppercase tracking-[0.3em] text-tenant-text/15 font-semibold flex items-center gap-12">
+          <span key={i} className="text-[11px] uppercase tracking-[0.3em] text-tenant-text/15 font-semibold flex items-center gap-12 relative z-10">
             {item}
-            <span className="w-1.5 h-1.5 rounded-full bg-tenant-primary/30" />
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-tenant-primary to-purple-400" />
           </span>
         ))}
       </motion.div>
@@ -661,10 +662,10 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 Donde la ingeniería <br className="hidden md:block" />
                 se encuentra con el{' '}
                 <span className="relative inline-block">
-                  <span className="text-tenant-primary">detalle.</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-tenant-primary to-purple-400">detalle.</span>
                   <motion.span
                     variants={lineReveal}
-                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-tenant-primary/30 origin-left"
+                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-tenant-primary/0 via-tenant-primary/40 to-tenant-primary/0 origin-left"
                   />
                 </span>
               </motion.h2>
@@ -688,6 +689,9 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               custom={0.2}
               className="relative w-full aspect-[4/5] md:aspect-[4/3] lg:aspect-[4/5] rounded-2xl overflow-hidden group"
             >
+              {/* Radial glow behind image */}
+              <div className="absolute inset-0 bg-tenant-primary/10 blur-3xl pointer-events-none scale-125 z-0" />
+              
               {/* Image wrapper with clip reveal */}
               <motion.div
                 initial={{ clipPath: 'inset(100% 0 0 0)' }}
@@ -759,28 +763,32 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                   key={i}
                   variants={fadeUp}
                   custom={i * 0.15}
-                  className="bg-tenant-card p-8 rounded-2xl border border-white/[0.06] hover:border-tenant-primary/30 transition-all duration-300 flex flex-col items-center text-center group"
+                  className="relative bg-tenant-card p-8 rounded-2xl border border-white/[0.06] hover:border-tenant-primary/30 hover:shadow-[0_0_30px_rgba(var(--tenant-primary),0.05)] transition-all duration-300 flex flex-col items-center text-center group overflow-hidden"
                 >
-                  <div className="w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center text-tenant-primary mb-6 border border-white/[0.06] group-hover:scale-110 transition-transform duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-tenant-primary/0 group-hover:to-tenant-primary/5 transition-colors duration-500 pointer-events-none" />
+                  <div className="relative z-10 w-14 h-14 bg-tenant-background rounded-xl flex items-center justify-center text-tenant-primary mb-6 border border-white/[0.06] group-hover:border-tenant-primary/40 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(var(--tenant-primary),0.2)] transition-all duration-500">
                     {item.icon}
                   </div>
-                  <h3 className="text-xl font-display font-bold mb-3">{item.title}</h3>
-                  <p className="text-tenant-text/60 text-sm leading-relaxed">{item.desc}</p>
+                  <h3 className="relative z-10 text-xl font-display font-bold mb-3">{item.title}</h3>
+                  <p className="relative z-10 text-tenant-text/60 text-sm leading-relaxed">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
           </div>
 
           {/* Bloque 2: Precios */}
-          <div>
-            <div className="text-center mb-16">
+          <div className="relative">
+            {/* Background Orb for Pricing */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[400px] bg-tenant-primary/10 blur-[150px] pointer-events-none z-0" />
+            
+            <div className="text-center mb-16 relative z-10">
               <motion.h2 variants={fadeUp} custom={0.1} className="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-bold tracking-tight mb-5 text-white">
                 Precios transparentes. Elige tu vehículo.
               </motion.h2>
               <motion.div variants={lineReveal} className="w-16 h-px bg-white/20 mx-auto origin-center" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto relative z-10">
               {[
                 { 
                   title: 'Autos', 
@@ -914,7 +922,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
               ¿Listo para ver tu auto <br className="hidden sm:block" />
               al nivel de{' '}
               <span className="relative inline-block">
-                <span className="text-tenant-primary">exhibición?</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-tenant-primary to-purple-400">exhibición?</span>
                 <motion.span
                   initial={{ scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
