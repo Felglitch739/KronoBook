@@ -177,7 +177,7 @@ interface ServiceCardProps {
   duration?: string;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({
+const _ServiceCard: React.FC<ServiceCardProps> = ({
   icon, title, description, features, ctaLabel, onBookClick, accent = false, index, price, duration
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -329,9 +329,9 @@ const Marquee: React.FC<{ items: string[] }> = ({ items }) => {
    ═══════════════════════════════════════════════════ */
 export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) => {
   type VehicleType = 'Sedán' | 'SUV' | 'Pick-Up';
-  const [activeVehicle, setActiveVehicle] = useState<VehicleType>('Sedán');
+  const [_activeVehicle, _setActiveVehicle] = useState<VehicleType>('Sedán');
 
-  const vehicleData = {
+  const _vehicleData = {
     'Sedán': {
       exterior: {
         price: '$450', duration: '1.5 - 2 hrs',

@@ -39,7 +39,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ slug, children }) 
   useEffect(() => {
     const fetchTheme = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('negocios')
           .select('theme_config')
           .eq('slug', slug)
