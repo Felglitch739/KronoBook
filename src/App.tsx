@@ -5,6 +5,7 @@ import { LandingPage } from './features/landing/LandingPage';
 import { CarWashLanding } from './features/landing/CarWashLanding';
 import { BookingFlow } from './features/agenda/BookingFlow';
 import { Dashboard } from './features/dashboard/Dashboard';
+import { CarWashDashboard } from './features/dashboard/CarWashDashboard';
 import { Login } from './features/auth/Login';
 import { Signup } from './features/auth/Signup';
 // Removed Onboarding
@@ -91,6 +92,8 @@ function TenantApp() {
                   negocio={activeNegocio}
                   servicios={activeServicios}
                   onBookClick={() => navigate(`/${slug}/reservar`)}
+                  isStaffForCurrentSlug={isStaffForCurrentSlug}
+                  slug={slug}
                 />
               ) : (
                 <LandingPage
@@ -192,6 +195,24 @@ function DashboardWrapper() {
           Ir a mis negocios
         </button>
       </div>
+    );
+  }
+
+  const isCarWash = negocio?.id === 'd68107d2-37de-4457-8b37-74a176c996a1';
+
+  if (isCarWash) {
+    return (
+      <CarWashDashboard 
+        citas={citas} 
+        servicios={servicios} 
+        onUpdateStatus={updateCitaEstado} 
+        negocioId={negocio?.id} 
+        negocioName={negocio?.nombre}
+        onAddSuccess={refetch} 
+        onDeleteService={eliminarServicio}
+        onDeleteCita={eliminarCita}
+        onAddService={crearServicio}
+      />
     );
   }
 

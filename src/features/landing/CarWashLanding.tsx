@@ -15,6 +15,8 @@ interface CarWashLandingProps {
   negocio: Negocio;
   servicios: Servicio[];
   onBookClick: () => void;
+  isStaffForCurrentSlug?: boolean;
+  slug?: string;
 }
 
 /* ─── Animation Variants ─── */
@@ -427,7 +429,7 @@ const Marquee: React.FC<{ items: string[] }> = ({ items }) => {
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT — DualFX Landing Page
    ═══════════════════════════════════════════════════ */
-export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) => {
+export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isStaffForCurrentSlug, slug }) => {
   type VehicleType = 'Sedán' | 'SUV' | 'Pick-Up';
   // @ts-ignore - Variables en desarrollo
   const [_activeVehicle, _setActiveVehicle] = useState<VehicleType>('Sedán');
@@ -520,6 +522,12 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                 <span className="absolute bottom-0 left-0 w-0 h-px bg-tenant-primary group-hover:w-full transition-all duration-300" />
               </a>
             ))}
+            {isStaffForCurrentSlug && slug && (
+              <a href={`/${slug}/admin`} className="relative group py-2 text-sky-400 hover:text-sky-300 font-bold transition-colors duration-300">
+                Admin
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-sky-400 group-hover:w-full transition-all duration-300" />
+              </a>
+            )}
           </div>
 
           {/* Desktop CTA */}
@@ -567,6 +575,20 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick }) =
                     <ArrowUpRight className="w-4 h-4 text-tenant-primary/50" />
                   </motion.a>
                 ))}
+                
+                {isStaffForCurrentSlug && slug && (
+                  <motion.a
+                    href={`/${slug}/admin`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.1 }}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sky-400 text-lg font-bold hover:text-sky-300 transition-colors flex items-center justify-between"
+                  >
+                    Admin Dashboard
+                    <ArrowUpRight className="w-4 h-4 text-sky-500/50" />
+                  </motion.a>
+                )}
                 <motion.button
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
