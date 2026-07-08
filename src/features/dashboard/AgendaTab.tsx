@@ -24,8 +24,8 @@ interface AgendaTabProps {
 }
 
 export const AgendaTab: React.FC<AgendaTabProps> = ({ citas, servicios, onUpdateStatus, onDeleteCita, businessName }) => {
-  // Inicializamos en Junio 2026, mes de la mock data
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 5, 1));
+  // Inicializamos en el mes actual
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
 
   const year = currentDate.getFullYear();

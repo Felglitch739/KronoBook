@@ -20,6 +20,7 @@ function TenantApp() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const [userBusinessSlugs, setUserBusinessSlugs] = React.useState<string[]>([]);
+  const [userBusinessIds, setUserBusinessIds] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     if (user) {
@@ -36,15 +37,25 @@ function TenantApp() {
           const slugs = staffData
             .map((s: any) => s.negocios?.slug)
             .filter(Boolean);
+          const ids = staffData
+            .map((s: any) => s.negocio_id)
+            .filter(Boolean);
           setUserBusinessSlugs(slugs);
+          setUserBusinessIds(ids);
         }
       });
     } else {
       setUserBusinessSlugs([]);
+      setUserBusinessIds([]);
     }
   }, [user]);
 
-  const isStaffForCurrentSlug = Boolean(slug && userBusinessSlugs.includes(slug));
+  const normalizedSlugForStaff = slug?.toLowerCase() || '';
+  const isCarWashStaff = ['dualfx', 'kronowash', 'kronowahs', 'lavado'].includes(normalizedSlugForStaff);
+  
+  const isStaffForCurrentSlug = isCarWashStaff 
+    ? userBusinessIds.includes('d68107d2-37de-4457-8b37-74a176c996a1')
+    : Boolean(slug && userBusinessSlugs.includes(slug));
 
   if (loading) {
     return (
@@ -223,7 +234,12 @@ function SelectBusiness() {
           
         if (staffData && staffData.length > 0) {
           const negociosData = staffData
-            .map((s: any) => s.negocios)
+            .map((s: any) => {
+              if (s.negocios && s.negocio_id === 'd68107d2-37de-4457-8b37-74a176c996a1') {
+                return { ...s.negocios, slug: 'dualfx' };
+              }
+              return s.negocios;
+            })
             .filter(Boolean);
             
           if (negociosData && negociosData.length > 0) {

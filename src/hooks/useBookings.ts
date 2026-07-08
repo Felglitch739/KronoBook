@@ -48,7 +48,16 @@ export const useBookings = () => {
               .eq('user_id', user.id);
             
             if (staffData && staffData.length > 0) {
-              const matchedStaff = staffData.find((s: any) => s.negocios && s.negocios.slug === slug);
+              const matchedStaff = staffData.find((s: any) => {
+                if (!s.negocios) return false;
+                
+                const currentSlug = slug.toLowerCase();
+                if (['dualfx', 'kronowash', 'kronowahs', 'lavado'].includes(currentSlug)) {
+                  return s.negocio_id === 'd68107d2-37de-4457-8b37-74a176c996a1';
+                }
+                return s.negocios.slug === slug;
+              });
+              
               if (matchedStaff) {
                 currentBusiness = matchedStaff.negocios;
               }
@@ -60,11 +69,16 @@ export const useBookings = () => {
           const rawSlug = slug || 'barberia-chaga';
           const currentSlug = rawSlug.toLowerCase();
           
-          const { data, error } = await supabase
-            .from('negocios')
-            .select('*')
-            .eq('slug', currentSlug)
-            .maybeSingle();
+          let query = supabase.from('negocios').select('*');
+          
+          // Mapear los slugs de demostración al ID real del negocio en la BD
+          if (['dualfx', 'kronowash', 'kronowahs', 'lavado'].includes(currentSlug)) {
+            query = query.eq('id', 'd68107d2-37de-4457-8b37-74a176c996a1');
+          } else {
+            query = query.eq('slug', currentSlug);
+          }
+
+          const { data, error } = await query.maybeSingle();
 
           if (error || !data) {
             // Slugs estáticos para demostración que pueden no estar en la BD aún
