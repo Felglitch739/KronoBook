@@ -350,12 +350,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
           ))}
         </ul>
 
-        {/* CTA Button — WhatsApp parametrizado por paquete */}
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={onBookClick}
+        {/* CTA Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            onBookClick();
+          }}
           className={`w-full font-bold py-3.5 rounded-xl transition-all duration-300 relative z-10 text-sm tracking-wide overflow-hidden group/btn flex items-center justify-center gap-2 ${popular
               ? 'text-white shadow-lg hover:shadow-[0_4px_25px_rgba(110,59,255,0.4)] hover:scale-[1.02] active:scale-[0.98]'
               : 'text-white border border-[#6E3BFF]/30 hover:border-[#6E3BFF]/60 hover:shadow-[0_0_20px_rgba(110,59,255,0.15)] active:scale-[0.98]'
@@ -368,9 +368,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
         >
           {/* Button shine sweep */}
           <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-          <MessageCircle className="w-4 h-4 relative shrink-0" />
-          <span className="relative">Agendar por WhatsApp</span>
-        </a>
+          <span className="relative">Registrar cita aquí en nuestra plataforma</span>
+        </button>
       </div>
     </motion.div>
   );
@@ -918,11 +917,11 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
                   title: 'Autos',
                   sub: '(Sedán / Compactos)',
                   desc: 'Detallado básico completo',
-                  price: '400',
+                  price: '700',
                   duration: '90',
                   popular: false,
                   icon: <Car className="w-8 h-8 text-white mx-auto mb-3" />,
-                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20Autos%20(%24400%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
+                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20Autos%20(%24700%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
                   features: [
                     'Lavado exterior a presión',
                     'Limpieza profunda de rines',
@@ -936,11 +935,11 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
                   title: 'SUV',
                   sub: '(Camionetas de 2 filas)',
                   desc: 'Detallado básico completo',
-                  price: '500',
+                  price: '800',
                   duration: '120',
                   popular: true,
                   icon: <Car className="w-8 h-8 text-white mx-auto mb-3" />,
-                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20SUV%20(%24500%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
+                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20SUV%20(%24800%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
                   features: [
                     'Lavado exterior a presión',
                     'Limpieza profunda de rines',
@@ -955,11 +954,11 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
                   title: 'Pick-ups y Vans',
                   sub: '(3 filas o batea)',
                   desc: 'Detallado básico completo',
-                  price: '600',
+                  price: '900',
                   duration: '150',
                   popular: false,
                   icon: <Truck className="w-8 h-8 text-white mx-auto mb-3" />,
-                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20Pick-ups%20y%20Vans%20(%24600%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
+                  whatsappUrl: 'https://wa.me/528662040513?text=Hola%2C%20me%20interesa%20el%20paquete%20Pick-ups%20y%20Vans%20(%24900%20MXN).%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F',
                   features: [
                     'Lavado exterior a presión',
                     'Limpieza de batea/caja',
@@ -986,6 +985,11 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
                   index={i}
                 />
               ))}
+            </div>
+            
+            {/* Disclaimer text */}
+            <div className="mt-12 text-center text-sm text-gray-400 relative z-10 max-w-3xl mx-auto px-4">
+              <p>* El precio final está sujeto a cambios dependiendo de las condiciones en las que se encuentre el vehículo. Trataremos de dar el mejor servicio posible, pero hay manchas que lamentablemente no se pueden quitar.</p>
             </div>
           </div>
 
