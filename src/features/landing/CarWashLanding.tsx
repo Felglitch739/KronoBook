@@ -226,12 +226,11 @@ interface PricingCardProps {
   icon: React.ReactNode;
   features: string[];
   onBookClick: () => void;
-  whatsappUrl: string;
   index: number;
 }
 
 const PricingCard: React.FC<PricingCardProps> = ({
-  title, sub, desc, price, duration, popular, icon, features, onBookClick, whatsappUrl, index
+  title, sub, desc, price, duration, popular, icon, features, onBookClick, index
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -981,7 +980,6 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
                   icon={item.icon}
                   features={item.features}
                   onBookClick={onBookClick}
-                  whatsappUrl={item.whatsappUrl}
                   index={i}
                 />
               ))}

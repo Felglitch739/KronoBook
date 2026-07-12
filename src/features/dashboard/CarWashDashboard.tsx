@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, DollarSign, List, LogOut, Plus } from 'lucide-react';
 import { type Cita, type Servicio } from '../../types';
 import { useAuth } from '../../context/AuthContext';
-import { usePushNotifications } from '../../hooks/usePushNotifications';
+
 import { AddAppointmentModal } from '../../components/dashboard/AddAppointmentModal';
 import { DigitalReceiptModal } from '../../components/dashboard/DigitalReceiptModal';
 
@@ -49,7 +49,7 @@ export const CarWashDashboard: React.FC<CarWashDashboardProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [justCreatedTx, setJustCreatedTx] = useState<QuickTransaction | null>(null);
   const { signOut } = useAuth();
-  const { isSupported, isSubscribed, permission, loading: pushLoading, subscribeToPush } = usePushNotifications();
+
 
   const handleSignOut = async () => {
     if (window.confirm('¿Cerrar sesión de DualFX Admin?')) {
@@ -191,7 +191,7 @@ export const CarWashDashboard: React.FC<CarWashDashboardProps> = ({
 
         <div className="bg-[#0a0a0f]/95 backdrop-blur-xl border-t border-white/[0.05] pb-safe">
           <div className="flex justify-around items-center px-4 h-20">
-            {navItems.map((item, idx) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
