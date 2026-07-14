@@ -52,7 +52,7 @@ function TenantApp() {
   }, [user]);
 
   const normalizedSlugForStaff = slug?.toLowerCase() || '';
-  const isCarWashStaff = ['dualfx', 'kronowash', 'kronowahs', 'lavado'].includes(normalizedSlugForStaff);
+  const isCarWashStaff = ['dualfx', 'dualfx.com', 'kronowash', 'kronowahs', 'lavado'].includes(normalizedSlugForStaff);
   
   const isStaffForCurrentSlug = isCarWashStaff 
     ? userBusinessIds.includes('d68107d2-37de-4457-8b37-74a176c996a1')
@@ -73,7 +73,7 @@ function TenantApp() {
 
   // Check if it's the custom car wash partition
   const normalizedSlug = slug?.toLowerCase();
-  const isCarWash = normalizedSlug === 'dualfx' || normalizedSlug === 'kronowash' || normalizedSlug === 'lavado';
+  const isCarWash = normalizedSlug === 'dualfx' || normalizedSlug === 'dualfx.com' || normalizedSlug === 'kronowash' || normalizedSlug === 'lavado';
 
   return (
     <ThemeProvider slug={slug || 'demo'}>

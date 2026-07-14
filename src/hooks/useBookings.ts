@@ -52,7 +52,7 @@ export const useBookings = () => {
                 if (!s.negocios) return false;
                 
                 const currentSlug = slug.toLowerCase();
-                if (['dualfx', 'kronowash', 'kronowahs', 'lavado'].includes(currentSlug)) {
+                if (['dualfx', 'dualfx.com', 'kronowash', 'kronowahs', 'lavado'].includes(currentSlug)) {
                   return s.negocio_id === 'd68107d2-37de-4457-8b37-74a176c996a1';
                 }
                 return s.negocios.slug === slug;
@@ -72,7 +72,7 @@ export const useBookings = () => {
           let query = supabase.from('negocios').select('*');
           
           // Mapear los slugs de demostración al ID real del negocio en la BD
-          if (['dualfx', 'kronowash', 'kronowahs', 'lavado'].includes(currentSlug)) {
+          if (['dualfx', 'dualfx.com', 'kronowash', 'kronowahs', 'lavado'].includes(currentSlug)) {
             query = query.eq('id', 'd68107d2-37de-4457-8b37-74a176c996a1');
           } else {
             query = query.eq('slug', currentSlug);
@@ -82,7 +82,7 @@ export const useBookings = () => {
 
           if (error || !data) {
             // Slugs estáticos para demostración que pueden no estar en la BD aún
-            const staticSlugs = ['demo', 'dualfx', 'kronowash', 'lavado'];
+            const staticSlugs = ['demo', 'dualfx', 'dualfx.com', 'kronowash', 'lavado'];
             if (slug && !staticSlugs.includes(currentSlug)) {
               navigate('/404');
             }
