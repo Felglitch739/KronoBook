@@ -82,7 +82,7 @@ const AnimatedCounter: React.FC<{ value: string; label: string }> = ({ value, la
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <div ref={ref} className="text-center md:text-left">
+    <div ref={ref} className="text-left md:text-left">
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={isInView ? { scale: 1, opacity: 1 } : {}}
@@ -503,7 +503,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
           {/* Logo with hover effect */}
           <motion.a
             href="#"
-            className="flex items-center gap-1.5 group w-1/3"
+            className="flex items-center gap-1.5 group w-auto md:w-1/3"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -671,9 +671,9 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
             </motion.div>
 
             {/* Headline with character reveal */}
-            <motion.h1 variants={fadeUp} custom={0.15} className="text-[clamp(2.5rem,7vw,4.5rem)] font-display font-bold leading-[1.08] tracking-[-0.025em] mb-7">
+            <motion.h1 variants={fadeUp} custom={0.15} className="text-[clamp(2.25rem,9vw,4.5rem)] font-display font-bold leading-[1.08] tracking-[-0.025em] mb-7">
               <CharReveal text="Ingeniería aplicada" delay={0.3} />
-              <br className="hidden sm:block" />
+              <br className="block" />
               <span className="block mt-1">
                 <CharReveal text="al cuidado " delay={0.7} />
                 <span className="relative inline-block">
@@ -805,7 +805,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
                 El resultado es una restauración visual profunda: eliminamos contaminantes y devolvemos el brillo original sin comprometer la integridad de la pintura.
               </motion.p>
 
-              <motion.div variants={fadeUp} custom={0.45} className="flex gap-14 md:gap-20">
+              <motion.div variants={fadeUp} custom={0.45} className="flex flex-col sm:flex-row gap-8 sm:gap-14 md:gap-20">
                 <AnimatedCounter value="0%" label="Fricción Innecesaria" />
                 <AnimatedCounter value="100%" label="Precisión Técnica" />
               </motion.div>
@@ -1010,7 +1010,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
 
           <div className="relative text-center">
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight mb-6 leading-tight">
-              ¿Listo para ver tu auto <br className="hidden sm:block" />
+              ¿Listo para ver tu auto <br className="block" />
               al nivel de{' '}
               <span className="relative inline-block">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-tenant-primary to-purple-400">exhibición?</span>
@@ -1118,7 +1118,7 @@ export const CarWashLanding: React.FC<CarWashLandingProps> = ({ onBookClick, isS
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ delay: 1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-tenant-background/90 backdrop-blur-2xl border-t border-white/[0.06] px-4 py-3 safe-area-pb"
+        className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-tenant-background/90 backdrop-blur-2xl border-t border-white/[0.06] px-4 pt-3 pb-6"
       >
         <button
           onClick={onBookClick}
