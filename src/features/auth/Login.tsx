@@ -127,9 +127,14 @@ export const Login: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">
-              Contraseña
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                Contraseña
+              </label>
+              <Link to="/forgot-password" className="text-xs text-sky-400 hover:text-sky-300 font-semibold transition-colors">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-500">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -8,6 +8,8 @@ import { Dashboard } from './features/dashboard/Dashboard';
 import { CarWashDashboard } from './features/dashboard/CarWashDashboard';
 import { Login } from './features/auth/Login';
 import { Signup } from './features/auth/Signup';
+import { ForgotPassword } from './features/auth/ForgotPassword';
+import { UpdatePassword } from './features/auth/UpdatePassword';
 // Removed Onboarding
 import { KronoBookLanding } from './pages/KronoBookLanding';
 import { useBookings } from './hooks/useBookings';
@@ -325,6 +327,8 @@ function App() {
 
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/update-password" element={<UpdatePassword />} />
       <Route path="/admin/*" element={<GlobalAdminApp />} />
       {/* Rutas de tenants: /:slug y /:slug/admin */}
       <Route path="/:slug/*" element={<TenantApp />} />
