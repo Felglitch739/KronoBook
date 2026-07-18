@@ -29,7 +29,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // 2. Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Ignoramos estos eventos para no interrumpir el flujo de recuperación de contraseña.
+      // PASSWORD_RECOVERY: el usuario llegó desde el link del email.
+      // USER_UPDATED: se disparó internamente al actualizar la contraseña (supabase renueva el token).
+      // En ambos casos, UpdatePassword.tsx maneja su propio ciclo de vida.
+      if (event === 'PASSWORD_RECOVERY' || event === 'USER_UPDATED') {
+        return;
+      }
+
       const currentUser = session?.user || null;
       setUser(currentUser);
       if (currentUser) {

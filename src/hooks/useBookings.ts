@@ -172,7 +172,8 @@ export const useBookings = () => {
     };
 
     loadTenantData();
-  }, [slug, isAdminPage, user, profile, navigate, refreshTrigger]);
+  }, [slug, isAdminPage, user, navigate, refreshTrigger]); // ← `profile` eliminado: era el causante de re-renders durante el flujo de recuperación de contraseña
+
 
   const addCita = async (citaData: Omit<Cita, 'id' | 'estado' | 'negocioId'>) => {
     if (!negocio) throw new Error("No negocio loaded");
