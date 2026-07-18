@@ -20,6 +20,8 @@ export const ForgotPassword: React.FC = () => {
         ? `${window.location.origin}/update-password`
         : 'https://kronobook.vercel.app/update-password';
 
+    console.log('URL de redirección que se enviará a Supabase:', redirectTo);
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo,
     });
